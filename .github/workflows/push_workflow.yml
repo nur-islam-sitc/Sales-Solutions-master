@@ -10,14 +10,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      
-     
- 
-      - uses: MilesChou/composer-action/8.0/install@master
-      - run: |
-          cp .env.example .env
-          php artisan key:generate --ansi
-        
       - name: FTP Deployer
         uses: sand4rt/ftp-deployer@v1.5
         with:
