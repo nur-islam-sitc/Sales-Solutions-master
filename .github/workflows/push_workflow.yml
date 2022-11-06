@@ -10,6 +10,17 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+      - name: Setup Enviroment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+      - name: Speed up the packages installation process
+        run: composer global require hirak/prestissimo
+      - name: Install Packages
+        run: composer install --no-dev
+        
       - name: FTP Deployer
         uses: sand4rt/ftp-deployer@v1.5
         with:
