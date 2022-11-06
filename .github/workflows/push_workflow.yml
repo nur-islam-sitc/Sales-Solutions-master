@@ -1,0 +1,27 @@
+name: Publish Website to Web Hosting
+on:
+  push:
+    branches:
+      - dev-env-1
+jobs:
+  build-and-deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: FTP Deployer
+        uses: sand4rt/ftp-deployer@v1.5
+        with:
+          sftp: false # optional
+          host: ${{ secrets.FTP_SERVER }} # e.g. ftp.host.com or sftp.host.com (without ftp:// or ftps://)
+          port: 21 # optional, default is: 21
+          username: ${{ secrets.FTP_USERNAME }} # FTP username
+          password: ${{ secrets.FTP_PASSWORD }} # FTP password
+          protocol: ftps
+          cleanup: false # optional, remove existing files inside FTP remote folder
+          include: '[]' # optional, e.g. '['dist']'
+          exclude: '[]' # optional, e.g. '['node_modules/**', '.git/**', '*.env']'
+          passive: true # optional
+      
+    
