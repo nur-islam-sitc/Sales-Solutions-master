@@ -13,7 +13,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: shivammathur/setup-php@master
       - name: Composer install
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install 
     
       # Runs a set of commands using the runners shell
       - name: FTP-Deploy-Action
