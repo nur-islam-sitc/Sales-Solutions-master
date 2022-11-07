@@ -17,15 +17,19 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/material-design-iconic-font.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/media.css') }}">
 
 </head>
 <body>
 
+@include('panel.partials.__sidebar')
+@include('panel.partials.__header')
 
+<div class="section_gaps"></div>
 
+@yield('content')
 
 <script src="{{ asset('js/jquery-1.12.4.min.js') }}"></script>
 
