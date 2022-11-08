@@ -10,7 +10,10 @@ jobs:
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
-
+      - name: Speed up the packages installation process
+        run: composer global require hirak/prestissimo
+      - name: Install Packages
+        run: composer install --no-dev
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
