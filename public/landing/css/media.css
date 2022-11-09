@@ -1,0 +1,57 @@
+/* // XX-Large devices (larger desktops, 1400px and up) */
+@media (max-width: 1440px) {
+    
+
+
+}
+
+
+/* // XX-Large devices (larger desktops, 1024px and up) */
+@media (max-width: 1024px) {
+    
+
+
+}
+
+/* // XX-Large devices (larger desktops, 1024px and up) */
+@media (max-width: 767px) {
+    
+    #manage_shop .manage_shop_text{
+        padding: 18px 0px;
+        text-align: center;
+    }
+    .manage_shop_card-item {
+        padding: 23px 0px;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .total_achievements {
+        background: #558CFA;
+        border-radius: 10px;
+        padding: 22px 18px;
+        margin-bottom: 21px;
+    }
+    
+
+.social_icon .facebook {
+    padding: 6px 10px;
+    margin-left: 19px;
+
+}
+
+section#footer .col-lg-6:first-child{
+    order: 2;
+}
+
+section#footer .col-lg-6:last-child{
+    order: 1;
+}
+.footer_right {
+    padding: 4px 0 0 0;
+}
+.footer_left {
+    padding: 5px 20px;
+}
+
+}
