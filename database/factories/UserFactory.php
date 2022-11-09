@@ -18,8 +18,10 @@ class UserFactory extends Factory
         return [
             'name' => 'Super Admin',
             'email' => 'admin@gmail.com',
+            'phone' => '+8801800000000',
             'role' => 'admin',
             'email_verified_at' => now(),
+            'phone_verified_at' => now(),
             'password' => Hash::make('123456789'), // password
             'remember_token' => Str::random(10),
         ];
