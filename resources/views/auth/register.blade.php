@@ -1,12 +1,12 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
+@section('title', 'Register')
 
 @section('content')
 
 
     <div class="col-lg-6">
-        <form action="{{ route('check.login') }}" method="POST">
+        <form action="{{ route('merchant.register.store') }}" method="POST">
             @csrf
             <div class="left_login">
 
@@ -21,24 +21,67 @@
 
                     <div class="form_part">
 
+                        <div class="custome_input">
+                            <label class="@error('name') validation-error-label @enderror">{{ __('Full Name') }}</label>
+                            <input type="text" name="name" class="@error('name') validation-error @enderror" placeholder="Enter Your Full Name " value="{{ old('name') }}">
+
+                            @error('name')
+                            <span>{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="custome_input">
+                            <label class="@error('shop_name') validation-error-label @enderror">{{ __('Shop Name') }}</label>
+                            <input type="text" name="shop_name" class="@error('shop_name') validation-error @enderror" placeholder="Enter Shop Name" value="{{ old('shop_name') }}">
+
+                            @error('shop_name')
+                            <span>{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="custome_input">
+                            <label class="@error('domain') validation-error-label @enderror">{{ __('Domain Name') }}</label>
+                            <input type="text" name="domain" class="@error('domain') validation-error @enderror" placeholder="Enter domain Name" value="{{ old('domain') }}">
+
+                            @error('domain')
+                            <span>{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <!-- E-mail -->
                         <div class="custome_input">
-                            <label class="@error('password') validation-error-label @enderror">E-mail Address or Phone Number</label>
-                            <input type="text" name="email" class="@error('email') validation-error @enderror" placeholder="Enter e-mail address or phone number here" value="{{ old('email') }}">
+                            <label class="@error('email') validation-error-label @enderror">{{ __('E-mail Address') }}</label>
+                            <input type="text" name="email" class="@error('email') validation-error @enderror" placeholder="Enter e-mail address" value="{{ old('email') }}">
 
                             @error('email')
                             <span>{{ $message }}</span>
                             @enderror
                         </div>
 
+                        <div class="custome_input">
+                            <label class="@error('phone') validation-error-label @enderror">{{ __('Phone Number') }}</label>
+                            <input type="text" name="phone" class="@error('phone') validation-error @enderror" placeholder="Enter phone number" value="{{ old('phone') }}">
+
+                            @error('phone')
+                            <span>{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <!-- Password -->
                         <div class="custome_input">
-                            <label class="@error('password') validation-error-label @enderror">Password</label>
+                            <label class="@error('password') validation-error-label @enderror">{{ __('Password') }}</label>
                             <input type="password" name="password" class="@error('password') validation-error @enderror" placeholder="Enter Password here">
 
                             @error('password')
                             <span>{{ $message }}</span>
                             @enderror
+                        </div>
+
+                        <!-- Password -->
+                        <div class="custome_input">
+                            <label>{{ __('Confirm Password') }}</label>
+                            <input type="password" name="password_confirmation" placeholder="Confirm Your Password">
+
                         </div>
 
                         <!-- Submit -->
@@ -49,7 +92,7 @@
 
                         <!-- Submit -->
                         <div class="custome_input">
-                            <p>Don’t Have An Account ? <a href="register.html">Sign Up</a></p>
+                            <p>Already Have An Account ? <a href="#">Sign In</a></p>
                             <p class="logInSocial">Login With Social Media</p>
 
                             <div class="logInSocialLink">
