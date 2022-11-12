@@ -17,6 +17,8 @@ class CreateCategoriesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('shop_id');
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->integer('status')->comment('1 for active 2 for inactive');
             $table->timestamps();

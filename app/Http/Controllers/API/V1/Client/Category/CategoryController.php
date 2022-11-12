@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1\Client\Category;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,7 +17,18 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $category  = Category::paginate();
+            return response()->json([
+                'success' => true,
+                'data' => $category,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>  $e->getMessage(),
+            ], 400);
+        }
     }
 
     /**
@@ -35,25 +47,23 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
 
 
         try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'parent_id' => 'nullable|integer',
-                'status' => 'required|integer'
-            ]);
+
             $category = new Category();
             $category->name = $request->name;
             $category->slug = Str::slug($request->name);
+            $category->shop_id = 1;
+            $category->user_id = 1;
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
             $category->save();
             return response()->json([
                 'success' => true,
-                'msg' => 'category Add Successfully',
+                'msg' => 'Category created Successfully',
                 'data' =>   $category,
             ], 200);
         } catch (\Exception $e) {
@@ -73,10 +83,16 @@ class CategoryController extends Controller
     public function show($slug)
     {
         try {
-           $category = Category::where('slug',$slug)->first();
+            $category = Category::where('slug', $slug)->first();
+            if (!$category) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Category not Found',
+                ], 404);
+            }
             return response()->json([
                 'success' => true,
-                'data' =>   $category ? $category  : 'Not Found!',
+                'data' =>   $category,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -104,17 +120,17 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(CategoryRequest $request, $id)
     {
         try {
-            $request->validate([
-                'category_id' => 'required|integer',
-                'name' => 'required|string|max:255',
-                'parent_id' => 'nullable|integer',
-                'status' => 'required|integer'
-            ]);
 
-            $category = Category::find($request->category_id);
+            $category = Category::find($id);
+            if (!$category) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Category not Found',
+                ], 404);
+            }
             $category->name = $request->name;
             $category->slug = Str::slug($request->name);
             $category->parent_id = $request->parent_id;
@@ -122,7 +138,7 @@ class CategoryController extends Controller
             $category->save();
             return response()->json([
                 'success' => true,
-                'msg' => 'category Update Successfully',
+                'msg' => 'category updated successfully',
                 'data' =>   $category,
             ], 200);
         } catch (\Exception $e) {
@@ -143,11 +159,11 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::find($id);
-            if(!$category){
+            if (!$category) {
                 return response()->json([
                     'success' => false,
                     'msg' => 'category not Found',
-                ], 404); 
+                ], 404);
             }
             $category->delete();
             return response()->json([
