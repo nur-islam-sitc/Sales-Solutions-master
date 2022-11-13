@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
+use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
+use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
+use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +20,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+//client api
+Route::prefix('v1/customer')->name('customer.')->group(function(){
+    Route::get('categories',[CustomerCategory::class,'index'])->name('categories.index');
+    Route::get('categories/{category}',[CustomerCategory::class,'show'])->name('categories.show');
+    Route::get('products',[CustomerProduct::class,'index'])->name('products.index');
+    Route::get('products/{product}',[CustomerProduct::class,'show'])->name('products.show');
+});
+
+//client api
+Route::prefix('v1/client')->name('client.')->group(function(){
+    Route::resource('categories',ClientCategory::class);
+    Route::resource('products',ClientProduct::class);
 });
