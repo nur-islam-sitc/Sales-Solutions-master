@@ -177,4 +177,5 @@ class CategoryController extends Controller
             ], 400);
         }
     }
+
 }

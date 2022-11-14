@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', [\App\Http\Controllers\General\HomeControler::class, 'index'])->name('home');
 
 Route::get('/register', [\App\Http\Controllers\Merchant\Auth\LoginController::class, 'index'])->name('merchant.register');

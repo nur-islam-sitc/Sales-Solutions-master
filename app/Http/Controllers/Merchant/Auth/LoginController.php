@@ -10,6 +10,9 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use Auth;
+use Validator;
 
 class LoginController extends Controller
 {
@@ -40,5 +43,23 @@ class LoginController extends Controller
 
         return redirect()->route('thank_you');
 
+    }
+
+    public function merchant_login(Request $request) {
+        $validator = Validator::make($request->all(), [ 
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+            $token = auth()->user()->createApiToken(); #Generate token
+            return response()->json(['status' => 'Authorised', 'token' => $token ], 200);
+        } else { 
+            return response()->json(['status'=>'Unauthorised'], 401);
+        } 
     }
 }
