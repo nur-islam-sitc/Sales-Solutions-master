@@ -19,7 +19,7 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $product  = Product::paginate();
+            $product  = Product::all();
             return response()->json([
                 'success' => true,
                 'data' => $product,
@@ -60,6 +60,8 @@ class ProductController extends Controller
             $product->product_name = $request->product_name; 
             $product->slug = Str::slug($request->product_name); 
             $product->price = $request->price; 
+            $product->product_code = $request->product_code; 
+            $product->product_qty = $request->product_qty; 
             $product->discount = $request->discount; 
             $product->size = $request->size; 
             $product->color = $request->color; 
@@ -148,6 +150,8 @@ class ProductController extends Controller
             $product->product_name = $request->product_name; 
             $product->slug = Str::slug($request->product_name); 
             $product->price = $request->price; 
+            $product->product_code = $request->product_code; 
+            $product->product_qty = $request->product_qty; 
             $product->discount = $request->discount; 
             $product->size = $request->size; 
             $product->color = $request->color; 
