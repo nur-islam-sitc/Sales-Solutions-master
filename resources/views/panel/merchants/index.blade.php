@@ -117,7 +117,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td class="companyName">{{ $merchant->shop->name }}</td>
-                                    <td class="name"><a href="#">{{ $merchant->name }}</a></td>
+                                    <td class="name"><a href="{{ route('admin.merchant.details', $merchant) }}">{{ $merchant->name }}</a></td>
                                     <td>{{ $merchant->phone }}</td>
                                     <td>{{ $merchant->created_at }}</td>
                                     <td></td>

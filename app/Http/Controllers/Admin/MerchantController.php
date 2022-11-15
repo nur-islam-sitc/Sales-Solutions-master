@@ -16,4 +16,9 @@ class MerchantController extends Controller
                                 ->get();
         return view('panel.merchants.index', compact('merchants'));
     }
+
+    public function show(User $merchant)
+    {
+        return view('panel.merchants.details', compact('merchant'));
+    }
 }
