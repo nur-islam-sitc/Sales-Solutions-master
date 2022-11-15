@@ -18,7 +18,7 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $category  = Category::paginate();
+            $category  = Category::all();
             return response()->json([
                 'success' => true,
                 'data' => $category,
@@ -56,6 +56,7 @@ class CategoryController extends Controller
             $category = new Category();
             $category->name = $request->name;
             $category->slug = Str::slug($request->name);
+            $category->description = $request->description;
             $category->shop_id = 1;
             $category->user_id = 1;
             $category->parent_id = $request->parent_id;
@@ -133,6 +134,7 @@ class CategoryController extends Controller
             }
             $category->name = $request->name;
             $category->slug = Str::slug($request->name);
+            $category->description = $request->description;
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
             $category->save();

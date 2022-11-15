@@ -19,6 +19,8 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('shop_id');
             $table->string('product_name');
+            $table->string('product_code');
+            $table->string('product_qty');
             $table->string('slug');
             $table->float('price',8,2);
             $table->float('discount',8,2);
