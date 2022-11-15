@@ -16,6 +16,13 @@ class User extends Authenticatable
     const ADMIN = 'admin';
     const MERCHANT = 'merchant';
     const CUSTOMER = 'customer';
+    const STAFF = 'staff';
+
+    const STATUS_BLOCKED = 'blocked';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
+
+
     /**
      * The attributes that are mass assignable.
      *
@@ -49,6 +56,28 @@ class User extends Authenticatable
     ];
 
     protected $appends = ['avatar'];
+
+
+    public static function listStatus(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'active',
+            self::STATUS_BLOCKED => 'blocked',
+            self::STATUS_INACTIVE  => 'inactive',
+        ];
+
+    }
+
+
+    /**
+     * return password as a hash
+     *
+     * @param $password
+     */
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
 
     /**
      * @param $value

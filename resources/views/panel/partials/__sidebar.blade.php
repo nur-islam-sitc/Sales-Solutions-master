@@ -21,7 +21,7 @@
                 </li>
 
                 <li>
-                    <a href="client_list.html">
+                    <a href="{{ route('admin.merchants') }}">
                         <svg width="20" height="26" viewBox="0 0 20 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.6218 3.34717H2.365C1.71684 3.34717 1.19141 3.87261 1.19141 4.52077V23.2983C1.19141 23.9465 1.71684 24.4719 2.365 24.4719H17.6218C18.2699 24.4719 18.7954 23.9465 18.7954 23.2983V4.52077C18.7954 3.87261 18.2699 3.34717 17.6218 3.34717Z" stroke="#A16CF8" stroke-width="1.67657" stroke-linejoin="round"/>
                             <path d="M6.47267 1V4.52079M13.5143 1V4.52079M5.29907 9.80198H14.6879M5.29907 14.4964H12.3407M5.29907 19.1908H9.99346" stroke="#A16CF8" stroke-width="1.67657" stroke-linecap="round" stroke-linejoin="round"/>
