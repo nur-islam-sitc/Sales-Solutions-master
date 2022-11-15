@@ -55,7 +55,10 @@ class LoginController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
         }
 
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        if(Auth::attempt([
+            'email' => $request->email, 
+            'password' => $request->password,
+            'role' => User::MERCHANT])){ 
             $token = auth()->user()->createApiToken(); #Generate token
             return response()->json(['status' => 'Authorised', 'token' => $token ], 200);
         } else { 
