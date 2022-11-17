@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API\V1\Client\Product;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use App\Models\Media;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use File;
 
 class ProductController extends Controller
 {
@@ -19,7 +21,7 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $product  = Product::all();
+            $product  = Product::with(['main_image','other_image'])->get();
             return response()->json([
                 'success' => true,
                 'data' => $product,
@@ -71,6 +73,30 @@ class ProductController extends Controller
             $product->meta_description = $request->meta_description; 
             $product->status = $request->status; 
             $product->save();
+
+             //store product main image
+             $mainImageName = time() . '_main_image.' . $request->main_image->extension();
+             $request->main_image->move(public_path('images'), $mainImageName);
+             $media = new Media();
+             $media->name = '/images/' . $mainImageName;
+             $media->parent_id = $product->id;
+             $media->type = 'product_main_image';
+             $media->save();
+ 
+             $product['main_image'] = $media->name;
+
+              //store product other image
+              $otherImageName = time() . '_other_image.' . $request->other_image->extension();
+              $request->other_image->move(public_path('images'), $otherImageName);
+              $mediaOther = new Media();
+              $mediaOther->name = '/images/' . $otherImageName;
+              $mediaOther->parent_id = $product->id;
+              $mediaOther->type = 'product_other_image';
+              $mediaOther->save();
+  
+              $product['other_image'] = $mediaOther->name;
+            
+
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -95,7 +121,7 @@ class ProductController extends Controller
     public function show($slug)
     {
         try {
-            $product  = Product::where('slug',$slug)->first();
+            $product  = Product::with(['main_image','other_image'])->where('slug',$slug)->first();
             if(!$product){
                 return response()->json([
                     'success' => false,
@@ -137,7 +163,7 @@ class ProductController extends Controller
         try {
 
             DB::beginTransaction();
-            $product  = Product::find($id);
+            $product  = Product::with(['main_image','other_image'])->find($id);
             if(!$product){
                 return response()->json([
                     'success' => false,
@@ -161,11 +187,34 @@ class ProductController extends Controller
             $product->meta_description = $request->meta_description; 
             $product->status = $request->status; 
             $product->save();
+
+            if ($request->has('main_image')) {
+                $image_path = $product->main_image->name;
+                File::delete(public_path($image_path));
+
+                $imageName = time() . '_main_image.' . $request->main_image->extension();
+                $request->main_image->move(public_path('images'), $imageName);
+                $media = Media::where('type', 'product_main_image')->where('parent_id', $product->id)->update([
+                    'name' => '/images/' . $imageName
+                ]);
+            }
+            if ($request->has('other_image')) {
+                $image_path = $product->other_image->name;
+                File::delete(public_path($image_path));
+
+                $imageName = time() . '_other_image.' . $request->other_image->extension();
+                $request->other_image->move(public_path('images'), $imageName);
+                $media = Media::where('type', 'product_other_image')->where('parent_id', $product->id)->update([
+                    'name' => '/images/' . $imageName
+                ]);
+            }
+
+            $updatedProduct = Product::with(['main_image','other_image'])->where('id',$id)->first();
             DB::commit();
             return response()->json([
                 'success' => true,
                 'msg' => 'product updated successfully',
-                'data' => $product,
+                'data' => $updatedProduct,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -185,18 +234,21 @@ class ProductController extends Controller
     public function destroy($id)
     {
         try {
-            $product  = Product::find($id);
+            $product  = Product::with(['main_image','other_image'])->find($id);
             if(!$product){
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Product not Found',
                 ], 404);
             }
+            File::delete(public_path($product->main_image->name));
+            $product->main_image->delete();
+            File::delete(public_path($product->other_image->name));
+            $product->other_image->delete();
             $product->delete();
             return response()->json([
                 'success' => true,
                 'msg' => 'product remove successfully',
-                'data' => $product,
             ]);
         } catch (\Exception $e) {
             return response()->json([
