@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Media extends Model
 {
     use HasFactory;
-    protected $fillable = ["media_name","parent_id","type"];
+    protected $fillable = ["name","parent_id","type"];
 }
