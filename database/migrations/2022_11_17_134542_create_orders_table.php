@@ -17,11 +17,11 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('shop_id');
-            $table->sting('order_no');
-            $table->sting('customer_name');
-            $table->sting('customer_phone');
-            $table->sting('customer_address');
-            $table->sting('order_status')->default('pending')->comment('pending,confirmed,follow_up,shipped,delivery,returned,cancel');
+            $table->string('order_no');
+            $table->string('customer_name');
+            $table->string('customer_phone');
+            $table->string('customer_address');
+            $table->string('order_status')->default('pending')->comment('pending,confirmed,follow_up,shipped,delivery,returned,cancel');
             $table->float('advance',8,2)->default(0);
             $table->boolean('cod')->default(true);
             $table->boolean('invoice_print')->default(false);

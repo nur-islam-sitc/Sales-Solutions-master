@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
+use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Merchant\Auth\LoginController;
@@ -39,6 +40,7 @@ Route::prefix('v1/customer')->name('customer.')->group(function(){
 //merchant api
 Route::post('login', [LoginController::class,'merchant_login'])->name('merchant.login');
 Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(function(){
+    Route::resource('sliders',ClientSlider::class);
     Route::resource('orders',ClientOrder::class);
     Route::resource('products',ClientProduct::class);
     Route::resource('categories',ClientCategory::class);

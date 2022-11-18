@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API\V1\Client\Order;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderRequest;
 use App\Models\Order;
+use App\Models\OrderDetails;
 use Illuminate\Http\Request;
+use DB;
 
 class OrderController extends Controller
 {
@@ -15,7 +18,18 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $orders  = Order::with('order_details')->get();
+            return response()->json([
+                'success' => true,
+                'data' => $orders,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>  $e->getMessage(),
+            ], 400);
+        }
     }
 
     /**
@@ -34,35 +48,36 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
+        //return $request->all();
         try {
             DB::beginTransaction();
             $order = new Order();
+            $order->order_no = rand(100,9999);
             $order->customer_name = $request->customer_name;
             $order->customer_phone = $request->customer_phone;
             $order->customer_address = $request->customer_address;
             $order->shop_id = 1;
             $order->user_id = 1;
-            $order->parent_id = $request->parent_id;
-            $category->status = $request->status;
-            $category->save();
+            $order->save();
 
-            //store category image
-            $imageName = time() . '.' . $request->category_image->extension();
-            $request->category_image->move(public_path('images'), $imageName);
-            $media = new Media();
-            $media->name = '/images/' . $imageName;
-            $media->parent_id = $category->id;
-            $media->type = 'category';
-            $media->save();
+            //store order details
+            foreach($request->product_id as $key => $val){
+
+                $orderDetails = new OrderDetails();
+                $orderDetails->order_id = $order->id;
+                $orderDetails->product_id = $val;
+                $orderDetails->product_qty = $request->product_qty[$key];
+                $orderDetails->save();
+            }
+            $createdOrder = Order::with('order_details')->where('id',$order->id)->first();
+
             DB::commit();
-            $category['image'] = $media->name;
-
             return response()->json([
                 'success' => true,
-                'msg' => 'Category created Successfully',
-                'data' =>   $category,
+                'msg' => 'Order created Successfully',
+                'data' =>   $createdOrder,
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -81,7 +96,24 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $order = Order::with('order_details')->where('id', $id)->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Category not Found',
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'data' =>   $order,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
     }
 
     /**
