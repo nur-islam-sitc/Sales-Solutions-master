@@ -6,38 +6,38 @@
             <div class="row">
 
 
-                <form action="{{ route('admin.staffs.update', $staff) }}" method="POST">
+                <form action="{{ route('admin.staffs.update', $user) }}" method="POST">
                     @csrf
                     @method('PUT')
 
                     <div class="col-lg-8 mx-auto settings_tabs_content">
                         <div class="custome_input">
-                            <label for="" class="@error('name') validation-error-label @enderror">Name</label>
-                            <input type="text" name="name" class="@error('name') validation-error @enderror" value="{{ $staff->name }}">
+                            <label for="name" class="@error('name') validation-error-label @enderror">Name</label>
+                            <input type="text" name="name" class="@error('name') validation-error @enderror" value="{{ $user->name }}" />
                             @error('name')
                             <span>{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="custome_input">
-                            <label for="" class="@error('email') validation-error-label @enderror">Email</label>
-                            <input type="text" name="email" class="@error('email') validation-error @enderror" value="{{ $staff->email }}">
+                            <label for="email" class="@error('email') validation-error-label @enderror">Email</label>
+                            <input type="text" name="email" class="@error('email') validation-error @enderror" value="{{ $user->email }}">
                             @error('email')
                             <span>{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="custome_input">
-                            <label for="" class="@error('phone') validation-error-label @enderror">Phone</label>
-                            <input type="text" name="phone" class="@error('phone') validation-error @enderror" value="{{ $staff->phone }}">
+                            <label for="phone" class="@error('phone') validation-error-label @enderror">Phone</label>
+                            <input type="text" name="phone" class="@error('phone') validation-error @enderror" value="{{ $user->phone }}">
                             @error('phone')
                             <span>{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="custome_input">
-                            <label for="" class="@error('password') validation-error-label @enderror">Password</label>
-                            <input type="text" name="password" class="@error('password') validation-error @enderror">
+                            <label for="password" class="@error('password') validation-error-label @enderror">Password</label>
+                            <input type="password" name="password" class="@error('password') validation-error @enderror">
                             @error('password')
                             <span>{{ $message }}</span>
                             @enderror

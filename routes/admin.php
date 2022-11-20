@@ -22,5 +22,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
         Route::post('/store', [StaffController::class, 'store'])->name('admin.staffs.store');
         Route::get('/edit/{user}', [StaffController::class, 'edit'])->name('admin.staffs.edit');
         Route::put('/update/{user}', [StaffController::class, 'update'])->name('admin.staffs.update');
+        Route::delete('/delete/{user}', [StaffController::class, 'destroy'])->name('admin.staffs.delete');
+        Route::post('/update-status', [StaffController::class, 'updateStatus'])->name('admin.staffs.update_status');
     });
 });

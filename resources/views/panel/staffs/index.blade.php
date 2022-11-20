@@ -21,13 +21,13 @@
                             <span class="dropdown-toggle d_flex" id="dropdownMenuButton1" data-bs-toggle="dropdown"
                                   aria-expanded="false">
                                 Joining Date
-                                <div class="arrow">
+                                <span class="arrow">
                                     <svg width="11" height="6" viewBox="0 0 11 6" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path d="M0.244629 0.501221L5.40989 5.66649L10.5752 0.501221H0.244629Z"
                                               fill="#747474"/>
                                     </svg>
-                                </div>
+                                </span>
                             </span>
 
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -94,7 +94,9 @@
                             <div class="FilterBy_item">
                                 <div class="custome_input">
 
-                                    <input type="text" name="" placeholder="Search here...">
+                                    <label class="mb-0">
+                                        <input type="text" name="" placeholder="Search here..." />
+                                    </label>
 
                                     <div class="search">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -143,7 +145,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="img"><a href=""><img
                                             src="{{ $staff->avatar }}" alt=""></a></td>
-                                <td class="name"><a href="staff_details.html">{{ $staff->name }}</a></td>
+                                <td class="name"><a href="#">{{ $staff->name }}</a></td>
                                 <td>{{ $staff->phone }}</td>
                                 <td>{{ $staff->email }}</td>
                                 <td>{{ $staff->created_at }}</td>
@@ -185,7 +187,7 @@
                                     <div class="dropdown_part">
                                     <span class="dropdown-toggle d_flex" id="dropdownMenuButton1"
                                           data-bs-toggle="dropdown" aria-expanded="false">
-                                        Active
+                                        {{ ucfirst($staff->status) }}
                                         <div class="arrow">
                                             <svg width="11" height="6" viewBox="0 0 11 6" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
@@ -199,7 +201,7 @@
 
                                             @foreach(\App\Models\Traits\Status::listStatus() as $status)
 
-                                                <li><a class="dropdown-item" id="change-status" href="javascript:;" onclick="updateStatus('{{ $status }}')">{{ $status }}</a></li>
+                                                <li><a class="dropdown-item" id="change-status" href="#" onclick="updateStatus('{{ $status }}', {{ $staff->id }})">{{ $status }}</a></li>
 
                                             @endforeach
 
@@ -219,7 +221,12 @@
                                 </td>
                                 <td style="text-align: center">
                                     <a href="{{ route('admin.staffs.edit', $staff) }}">Edit </a>
-                                    <a href="">Del </a>
+                                    <a href="#" onclick="event.preventDefault();document.getElementById('delete-staff').submit();">Del </a>
+
+                                    <form id="delete-staff" action="{{ route('admin.staffs.delete', $staff) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
                                 </td>
                             </tr>
 
@@ -237,4 +244,21 @@
         </div>
 
     </section>
+@endsection
+
+@section('scripts')
+    <script>
+        function updateStatus(status, id) {
+            $.ajax({
+                method: 'POST',
+                url: "{{ route('admin.staffs.update_status') }}",
+                data: {_token: '{{ csrf_token() }}', status: status, id:id},
+                success:function (response) {
+                    if(response === '1') {
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+    </script>
 @endsection
