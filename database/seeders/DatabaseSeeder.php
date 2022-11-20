@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -29,5 +30,36 @@ class DatabaseSeeder extends Seeder
                     'address' => $this->faker->address(),
                 ]);
          });
+
+
+         $roles = [
+             [
+                 'name' => 'Senior Quality Analyst',
+                 'slug' => 'senior-quality-analyst',
+             ],
+             [
+                 'name' => 'Senior Data Analyst',
+                 'slug' => 'senior-data-analyst',
+             ],
+             [
+                 'name' => 'Senior Web Developer',
+                 'slug' => 'senior-web-developer',
+             ],
+             [
+                 'name' => 'Inside Sales Head',
+                 'slug' => 'inside-sales-head',
+             ],
+             [
+                 'name' => 'Hub Manager',
+                 'slug' => 'hub-manager',
+             ],
+         ];
+
+         foreach ($roles as $role) {
+             Role::query()->create([
+                 'name' => $role['name'],
+                 'slug' => $role['slug'],
+             ]);
+         }
     }
 }

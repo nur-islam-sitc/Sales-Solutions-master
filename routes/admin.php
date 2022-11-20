@@ -19,5 +19,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
     Route::group(['prefix' => 'staffs'], function () {
         Route::get('/', [StaffController::class, 'index'])->name('admin.staffs');
         Route::get('/create', [StaffController::class, 'create'])->name('admin.staffs.create');
+        Route::post('/store', [StaffController::class, 'store'])->name('admin.staffs.store');
+        Route::get('/edit/{user}', [StaffController::class, 'edit'])->name('admin.staffs.edit');
+        Route::put('/update/{user}', [StaffController::class, 'update'])->name('admin.staffs.update');
     });
 });

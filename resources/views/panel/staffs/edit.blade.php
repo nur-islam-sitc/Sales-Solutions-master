@@ -5,13 +5,15 @@
         <div class="container custom_width">
             <div class="row">
 
-                <form action="{{ route('admin.staffs.store') }}" method="POST">
+
+                <form action="{{ route('admin.staffs.update', $staff) }}" method="POST">
                     @csrf
+                    @method('PUT')
 
                     <div class="col-lg-8 mx-auto settings_tabs_content">
                         <div class="custome_input">
                             <label for="" class="@error('name') validation-error-label @enderror">Name</label>
-                            <input type="text" name="name" class="@error('name') validation-error @enderror">
+                            <input type="text" name="name" class="@error('name') validation-error @enderror" value="{{ $staff->name }}">
                             @error('name')
                             <span>{{ $message }}</span>
                             @enderror
@@ -19,7 +21,7 @@
 
                         <div class="custome_input">
                             <label for="" class="@error('email') validation-error-label @enderror">Email</label>
-                            <input type="text" name="email" class="@error('email') validation-error @enderror">
+                            <input type="text" name="email" class="@error('email') validation-error @enderror" value="{{ $staff->email }}">
                             @error('email')
                             <span>{{ $message }}</span>
                             @enderror
@@ -27,7 +29,7 @@
 
                         <div class="custome_input">
                             <label for="" class="@error('phone') validation-error-label @enderror">Phone</label>
-                            <input type="text" name="phone" class="@error('phone') validation-error @enderror">
+                            <input type="text" name="phone" class="@error('phone') validation-error @enderror" value="{{ $staff->phone }}">
                             @error('phone')
                             <span>{{ $message }}</span>
                             @enderror
