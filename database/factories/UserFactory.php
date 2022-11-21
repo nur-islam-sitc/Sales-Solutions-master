@@ -22,7 +22,7 @@ class UserFactory extends Factory
             'role' => 'admin',
             'email_verified_at' => now(),
             'phone_verified_at' => now(),
-            'password' => Hash::make('123456789'), // password
+            'password' => '123456789', // password
             'remember_token' => Str::random(10),
         ];
     }
@@ -32,11 +32,14 @@ class UserFactory extends Factory
      *
      * @return Factory
      */
-    public function unverified(): array
+    public function customer(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'email_verified_at' => null,
+                'name' => $this->faker->name,
+                'email' => $this->faker->unique()->email(),
+                'phone' => $this->faker->unique()->phoneNumber(),
+                'role' => 'customer',
             ];
         });
     }
