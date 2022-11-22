@@ -39,7 +39,7 @@ class UserFactory extends Factory
                 'name' => $this->faker->name,
                 'email' => $this->faker->unique()->email(),
                 'phone' => $this->faker->unique()->phoneNumber(),
-                'role' => 'customer',
+                'role' => 'merchant',
             ];
         });
     }

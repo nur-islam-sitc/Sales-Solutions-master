@@ -12,7 +12,7 @@ class MerchantController extends Controller
     {
 
         $merchants = User::query()->with('shop')
-                                ->where('role', 'customer')
+                                ->where('role', 'merchant')
                                 ->get();
         return view('panel.merchants.index', compact('merchants'));
     }
