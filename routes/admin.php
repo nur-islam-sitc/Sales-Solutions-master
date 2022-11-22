@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Auth\DashboardController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\MerchantController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\SupportTicketController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -25,4 +26,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
         Route::delete('/delete/{user}', [StaffController::class, 'destroy'])->name('admin.staffs.delete');
         Route::post('/update-status', [StaffController::class, 'updateStatus'])->name('admin.staffs.update_status');
     });
+
+    Route::group(['prefix' => 'support-ticket'], function (){
+        Route::get('/', [SupportTicketController::class, 'index'])->name('admin.support_ticket');
+        Route::get('/create', [SupportTicketController::class, 'create'])->name('admin.support_ticket.create');
+
+    });
+
+
+
 });
