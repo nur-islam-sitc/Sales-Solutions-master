@@ -26,7 +26,7 @@ class SliderRequest extends FormRequest
      */
     public function rules()
     {
-        if(Request::route()->getName === "client.sliders.store"){
+        if(Request::route()->getName() === "client.sliders.store"){
             return [
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
@@ -34,7 +34,7 @@ class SliderRequest extends FormRequest
             ];
         }
 
-        if(Request::route()->getName === "client.sliders.update"){
+        if(Request::route()->getName() === "client.sliders.update"){
             return [
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
