@@ -65,4 +65,13 @@ class LoginController extends Controller
             return response()->json(['status'=>'Unauthorised'], 401);
         } 
     }
+
+
+    public function merchant_logout()
+    {
+       $userRemoveToken = auth()->user()->removeApiToken();
+       return response()->json(['msg' => $userRemoveToken],200);
+       
+        
+    }
 }

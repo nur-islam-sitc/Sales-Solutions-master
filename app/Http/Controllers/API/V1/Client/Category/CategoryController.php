@@ -52,8 +52,6 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-
-
         try {
             DB::beginTransaction();
             $category = new Category();
