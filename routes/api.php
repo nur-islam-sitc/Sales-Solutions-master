@@ -40,6 +40,7 @@ Route::prefix('v1/customer')->name('customer.')->group(function(){
 //merchant api
 Route::post('login', [LoginController::class,'merchant_login'])->name('merchant.login');
 Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(function(){
+    Route::get('logout', [LoginController::class,'merchant_logout'])->name('logout');
     Route::resource('sliders',ClientSlider::class);
     Route::resource('orders',ClientOrder::class);
     Route::resource('products',ClientProduct::class);

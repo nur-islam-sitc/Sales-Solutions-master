@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $product  = Product::paginate();
+            $product  = Product::with(['main_image','other_image'])->get();
             return response()->json([
                 'success' => true,
                 'data' => $product,
@@ -39,7 +39,7 @@ class ProductController extends Controller
     public function show($slug)
     {
         try {
-            $product  = Product::where('slug',$slug)->first();
+            $product  = Product::with(['main_image','other_image'])->where('slug',$slug)->first();
             if(!$product){
                 return response()->json([
                     'success' => false,

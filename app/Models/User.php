@@ -111,4 +111,11 @@ class User extends Authenticatable
         $this->save();
         return $token;
     }
+
+    public function removeApiToken()
+    {
+        $this->api_token=null;
+        $this->save();
+        return 'Successfully logged out';
+    }
 }

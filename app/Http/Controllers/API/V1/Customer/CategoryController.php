@@ -16,7 +16,7 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $category  = Category::paginate();
+            $category  = Category::with('category_image')->get();
             return response()->json([
                 'success' => true,
                 'data' => $category,
@@ -39,7 +39,7 @@ class CategoryController extends Controller
     public function show($slug)
     {
         try {
-            $category = Category::where('slug', $slug)->first();
+            $category = Category::with('category_image')->where('slug', $slug)->first();
             if (!$category) {
                 return response()->json([
                     'success' => false,
