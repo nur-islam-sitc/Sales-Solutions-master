@@ -50,7 +50,7 @@ select:focus {
 }
 
 body {
-    
+
     font-family: 'Inter', sans-serif !important;
 }
 
@@ -60,7 +60,7 @@ body {
 	height: 100vh;
 	background: #fff
 	url('../images/Pulse-1s-200px\ \(1\).gif')
-	 no-repeat center center;	
+	 no-repeat center center;
 	z-index: 99999;
 }
 
@@ -136,6 +136,8 @@ input, label, textarea{
 button{
     border: none;
 }
+
+
 
 
 
@@ -260,7 +262,7 @@ button{
 }
 .feature-list{
     padding-top: 45px;
-    
+
 }
 .feature-list ul{
     list-style-type: square;
@@ -299,7 +301,7 @@ button{
     background-color:#F1F1FF;
 }
 #manage_shop .manage_shop_text{
-    padding:100px 150px 
+    padding:100px 150px
 }
 #manage_shop .manage_shop_text h2 {
     font-family: 'Inter';
@@ -308,8 +310,8 @@ button{
     font-size: 36px;
     line-height: 44px;
     color: #407EF9;
-    
-} 
+
+}
 #manage_shop .manage_shop_text h2 span {
     color: #A16CF8;
 }
@@ -339,7 +341,7 @@ button{
     font-weight: 500;
     font-size: 12.7622px;
     line-height: 15px;
-    
+
     color: #FFFFFF;
     margin-top: 16px;
 }
@@ -491,7 +493,7 @@ button{
     padding-top: 30px;
     margin-top: 65px;
     transition: margin-top 4s;
-    
+
 }
 .subscription_card_header h4{
     font-family: 'Inter';
@@ -501,7 +503,7 @@ button{
     line-height: 24px;
     text-align: center;
     color: #407EF9;
-    
+
 }
 .subscription_card_header:hover{
     color: white;
@@ -551,12 +553,12 @@ button{
     color: #FFFFFF;
     padding: 12px 73px;
     text-align: center;
-    
+
 }
 .subscript_button{
     padding: 13px  76px 44px 61px;
     margin-bottom: 40px;
-    
+
 }
 
 .subscription_card_contain:hover{
@@ -691,7 +693,7 @@ color: #FFFFFF;
     /* background: #0081FE;
     border-radius: 30px;
     transform: matrix(1, 0, 0, -1, 0, 0); */
-    
+
 }
 .footer_left{
     padding: 100px 20px;
@@ -746,7 +748,7 @@ color: #FFFFFF;
     box-shadow: 0px 80.6px 105.701px rgba(51, 51, 51, 0.1);
     border-radius: 20px;
     padding: 50px 40px;
-    
+
 }
 
 
