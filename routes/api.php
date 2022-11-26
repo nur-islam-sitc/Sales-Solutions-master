@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
+use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
@@ -41,6 +42,9 @@ Route::prefix('v1/customer')->name('customer.')->group(function(){
 Route::post('login', [LoginController::class,'merchant_login'])->name('merchant.login');
 Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(function(){
     Route::get('logout', [LoginController::class,'merchant_logout'])->name('logout');
+    Route::prefix('settings')->name('settings.')->group(function(){
+       Route::post('update-merchant-info',[MerchantSetting::class,'update_merchant_info'])->name('update.merchant.info'); 
+    });
     Route::resource('sliders',ClientSlider::class);
     Route::resource('orders',ClientOrder::class);
     Route::resource('products',ClientProduct::class);

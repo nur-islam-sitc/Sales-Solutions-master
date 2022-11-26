@@ -64,7 +64,13 @@ class LoginController extends Controller
             'password' => $request->password,
             'role' => User::MERCHANT])){
             $token = auth()->user()->createApiToken(); #Generate token
-            return response()->json(['status' => 'Authorised', 'token' => $token ], 200);
+            return response()->json(['status' => 'Authorised', 'token' => $token,'merchant'=> [
+                'name' => auth()->user()->name,
+                'email' => auth()->user()->email,
+                'phone' => auth()->user()->phone,
+                'role' => auth()->user()->role,
+                'avatar' => auth()->user()->avatar,
+                ] ], 200);
         } else {
             return response()->json(['status'=>'Unauthorised'], 401);
         }
