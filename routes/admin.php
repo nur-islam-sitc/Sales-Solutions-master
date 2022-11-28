@@ -18,8 +18,13 @@ Route::post('/login', [LoginController::class, 'login'])->name('check.login');
 
 Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('merchants', [MerchantController::class, 'index'])->name('admin.merchants');
-    Route::get('merchant/{merchant}', [MerchantController::class, 'show'])->name('admin.merchant.details');
+    Route::group(['prefix' => 'merchants'], function () {
+        Route::get('/', [MerchantController::class, 'index'])->name('admin.merchants');
+        Route::get('/merchants', [MerchantController::class, 'merchants']);
+        Route::get('/statuses', [MerchantController::class, 'statuses']);
+        Route::get('/{merchant}', [MerchantController::class, 'show'])->name('admin.merchant.details');
+    });
+
 
     Route::group(['prefix' => 'staffs'], function () {
         Route::get('/', [StaffController::class, 'index'])->name('admin.staffs');

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\General;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
-class HomeControler extends Controller
+
+class HomeController extends Controller
 {
     /**
      * Landing Page
