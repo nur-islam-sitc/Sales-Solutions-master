@@ -110,7 +110,7 @@
                     </div>
 
                     <div class="FilterBy_item">
-                        <a href="" class="btn btn-default">Add New</a>
+                        <a href="{{ route('admin.support_ticket.create') }}" class="btn btn-default">Add New</a>
                     </div>
 
                 </div>
