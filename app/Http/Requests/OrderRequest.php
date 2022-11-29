@@ -26,7 +26,7 @@ class OrderRequest extends FormRequest
      */
     public function rules()
     {
-        if(Request::route()->getName === "client.orders.store"){
+        if(Request::route()->getName() === "client.orders.store"){
             return [
                 'customer_name' => 'required|string|max:255',
                 'customer_phone' => 'required|string|max:255',
@@ -37,7 +37,7 @@ class OrderRequest extends FormRequest
             ];
         }
 
-        if(Request::route()->getName === "client.orders.update"){
+        if(Request::route()->getName() === "client.orders.update"){
             return [
                 'customer_name' => 'required|string|max:255',
                 'customer_phone' => 'required|string|max:255',

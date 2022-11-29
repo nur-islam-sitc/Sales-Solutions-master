@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -35,6 +37,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'role',
+        'status',
     ];
 
     /**
@@ -91,6 +94,15 @@ class User extends Authenticatable
     }
 
     /**
+     * @param $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value): string
+    {
+        return Carbon::parse($value)->toFormattedDateString();
+    }
+
+    /**
      * Return The shop that belongs to this User
      *
      */
@@ -99,16 +111,28 @@ class User extends Authenticatable
         return $this->hasOne(Shop::class);
     }
 
-    public function roles()
+    public function merchantinfo(): HasOne
+    {
+        return $this->hasOne(MerchantInfo::class);
+    }
+
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    public function createApiToken()
+    public function createApiToken(): string
     {
         $token = Str::random(64);
         $this->api_token = $token;
         $this->save();
         return $token;
+    }
+
+    public function removeApiToken(): string
+    {
+        $this->api_token=null;
+        $this->save();
+        return 'Successfully logged out';
     }
 }

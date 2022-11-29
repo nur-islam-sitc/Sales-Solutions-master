@@ -27,7 +27,7 @@ class ProductRequest extends FormRequest
     public function rules()
     {
 
-        if(Request::route()->getName === "client.products.store"){
+        if(Request::route()->getName() === "client.products.store"){
             return [
                 'category_id' => 'required|integer',
                 'product_name' => 'required|string',
@@ -45,7 +45,7 @@ class ProductRequest extends FormRequest
             ];
         }
 
-        if(Request::route()->getName === "client.products.update"){
+        if(Request::route()->getName() === "client.products.update"){
             return [
                 'category_id' => 'required|integer',
                 'product_name' => 'required|string',
