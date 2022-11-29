@@ -17,6 +17,9 @@ window.Vue = require('vue').default;
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('merchants', require('./components/Merchants.vue').default);
+Vue.component('modal', require('./components/Modal.vue').default);
+Vue.component('support-ticket', require('./components/SupportTicket.vue').default);
+Vue.component('support-ticket-list', require('./components/SupportTicketList.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
