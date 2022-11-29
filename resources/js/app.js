@@ -2,6 +2,8 @@
 window.axios = require('axios');
 window.Vue = require('vue').default;
 
+// Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('#token').getAttribute('value');
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

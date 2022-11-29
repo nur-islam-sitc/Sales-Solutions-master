@@ -5,7 +5,7 @@
 
                 <div class="FilterBy_item d_flex">
                     <h3 style="width: 70%">Joining Date:</h3>
-                    <input type="date" class="form-control" name="joining_date">
+                    <input type="date" class="form-control" ref="joining_date" name="joining_date" @change="filterByDate">
                 </div>
 
 
@@ -14,7 +14,7 @@
                     <div class="dropdown_part form-control">
                             <span class="dropdown-toggle d_flex" id="dropdownMenuButton1" data-bs-toggle="dropdown"
                                   aria-expanded="false">
-                                Status
+                                <p v-text="!statusText ? 'Select Status' : statusText"></p>
                                 <div class="arrow">
                                     <svg width="11" height="6" viewBox="0 0 11 6" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -47,7 +47,7 @@
                 <div class="FilterBy_item" >
                     <div class="custome_input">
 
-                        <input type="text" class="form-control form-control-lg" name="q" @keyup.enter="searchMerchant" placeholder="Search here...">
+                        <input type="text" class="form-control form-control-lg" ref="search" @keyup.enter="searchMerchant" placeholder="Search here...">
 
                         <div class="search">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -59,6 +59,13 @@
                         </div>
 
                     </div>
+                </div>
+
+                <div class="FilterBy_item">
+                    <div class="clear-filter">
+                        <button class="btn btn-default mt-0" @click="clearFilter">Clear Filter</button>
+                    </div>
+
                 </div>
 
             </div>
@@ -82,8 +89,8 @@
 
                     <tr v-for="(merchant, key) in merchants.data" :key="merchant.id">
                         <td>{{ key+1 }}</td>
-                        <td class="companyName">{{ merchant.name }}</td>
-                        <td class="name"><a href="">{{ merchant.shop.name }}</a></td>
+                        <td class="companyName">{{ merchant.shop.name }}</td>
+                        <td class="name"><a :href="'/panel/merchants/'+`${merchant.id}`">{{ merchant.name }}</a></td>
                         <td>{{ merchant.phone }}</td>
                         <td>{{ merchant.created_at }}</td>
                         <td></td>
@@ -103,9 +110,7 @@
 
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
-
-                                    <li v-for="status in statusList"><a class="dropdown-item" id="change-status" href="javascript:;">{{ capitalized(status)}}</a></li>
-
+                                    <li v-for="status in statusList" @click="updateStatus(merchant.id, status)"><a class="dropdown-item" id="change-status">{{ capitalized(status)}}</a></li>
 
                                     <!-- up arrow -->
                                     <div class="up_arrow">
@@ -130,13 +135,13 @@
 
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-end">
-                        <li class="page-item disabled" @click="prevPage(merchants.prev_page_url)">
+                        <li class="page-item" :class="{disabled: currentPage === 1}" @click="prevPage(merchants.prev_page_url)">
                             <a class="page-link" tabindex="-1">Previous</a>
                         </li>
                         <li v-for="pageNumber in merchants.last_page" v-if="Math.abs(pageNumber - merchants.current_page) < 6 || pageNumber === merchants.last_page - 1 || pageNumber === 0" class="page-item" :class="{active: merchants.current_page === pageNumber }">
                             <a class="page-link" @click="fetchMerchants(pageNumber), setCurrentPage(pageNumber)" :class="{disabled: merchants.current_page === pageNumber , last: (pageNumber === merchants.last_page - 1 && Math.abs(pageNumber - merchants.current_page) > 3), first:(pageNumber === 0 && Math.abs(pageNumber - merchants.current_page) > 3)}">{{ pageNumber }}</a></li>
-                        <li class="page-item" @click="nextPage(merchants.next_page_url)">
-                            <a class="page-link" href="#">Next</a>
+                        <li class="page-item" :class="{disabled: currentPage === merchants.last_page}" @click="nextPage(merchants.next_page_url)">
+                            <a class="page-link">Next</a>
                         </li>
                     </ul>
                 </nav>
@@ -154,6 +159,7 @@ export default {
             statusList: [],
             currentPage: 1,
             totalPage: '',
+            statusText: ''
         }
     },
     mounted() {
@@ -168,11 +174,16 @@ export default {
 
             return capitalizedFirst + rest;
         },
-        searchMerchant() {
-            console.log(this);
+        searchMerchant(e) {
+            const search = e.target.value
+            this.fetchMerchants(0, '', search)
         },
-        fetchMerchants(page = 0) {
-            axios.get('/panel/merchants/merchants?page='+page).then(response => {
+        filterByDate(e) {
+            const joining_date = e.target.value
+            this.fetchMerchants(0, '', '', joining_date)
+        },
+        fetchMerchants(page = 0, status = '',  search = '', joining_date = '') {
+            axios.get('/panel/merchants/merchants', {params: {page, status, search, joining_date }}).then(response => {
                 this.merchants = response.data
                 this.currentPage = response.data.current_page
                 this.totalPage = response.data.last_page
@@ -184,7 +195,19 @@ export default {
             })
         },
         filterMerchants(status) {
+            this.statusText = this.capitalized(status)
+            this.fetchMerchants(this.currentPage,  status)
+        },
+        updateStatus(merchant, status) {
 
+            axios.post('/panel/merchants/'+merchant+'/update-status', {status}).then(response => {
+                this.fetchMerchants();
+            })
+        },
+        clearFilter() {
+            this.statusText = ''
+            this.$refs['search'].value = ''
+            this.$refs['joining_date'].value = ''
         },
         setCurrentPage(page) {
             this.currentPage = page
@@ -219,5 +242,9 @@ export default {
  .page-item.active .page-link {
      background-color: #a071f1 !important;
      border-color: hsl(262deg 82% 69%) !important;
+ }
+
+ .dropdown-menu li:hover {
+     cursor: pointer;
  }
 </style>

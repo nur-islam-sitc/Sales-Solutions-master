@@ -2090,7 +2090,8 @@ __webpack_require__.r(__webpack_exports__);
       merchants: [],
       statusList: [],
       currentPage: 1,
-      totalPage: ''
+      totalPage: '',
+      statusText: ''
     };
   },
   mounted: function mounted() {
@@ -2104,13 +2105,28 @@ __webpack_require__.r(__webpack_exports__);
       var rest = name.slice(1);
       return capitalizedFirst + rest;
     },
-    searchMerchant: function searchMerchant() {
-      console.log(this);
+    searchMerchant: function searchMerchant(e) {
+      var search = e.target.value;
+      this.fetchMerchants(0, '', search);
+    },
+    filterByDate: function filterByDate(e) {
+      var joining_date = e.target.value;
+      this.fetchMerchants(0, '', '', joining_date);
     },
     fetchMerchants: function fetchMerchants() {
       var _this = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-      axios.get('/panel/merchants/merchants?page=' + page).then(function (response) {
+      var status = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+      var search = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+      var joining_date = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+      axios.get('/panel/merchants/merchants', {
+        params: {
+          page: page,
+          status: status,
+          search: search,
+          joining_date: joining_date
+        }
+      }).then(function (response) {
         _this.merchants = response.data;
         _this.currentPage = response.data.current_page;
         _this.totalPage = response.data.last_page;
@@ -2122,25 +2138,41 @@ __webpack_require__.r(__webpack_exports__);
         _this2.statusList = response.data;
       });
     },
-    filterMerchants: function filterMerchants(status) {},
+    filterMerchants: function filterMerchants(status) {
+      this.statusText = this.capitalized(status);
+      this.fetchMerchants(this.currentPage, status);
+    },
+    updateStatus: function updateStatus(merchant, status) {
+      var _this3 = this;
+      axios.post('/panel/merchants/' + merchant + '/update-status', {
+        status: status
+      }).then(function (response) {
+        _this3.fetchMerchants();
+      });
+    },
+    clearFilter: function clearFilter() {
+      this.statusText = '';
+      this.$refs['search'].value = '';
+      this.$refs['joining_date'].value = '';
+    },
     setCurrentPage: function setCurrentPage(page) {
       this.currentPage = page;
     },
     nextPage: function nextPage(url) {
-      var _this3 = this;
+      var _this4 = this;
       if (this.currentPage < this.totalPage) {
         axios.get(url).then(function (response) {
-          _this3.merchants = response.data;
-          _this3.currentPage = response.data.current_page;
+          _this4.merchants = response.data;
+          _this4.currentPage = response.data.current_page;
         });
       }
     },
     prevPage: function prevPage(url) {
-      var _this4 = this;
+      var _this5 = this;
       if (this.currentPage !== 1) {
         axios.get(url).then(function (response) {
-          _this4.merchants = response.data;
-          _this4.currentPage = response.data.current_page;
+          _this5.merchants = response.data;
+          _this5.currentPage = response.data.current_page;
         });
       }
     }
@@ -2209,7 +2241,23 @@ var render = function render() {
     staticClass: "col-lg-12"
   }, [_c("div", {
     staticClass: "FilterBy d_flex"
-  }, [_vm._m(0), _vm._v(" "), _c("div", {
+  }, [_c("div", {
+    staticClass: "FilterBy_item d_flex"
+  }, [_c("h3", {
+    staticStyle: {
+      width: "70%"
+    }
+  }, [_vm._v("Joining Date:")]), _vm._v(" "), _c("input", {
+    ref: "joining_date",
+    staticClass: "form-control",
+    attrs: {
+      type: "date",
+      name: "joining_date"
+    },
+    on: {
+      change: _vm.filterByDate
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "FilterBy_item d_flex"
   }, [_c("h3", {
     staticStyle: {
@@ -2224,7 +2272,11 @@ var render = function render() {
       "data-bs-toggle": "dropdown",
       "aria-expanded": "false"
     }
-  }, [_vm._v("\n                            Status\n                            "), _c("div", {
+  }, [_c("p", {
+    domProps: {
+      textContent: _vm._s(!_vm.statusText ? "Select Status" : _vm.statusText)
+    }
+  }), _vm._v(" "), _c("div", {
     staticClass: "arrow"
   }, [_c("svg", {
     attrs: {
@@ -2277,10 +2329,10 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "custome_input"
   }, [_c("input", {
+    ref: "search",
     staticClass: "form-control form-control-lg",
     attrs: {
       type: "text",
-      name: "q",
       placeholder: "Search here..."
     },
     on: {
@@ -2306,24 +2358,33 @@ var render = function render() {
       "stroke-width": "2",
       "stroke-linecap": "round"
     }
-  })])])])])])]), _vm._v(" "), _c("div", {
+  })])])])]), _vm._v(" "), _c("div", {
+    staticClass: "FilterBy_item"
+  }, [_c("div", {
+    staticClass: "clear-filter"
+  }, [_c("button", {
+    staticClass: "btn btn-default mt-0",
+    on: {
+      click: _vm.clearFilter
+    }
+  }, [_vm._v("Clear Filter")])])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-lg-12"
   }, [_c("div", {
     staticClass: "table_part"
   }, [_c("table", {
     staticClass: "table"
-  }, [_c("tbody", [_vm._m(1), _vm._v(" "), _vm._l(_vm.merchants.data, function (merchant, key) {
+  }, [_c("tbody", [_vm._m(0), _vm._v(" "), _vm._l(_vm.merchants.data, function (merchant, key) {
     return _c("tr", {
       key: merchant.id
     }, [_c("td", [_vm._v(_vm._s(key + 1))]), _vm._v(" "), _c("td", {
       staticClass: "companyName"
-    }, [_vm._v(_vm._s(merchant.name))]), _vm._v(" "), _c("td", {
+    }, [_vm._v(_vm._s(merchant.shop.name))]), _vm._v(" "), _c("td", {
       staticClass: "name"
     }, [_c("a", {
       attrs: {
-        href: ""
+        href: "/panel/merchants/" + "".concat(merchant.id)
       }
-    }, [_vm._v(_vm._s(merchant.shop.name))])]), _vm._v(" "), _c("td", [_vm._v(_vm._s(merchant.phone))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(merchant.created_at))]), _vm._v(" "), _c("td"), _vm._v(" "), _c("td", [_c("div", {
+    }, [_vm._v(_vm._s(merchant.name))])]), _vm._v(" "), _c("td", [_vm._v(_vm._s(merchant.phone))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(merchant.created_at))]), _vm._v(" "), _c("td"), _vm._v(" "), _c("td", [_c("div", {
       staticClass: "dropdown_part"
     }, [_c("span", {
       staticClass: "dropdown-toggle d_flex",
@@ -2353,11 +2414,16 @@ var render = function render() {
         "aria-labelledby": "dropdownMenuButton1"
       }
     }, [_vm._l(_vm.statusList, function (status) {
-      return _c("li", [_c("a", {
+      return _c("li", {
+        on: {
+          click: function click($event) {
+            return _vm.updateStatus(merchant.id, status);
+          }
+        }
+      }, [_c("a", {
         staticClass: "dropdown-item",
         attrs: {
-          id: "change-status",
-          href: "javascript:;"
+          id: "change-status"
         }
       }, [_vm._v(_vm._s(_vm.capitalized(status)))])]);
     }), _vm._v(" "), _c("div", {
@@ -2375,7 +2441,7 @@ var render = function render() {
         d: "M10.3306 5.16528L5.1653 1.6953e-05L3.48091e-05 5.16528L10.3306 5.16528Z",
         fill: "#F3ECFF"
       }
-    })])])], 2)])]), _vm._v(" "), _vm._m(2, true)]);
+    })])])], 2)])]), _vm._v(" "), _vm._m(1, true)]);
   })], 2)]), _vm._v(" "), _c("nav", {
     attrs: {
       "aria-label": "Page navigation example"
@@ -2383,7 +2449,10 @@ var render = function render() {
   }, [_c("ul", {
     staticClass: "pagination justify-content-end"
   }, [_c("li", {
-    staticClass: "page-item disabled",
+    staticClass: "page-item",
+    "class": {
+      disabled: _vm.currentPage === 1
+    },
     on: {
       click: function click($event) {
         return _vm.prevPage(_vm.merchants.prev_page_url);
@@ -2415,35 +2484,19 @@ var render = function render() {
     }, [_vm._v(_vm._s(pageNumber))])]) : _vm._e();
   }), _vm._v(" "), _c("li", {
     staticClass: "page-item",
+    "class": {
+      disabled: _vm.currentPage === _vm.merchants.last_page
+    },
     on: {
       click: function click($event) {
         return _vm.nextPage(_vm.merchants.next_page_url);
       }
     }
   }, [_c("a", {
-    staticClass: "page-link",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "page-link"
   }, [_vm._v("Next")])])], 2)])])])]);
 };
 var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "FilterBy_item d_flex"
-  }, [_c("h3", {
-    staticStyle: {
-      width: "70%"
-    }
-  }, [_vm._v("Joining Date:")]), _vm._v(" "), _c("input", {
-    staticClass: "form-control",
-    attrs: {
-      type: "date",
-      name: "joining_date"
-    }
-  })]);
-}, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("tr", [_c("th", [_vm._v("SL")]), _vm._v(" "), _c("th", [_vm._v("Company Name")]), _vm._v(" "), _c("th", [_vm._v("Client Name")]), _vm._v(" "), _c("th", [_vm._v("Client Contact No.")]), _vm._v(" "), _c("th", [_vm._v("Joining Date")]), _vm._v(" "), _c("th", [_vm._v("Next Due Date")]), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("th", [_vm._v("Login")])]);
@@ -2469,6 +2522,8 @@ render._withStripped = true;
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js")["default"]);
+
+// Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('#token').getAttribute('value');
 
 /**
  * The following block of code may be used to automatically register your
@@ -2513,7 +2568,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.page-item {\n    cursor: pointer;\n}\n.page-link, .page-link:hover {\n    color: #a071f1;\n}\n.page-item.active .page-link {\n    background-color: #a071f1 !important;\n    border-color: hsl(262deg 82% 69%) !important;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.page-item {\n    cursor: pointer;\n}\n.page-link, .page-link:hover {\n    color: #a071f1;\n}\n.page-item.active .page-link {\n    background-color: #a071f1 !important;\n    border-color: hsl(262deg 82% 69%) !important;\n}\n.dropdown-menu li:hover {\n    cursor: pointer;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

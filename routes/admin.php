@@ -23,6 +23,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
         Route::get('/merchants', [MerchantController::class, 'merchants']);
         Route::get('/statuses', [MerchantController::class, 'statuses']);
         Route::get('/{merchant}', [MerchantController::class, 'show'])->name('admin.merchant.details');
+        Route::post('/{merchant}/update-status', [MerchantController::class, 'changeStatus'])->name('admin.merchant.change_status');
     });
 
 
