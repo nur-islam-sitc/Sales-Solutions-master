@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,6 +37,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'role',
+        'status',
     ];
 
     /**
@@ -89,6 +91,15 @@ class User extends Authenticatable
     {
         return $value ?: asset('images/profile.png');
 
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value): string
+    {
+        return Carbon::parse($value)->toFormattedDateString();
     }
 
     /**
