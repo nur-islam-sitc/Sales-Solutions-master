@@ -57,8 +57,8 @@ class ProductController extends Controller
             DB::beginTransaction();
             $product  = new Product();
             $product->category_id  = $request->category_id; 
-            $product->user_id  = 1; 
-            $product->shop_id  = 1;
+            $product->user_id  = auth()->user()->id; 
+            $product->shop_id  = auth()->user()->shop->id;
             $product->product_name = $request->product_name; 
             $product->slug = Str::slug($request->product_name); 
             $product->price = $request->price; 
@@ -171,8 +171,6 @@ class ProductController extends Controller
                 ], 404);
             }
             $product->category_id  = $request->category_id; 
-            $product->user_id  = 1; 
-            $product->shop_id  = 1;
             $product->product_name = $request->product_name; 
             $product->slug = Str::slug($request->product_name); 
             $product->price = $request->price; 
