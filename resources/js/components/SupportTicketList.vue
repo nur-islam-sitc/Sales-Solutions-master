@@ -217,3 +217,16 @@
     </section>
 
 </template>
+
+<script>
+export default {
+    methods: {
+        fetchTickets() {
+
+        }
+    },
+    mounted() {
+        this.fetchTickets()
+    }
+}
+</script>

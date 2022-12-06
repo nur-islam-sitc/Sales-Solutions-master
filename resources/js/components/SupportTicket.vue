@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
     <div>
         <section id="Total_order" class="openTicket">
 
@@ -196,37 +196,49 @@
 
         </section>
         <div class="section_gaps"></div>
-        <support-ticket-list @add="showModal = true"/>
-        <div class="section_gaps"></div>
-        <Modal :show="showModal" @close="showModal = false">
-            <template #header>
-                <h6>Add Support ticket</h6>
-            </template>
-            <template #default>
-                <form action="" class="mt-4">
 
-                    <div class="form-group mb-2">
-                        <label for="">Subject *</label>
-                        <input type="text" class="form-control">
+        <support-ticket-list @add="[showModal = true, errors = {}]"/>
+
+        <div class="section_gaps"></div>
+        <form class="mt-4" @submit.prevent="handleSubmit" enctype="multipart/form-data">
+            <Modal :show="showModal" @close="showModal = false">
+
+                <template #header>
+                    <h6>Add Support ticket</h6>
+                </template>
+
+                <template #default>
+
+                    <div class="form-group mb-2 mt-4">
+                        <label for="merchants">Merchant *</label>
+                        <select name="" id="" class="form-control">
+                            <option value="">Hello</option>
+                        </select>
+
                     </div>
 
                     <div class="form-group mb-2">
-                        <label for="">Description *</label>
-                        <textarea type="text" class="form-control" rows="5"></textarea>
+                        <label for="subject" :class="['mb-0', !!errors.subject && 'validation-error-label']">Subject *</label>
+                        <input type="text" v-model="form.subject" name="subject" :class="[ 'form-control', !!errors.subject && 'validation-error' ]" @blur="validate('subject')" @keypress="validate('subject')"/>
+                        <span class="validation-error-message" v-if="!!errors.subject">{{ errors.subject }}</span>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label for="description" :class="['mb-0', !!errors.content && 'validation-error-label']">Description *</label>
+                        <textarea type="text" v-model="form.content" :class="[ 'form-control', !!errors.content && 'validation-error' ]" rows="5" @blur="validate('content')" @keypress="validate('content')"></textarea>
+                        <span class="validation-error-message" v-if="!!errors.content">{{ errors.description }}</span>
+
                     </div>
 
                     <div class="form-group mb-2">
                         <label for="">Attachments *</label>
-                        <input type="file" class="file-control">
+                        <input type="file" name="attachment" class="file-control" @change="fileUpload"/>
+                        <span class="validation-error-message" v-if="!!errors.attachment">{{ errors.attachment }}</span>
                     </div>
 
-                </form>
-            </template>
-            <template #footer>
-
-
-            </template>
-        </Modal>
+                </template>
+            </Modal>
+        </form>
     </div>
 
 </template>
@@ -234,15 +246,91 @@
 <script>
 import Modal from "./Modal.vue";
 import SupportTicketList from "./SupportTicketList.vue";
+import * as yup from 'yup';
+
+const loginFormSchema = yup.object().shape({
+    subject: yup.string().required().min(8),
+    content: yup.string().required().min(20),
+    attachment: yup.mixed().test("type", 'Supported file types Image and PDF only', function(value) {
+        if(value === 'undefined' || value !== null) {
+            return value && (value.type === 'image/jpg' || value.type === 'image/jpeg' || value.type === 'image/png' || value.type === 'application/pdf');
+        } else {
+            return true;
+        }
+
+    }),
+});
+
 export default {
     components: {
         SupportTicketList,
         Modal
     },
-    data () {
+    data() {
         return {
-            showModal: false
+            showModal: false,
+            form: {
+                user_id: 1,
+                subject: "",
+                content: "",
+                attachment: null,
+            },
+            errors: {
+                user_id: "",
+                subject: "",
+                content: "",
+                attachment: "",
+            },
+            merchants: []
         }
+    },
+    methods: {
+        validate(field) {
+            loginFormSchema
+                .validateAt(field, this.form)
+                .then(() => {
+                    this.errors[field] = "";
+                })
+                .catch(err => {
+                this.errors[field] = err.message;
+            })
+        },
+        handleSubmit() {
+            loginFormSchema
+                .validate(this.form, { abortEarly: false })
+                .then(() => {
+                    this.errors = {};
+
+                    const formData = new FormData();
+                    formData.append('user_id', this.form.user_id)
+                    formData.append('subject', this.form.subject)
+                    formData.append('content', this.form.content)
+                    formData.append('attachment', this.form.attachment)
+
+                    axios.post('/panel/support-ticket/store', formData,{
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }).then((response) => {
+                        this.showModal = false
+                        this.form.subject = ""
+                        this.form.content = ""
+                        this.form.attachment = null
+                    })
+                })
+                .catch(err => {
+                    err.inner.forEach(error => {
+                        this.errors[error.path] = error.message;
+                    });
+                })
+        },
+        fileUpload(event) {
+            this.form.attachment = event.target["files"][0];
+            this.validate('attachment')
+        },
+    },
+    mounted() {
+        axios.get('/merchants')
     }
 }
 </script>

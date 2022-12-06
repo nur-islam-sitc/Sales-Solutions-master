@@ -1,6 +1,6 @@
-
 window.axios = require('axios');
-window.Vue = require('vue').default;
+import   { createApp } from 'vue'
+
 
 // Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('#token').getAttribute('value');
 
@@ -15,18 +15,20 @@ window.Vue = require('vue').default;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('merchants', require('./components/Merchants.vue').default);
-Vue.component('modal', require('./components/Modal.vue').default);
-Vue.component('support-ticket', require('./components/SupportTicket.vue').default);
-Vue.component('support-ticket-list', require('./components/SupportTicketList.vue').default);
 
+import Merchants from "./components/Merchants.vue";
+import SupportTicket from "./components/SupportTicket.vue";
+import SupportTicketList from "./components/SupportTicketList.vue";
+import Modal from "./components/Modal.vue";
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
-    el: '#app',
-});
+const app = createApp({})
+app.component('merchants', Merchants)
+app.component('support-ticket', SupportTicket)
+app.component('support-ticket-list', SupportTicketList)
+app.component('modal', Modal)
+app.mount('#app')

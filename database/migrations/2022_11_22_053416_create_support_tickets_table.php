@@ -21,7 +21,7 @@ class CreateSupportTicketsTable extends Migration
             $table->string('subject');
             $table->text('content');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('staff_id')->constrained('users');
+            $table->foreignId('staff_id')->nullable()->constrained('users');
             $table->foreignId('attachment_id')->nullable()->constrained('attachments');
             $table->string('status')->default(Status::STATUS_ACTIVE);
             $table->timestamps();

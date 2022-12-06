@@ -9,4 +9,5 @@ use Illuminate\Database\Eloquent\Model;
 class SupportTicket extends Model
 {
     use HasFactory, HasUuid;
+    protected $guarded = [];
 }

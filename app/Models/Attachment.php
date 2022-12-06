@@ -9,5 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Attachment extends Model
 {
     use HasFactory, HasUuid;
+    protected $guarded = [];
 
 }
