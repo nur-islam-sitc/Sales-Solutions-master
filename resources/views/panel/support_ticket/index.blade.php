@@ -4,6 +4,6 @@
 
 @section('content')
 
-    <support-ticket></support-ticket>
+    <support-ticket :merchant_list="{{ $merchants }}"></support-ticket>
 
 @endsection

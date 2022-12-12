@@ -148,7 +148,6 @@
                                 <tr>
                                     <th>SL</th>
                                     <th>Client Name</th>
-                                    <th>Client ID</th>
                                     <th>Ticket No.</th>
                                     <th>Subject For Ticket</th>
                                     <th>Submission Time</th>
@@ -157,15 +156,13 @@
                                 </tr>
 
                                 <!-- item -->
-                                <tr>
-                                    <td>01</td>
-                                    <td class="name">M.H. Neshad</td>
-                                    <td>1577</td>
-                                    <td>922</td>
-                                    <td class="subject_for_ticket"><a href="support_ticket_details.html">Lorem ipsum dolor
-                                        sit amet, consectetur.....</a></td>
-                                    <td>12:45 PM ; 1 Feb, 2020</td>
-                                    <td>Claire</td>
+                                <tr v-for="(ticket, index) in tickets" :key="ticket.id">
+                                    <td>{{ index+1 }}</td>
+                                    <td class="name">{{ ticket['merchant']['name'] }}</td>
+                                    <td>#{{ ticket['ticket_id'] }}</td>
+                                    <td class="subject_for_ticket"><a href="support_ticket_details.html">{{ ticket.subject }}</a></td>
+                                    <td>{{ ticket.created_at }}</td>
+                                    <td>{{ ticket.staff_id }}</td>
                                     <td>
                                         <div class="dropdown_part">
                                         <span class="dropdown-toggle d_flex" id="dropdownMenuButton1"
@@ -220,13 +217,8 @@
 
 <script>
 export default {
-    methods: {
-        fetchTickets() {
-
-        }
-    },
-    mounted() {
-        this.fetchTickets()
+    props: {
+        tickets: Array
     }
 }
 </script>

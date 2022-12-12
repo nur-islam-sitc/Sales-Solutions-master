@@ -33,7 +33,7 @@
 
                             <!-- Middle Part -->
                             <div class="middle_part">
-                                <h2>46</h2>
+                                <h2>{{ total }}</h2>
                             </div>
 
                             <!-- last_part -->
@@ -89,7 +89,7 @@
 
                             <!-- Middle Part -->
                             <div class="middle_part">
-                                <h2>46</h2>
+                                <h2>{{ open }}</h2>
                             </div>
 
                             <!-- last_part -->
@@ -132,7 +132,7 @@
 
                             <!-- Middle Part -->
                             <div class="middle_part">
-                                <h2>43</h2>
+                                <h2>{{ processing }}</h2>
                             </div>
 
                             <!-- last_part -->
@@ -174,7 +174,7 @@
 
                             <!-- Middle Part -->
                             <div class="middle_part">
-                                <h2>35</h2>
+                                <h2>{{ solved }}</h2>
                             </div>
 
                             <!-- last_part -->
@@ -197,7 +197,7 @@
         </section>
         <div class="section_gaps"></div>
 
-        <support-ticket-list @add="[showModal = true, errors = {}]"/>
+        <support-ticket-list @add="[showModal = true, errors = {}]" :tickets="tickets"/>
 
         <div class="section_gaps"></div>
         <form class="mt-4" @submit.prevent="handleSubmit" enctype="multipart/form-data">
@@ -211,9 +211,11 @@
 
                     <div class="form-group mb-2 mt-4">
                         <label for="merchants">Merchant *</label>
-                        <select name="" id="" class="form-control">
-                            <option value="">Hello</option>
+                        <select class="form-control" v-model="form.user_id" @change="validate('user_id')">
+                            <option disabled value="">Please select one</option>
+                            <option :value="item.id" v-for="item in merchant_list" :key="item.id">{{ item.name }}</option>
                         </select>
+                        <span class="validation-error-message" v-if="!!errors.user_id">{{ errors.user_id }}</span>
 
                     </div>
 
@@ -226,8 +228,7 @@
                     <div class="form-group mb-2">
                         <label for="description" :class="['mb-0', !!errors.content && 'validation-error-label']">Description *</label>
                         <textarea type="text" v-model="form.content" :class="[ 'form-control', !!errors.content && 'validation-error' ]" rows="5" @blur="validate('content')" @keypress="validate('content')"></textarea>
-                        <span class="validation-error-message" v-if="!!errors.content">{{ errors.description }}</span>
-
+                        <span class="validation-error-message" v-if="!!errors.content">{{ errors.content }}</span>
                     </div>
 
                     <div class="form-group mb-2">
@@ -248,7 +249,7 @@ import Modal from "./Modal.vue";
 import SupportTicketList from "./SupportTicketList.vue";
 import * as yup from 'yup';
 
-const loginFormSchema = yup.object().shape({
+const ticketsSchema = yup.object().shape({
     subject: yup.string().required().min(8),
     content: yup.string().required().min(20),
     attachment: yup.mixed().test("type", 'Supported file types Image and PDF only', function(value) {
@@ -259,9 +260,13 @@ const loginFormSchema = yup.object().shape({
         }
 
     }),
+    user_id: yup.string().required('Please Select Merchant')
 });
 
 export default {
+    props: {
+        merchant_list: Array
+    },
     components: {
         SupportTicketList,
         Modal
@@ -270,7 +275,7 @@ export default {
         return {
             showModal: false,
             form: {
-                user_id: 1,
+                user_id: "",
                 subject: "",
                 content: "",
                 attachment: null,
@@ -281,12 +286,16 @@ export default {
                 content: "",
                 attachment: "",
             },
-            merchants: []
+            tickets: [],
+            total: 0,
+            open: 0,
+            processing: 0,
+            solved: 0
         }
     },
     methods: {
         validate(field) {
-            loginFormSchema
+            ticketsSchema
                 .validateAt(field, this.form)
                 .then(() => {
                     this.errors[field] = "";
@@ -296,7 +305,7 @@ export default {
             })
         },
         handleSubmit() {
-            loginFormSchema
+            ticketsSchema
                 .validate(this.form, { abortEarly: false })
                 .then(() => {
                     this.errors = {};
@@ -316,6 +325,11 @@ export default {
                         this.form.subject = ""
                         this.form.content = ""
                         this.form.attachment = null
+                        this.form.user_id = null
+
+                        this.fetchTickets()
+                    }).catch(error => {
+                        console.log('validation', error)
                     })
                 })
                 .catch(err => {
@@ -328,10 +342,19 @@ export default {
             this.form.attachment = event.target["files"][0];
             this.validate('attachment')
         },
+        fetchTickets() {
+            axios.get('/panel/support-ticket/tickets').then(response => {
+                console.log(response.data['counts']['active'])
+                this.tickets = response.data.tickets.data
+                this.total =response.data.tickets.total
+                this.open = response.data['counts']['active']
+            })
+        }
     },
     mounted() {
-        axios.get('/merchants')
+        this.fetchTickets();
     }
+
 }
 </script>
 

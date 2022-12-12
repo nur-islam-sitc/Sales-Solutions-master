@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use App\Models\SupportTicket;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 class SupportTicketController extends Controller
 {
@@ -17,17 +19,14 @@ class SupportTicketController extends Controller
      */
     public function index()
     {
-        return view('panel.support_ticket.index');
+        $merchants = User::query()->where('role', 'merchant')->get();
+        return view('panel.support_ticket.index', compact('merchants'));
     }
 
-    public function create()
-    {
-        return view('panel.support_ticket.create');
-    }
-
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
+            'user_id' => ['required'],
             'subject' => ['required'],
             'content' => ['required'],
         ]);
@@ -58,6 +57,21 @@ class SupportTicketController extends Controller
             'attachment_id' => $attachment ?: null,
         ]);
 
-        return $ticket;
+        return response()->json($ticket);
+    }
+
+    public function tickets(): JsonResponse
+    {
+        $tickets = SupportTicket::query()
+                        ->orderByDesc('id')
+                        ->paginate($this->limit());
+        $tickets->load('merchant');
+        $counts = $tickets->groupBy('status')->map->count();
+        $data = [
+            'tickets' => $tickets,
+            'counts' => $counts
+
+        ];
+        return response()->json($data);
     }
 }

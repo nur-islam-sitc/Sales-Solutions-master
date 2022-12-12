@@ -19782,7 +19782,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var loginFormSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
+var ticketsSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
   subject: yup__WEBPACK_IMPORTED_MODULE_2__.string().required().min(8),
   content: yup__WEBPACK_IMPORTED_MODULE_2__.string().required().min(20),
   attachment: yup__WEBPACK_IMPORTED_MODULE_2__.mixed().test("type", 'Supported file types Image and PDF only', function (value) {
@@ -19791,9 +19791,13 @@ var loginFormSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
     } else {
       return true;
     }
-  })
+  }),
+  user_id: yup__WEBPACK_IMPORTED_MODULE_2__.string().required('Please Select Merchant')
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    merchant_list: Array
+  },
   components: {
     SupportTicketList: _SupportTicketList_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Modal: _Modal_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -19802,7 +19806,7 @@ var loginFormSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
     return {
       showModal: false,
       form: {
-        user_id: 1,
+        user_id: "",
         subject: "",
         content: "",
         attachment: null
@@ -19813,13 +19817,17 @@ var loginFormSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
         content: "",
         attachment: ""
       },
-      merchants: []
+      tickets: [],
+      total: 0,
+      open: 0,
+      processing: 0,
+      solved: 0
     };
   },
   methods: {
     validate: function validate(field) {
       var _this = this;
-      loginFormSchema.validateAt(field, this.form).then(function () {
+      ticketsSchema.validateAt(field, this.form).then(function () {
         _this.errors[field] = "";
       })["catch"](function (err) {
         _this.errors[field] = err.message;
@@ -19827,7 +19835,7 @@ var loginFormSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
     },
     handleSubmit: function handleSubmit() {
       var _this2 = this;
-      loginFormSchema.validate(this.form, {
+      ticketsSchema.validate(this.form, {
         abortEarly: false
       }).then(function () {
         _this2.errors = {};
@@ -19845,6 +19853,10 @@ var loginFormSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
           _this2.form.subject = "";
           _this2.form.content = "";
           _this2.form.attachment = null;
+          _this2.form.user_id = null;
+          _this2.fetchTickets();
+        })["catch"](function (error) {
+          console.log('validation', error);
         });
       })["catch"](function (err) {
         err.inner.forEach(function (error) {
@@ -19855,10 +19867,19 @@ var loginFormSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
     fileUpload: function fileUpload(event) {
       this.form.attachment = event.target["files"][0];
       this.validate('attachment');
+    },
+    fetchTickets: function fetchTickets() {
+      var _this3 = this;
+      axios.get('/panel/support-ticket/tickets').then(function (response) {
+        console.log(response.data['counts']['active']);
+        _this3.tickets = response.data.tickets.data;
+        _this3.total = response.data.tickets.total;
+        _this3.open = response.data['counts']['active'];
+      });
     }
   },
   mounted: function mounted() {
-    axios.get('/merchants');
+    this.fetchTickets();
   }
 });
 
@@ -19876,11 +19897,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  methods: {
-    fetchTickets: function fetchTickets() {}
-  },
-  mounted: function mounted() {
-    this.fetchTickets();
+  props: {
+    tickets: Array
   }
 });
 
@@ -20217,109 +20235,280 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
-var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<section id=\"Total_order\" class=\"openTicket\"><div class=\"container custom_width\"><div class=\"row\"><!-- item 1--><div class=\"col-lg-3\"><div class=\"Total_order_item\"><!-- Header Part --><div class=\"header_part d_flex d_justify\"><h3><svg width=\"19\" height=\"19\" viewBox=\"0 0 19 19\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\"></path><path d=\"M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\" stroke-linecap=\"round\"></path></svg> Total Ticket </h3></div><!-- Middle Part --><div class=\"middle_part\"><h2>46</h2></div><!-- last_part --><div class=\"last_part\"><ul><li><p>Orders Update:</p></li><li><span>Increased by</span></li><li><span class=\"percent\"><svg width=\"28\" height=\"24\" viewBox=\"0 0 28 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M2.77661 1.42993C2.77661 1.09602 2.64396 0.775776 2.40785 0.539661C2.17174 0.303546 1.8515 0.170898 1.51758 0.170898C1.18366 0.170898 0.863422 0.303546 0.627307 0.539661C0.391193 0.775776 0.258545 1.09602 0.258545 1.42993L0.258545 22.4138C0.258545 23.1088 0.822592 23.6729 1.51758 23.6729H25.8589C26.1928 23.6729 26.5131 23.5402 26.7492 23.3041C26.9853 23.068 27.1179 22.7477 27.1179 22.4138C27.1179 22.0799 26.9853 21.7597 26.7492 21.5236C26.5131 21.2874 26.1928 21.1548 25.8589 21.1548H2.77661V1.42993ZM26.7486 5.67707C26.971 5.4384 27.0921 5.12273 27.0863 4.79655C27.0806 4.47038 26.9484 4.15917 26.7178 3.92849C26.4871 3.69781 26.1759 3.56568 25.8497 3.55992C25.5235 3.55417 25.2078 3.67524 24.9692 3.89764L17.0457 11.8212L12.8992 7.67474C12.6632 7.43896 12.3432 7.30653 12.0095 7.30653C11.6759 7.30653 11.3559 7.43896 11.1198 7.67474L5.664 13.1306C5.4416 13.3692 5.32053 13.6849 5.32628 14.0111C5.33204 14.3372 5.46417 14.6485 5.69485 14.8791C5.92552 15.1098 6.23673 15.2419 6.56291 15.2477C6.88908 15.2535 7.20476 15.1324 7.44343 14.91L12.0095 10.3439L16.1559 14.4903C16.392 14.7261 16.712 14.8585 17.0457 14.8585C17.3793 14.8585 17.6993 14.7261 17.9354 14.4903L26.7486 5.67707Z\" fill=\"#5DCA08\"></path></svg> 30% </span></li></ul></div></div></div><!-- item 2--><div class=\"col-lg-3\"><div class=\"Total_order_item\"><!-- Header Part --><div class=\"header_part d_flex d_justify\"><h3><svg width=\"19\" height=\"19\" viewBox=\"0 0 19 19\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\"></path><path d=\"M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\" stroke-linecap=\"round\"></path></svg> Open Ticket </h3></div><!-- Middle Part --><div class=\"middle_part\"><h2>46</h2></div><!-- last_part --><div class=\"last_part\"><ul><li><p>Ticket Process Increased</p></li></ul></div></div></div><!-- item 3--><div class=\"col-lg-3\"><div class=\"Total_order_item\"><!-- Header Part --><div class=\"header_part d_flex d_justify\"><h3><svg width=\"19\" height=\"19\" viewBox=\"0 0 19 19\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\"></path><path d=\"M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\" stroke-linecap=\"round\"></path></svg> Processing Ticket </h3></div><!-- Middle Part --><div class=\"middle_part\"><h2>43</h2></div><!-- last_part --><div class=\"last_part\"><ul><li><p>Ticket Solving Is On Process</p></li></ul></div></div></div><!-- item 4--><div class=\"col-lg-3\"><div class=\"Total_order_item\"><!-- Header Part --><div class=\"header_part d_flex d_justify\"><h3><svg width=\"19\" height=\"19\" viewBox=\"0 0 19 19\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\"></path><path d=\"M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834\" stroke=\"#747474\" stroke-width=\"1.56863\" stroke-miterlimit=\"10\" stroke-linecap=\"round\"></path></svg> Solved Ticket </h3></div><!-- Middle Part --><div class=\"middle_part\"><h2>35</h2></div><!-- last_part --><div class=\"last_part\"><ul><li><p>Ticket Solved And Closed</p></li></ul></div></div></div></div></div></section><div class=\"section_gaps\"></div>", 2);
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "section_gaps"
-}, null, -1 /* HOISTED */);
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, "Add Support ticket", -1 /* HOISTED */);
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "form-group mb-2 mt-4"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "for": "merchants"
-}, "Merchant *"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-  name: "",
-  id: "",
-  "class": "form-control"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  value: ""
-}, "Hello")])], -1 /* HOISTED */);
-var _hoisted_6 = {
-  "class": "form-group mb-2"
+var _hoisted_1 = {
+  id: "Total_order",
+  "class": "openTicket"
 };
+var _hoisted_2 = {
+  "class": "container custom_width"
+};
+var _hoisted_3 = {
+  "class": "row"
+};
+var _hoisted_4 = {
+  "class": "col-lg-3"
+};
+var _hoisted_5 = {
+  "class": "Total_order_item"
+};
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "header_part d_flex d_justify"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  width: "19",
+  height: "19",
+  viewBox: "0 0 19 19",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10"
+}), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10",
+  "stroke-linecap": "round"
+})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Total Ticket ")])], -1 /* HOISTED */);
 var _hoisted_7 = {
-  key: 0,
-  "class": "validation-error-message"
+  "class": "middle_part"
 };
-var _hoisted_8 = {
-  "class": "form-group mb-2"
-};
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "last_part"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Orders Update:")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Increased by")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  "class": "percent"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  width: "28",
+  height: "24",
+  viewBox: "0 0 28 24",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  "fill-rule": "evenodd",
+  "clip-rule": "evenodd",
+  d: "M2.77661 1.42993C2.77661 1.09602 2.64396 0.775776 2.40785 0.539661C2.17174 0.303546 1.8515 0.170898 1.51758 0.170898C1.18366 0.170898 0.863422 0.303546 0.627307 0.539661C0.391193 0.775776 0.258545 1.09602 0.258545 1.42993L0.258545 22.4138C0.258545 23.1088 0.822592 23.6729 1.51758 23.6729H25.8589C26.1928 23.6729 26.5131 23.5402 26.7492 23.3041C26.9853 23.068 27.1179 22.7477 27.1179 22.4138C27.1179 22.0799 26.9853 21.7597 26.7492 21.5236C26.5131 21.2874 26.1928 21.1548 25.8589 21.1548H2.77661V1.42993ZM26.7486 5.67707C26.971 5.4384 27.0921 5.12273 27.0863 4.79655C27.0806 4.47038 26.9484 4.15917 26.7178 3.92849C26.4871 3.69781 26.1759 3.56568 25.8497 3.55992C25.5235 3.55417 25.2078 3.67524 24.9692 3.89764L17.0457 11.8212L12.8992 7.67474C12.6632 7.43896 12.3432 7.30653 12.0095 7.30653C11.6759 7.30653 11.3559 7.43896 11.1198 7.67474L5.664 13.1306C5.4416 13.3692 5.32053 13.6849 5.32628 14.0111C5.33204 14.3372 5.46417 14.6485 5.69485 14.8791C5.92552 15.1098 6.23673 15.2419 6.56291 15.2477C6.88908 15.2535 7.20476 15.1324 7.44343 14.91L12.0095 10.3439L16.1559 14.4903C16.392 14.7261 16.712 14.8585 17.0457 14.8585C17.3793 14.8585 17.6993 14.7261 17.9354 14.4903L26.7486 5.67707Z",
+  fill: "#5DCA08"
+})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 30% ")])])])], -1 /* HOISTED */);
 var _hoisted_9 = {
-  key: 0,
-  "class": "validation-error-message"
+  "class": "col-lg-3"
 };
 var _hoisted_10 = {
+  "class": "Total_order_item"
+};
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "header_part d_flex d_justify"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  width: "19",
+  height: "19",
+  viewBox: "0 0 19 19",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10"
+}), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10",
+  "stroke-linecap": "round"
+})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Open Ticket ")])], -1 /* HOISTED */);
+var _hoisted_12 = {
+  "class": "middle_part"
+};
+var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "last_part"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Ticket Process Increased")])])], -1 /* HOISTED */);
+var _hoisted_14 = {
+  "class": "col-lg-3"
+};
+var _hoisted_15 = {
+  "class": "Total_order_item"
+};
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "header_part d_flex d_justify"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  width: "19",
+  height: "19",
+  viewBox: "0 0 19 19",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10"
+}), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10",
+  "stroke-linecap": "round"
+})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Processing Ticket ")])], -1 /* HOISTED */);
+var _hoisted_17 = {
+  "class": "middle_part"
+};
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "last_part"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Ticket Solving Is On Process")])])], -1 /* HOISTED */);
+var _hoisted_19 = {
+  "class": "col-lg-3"
+};
+var _hoisted_20 = {
+  "class": "Total_order_item"
+};
+var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "header_part d_flex d_justify"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  width: "19",
+  height: "19",
+  viewBox: "0 0 19 19",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M5.49553 5.80437C5.79653 5.50327 5.97277 5.09964 5.989 4.67421C6.00524 4.24877 5.86027 3.83288 5.58309 3.50972C5.56016 3.48284 5.54824 3.44829 5.54972 3.413C5.5512 3.3777 5.56596 3.34427 5.59105 3.3194L7.18775 1.72089C7.21415 1.69451 7.24994 1.67969 7.28725 1.67969C7.32457 1.67969 7.36036 1.69451 7.38675 1.72089L9.93179 4.26592C10.0257 4.3598 10.0964 4.47426 10.1384 4.60024C10.1802 4.72651 10.2508 4.8413 10.3447 4.9355C10.4386 5.02971 10.5532 5.10074 10.6793 5.14297C10.8054 5.18497 10.9199 5.2557 11.014 5.34957L17.5408 11.875C17.5672 11.9014 17.582 11.9371 17.582 11.9745C17.582 12.0118 17.5672 12.0476 17.5408 12.074L15.9441 13.6707C15.9193 13.6958 15.8858 13.7105 15.8505 13.712C15.8152 13.7135 15.7807 13.7016 15.7538 13.6786C15.4307 13.4012 15.0147 13.2559 14.5892 13.2721C14.1636 13.2882 13.7598 13.4645 13.4586 13.7657C13.1575 14.0668 12.9812 14.4706 12.9651 14.8962C12.9489 15.3218 13.0941 15.7378 13.3716 16.0608C13.3945 16.0877 13.4064 16.1223 13.405 16.1576C13.4035 16.1929 13.3887 16.2263 13.3636 16.2512L11.7669 17.8479C11.7405 17.8742 11.7047 17.8891 11.6674 17.8891C11.6301 17.8891 11.5943 17.8742 11.5679 17.8479L5.04072 11.321C4.94686 11.227 4.87613 11.1124 4.83412 10.9863C4.79232 10.8601 4.72167 10.7453 4.62778 10.6511C4.53388 10.5569 4.41933 10.4858 4.2932 10.4436C4.16723 10.4017 4.05276 10.3309 3.95888 10.237L1.41385 7.69198C1.38747 7.66559 1.37265 7.6298 1.37265 7.59248C1.37265 7.55516 1.38747 7.51937 1.41385 7.49298L3.01056 5.89627C3.03543 5.87119 3.06886 5.85642 3.10415 5.85495C3.13945 5.85347 3.174 5.86539 3.20087 5.88832C3.52359 6.16596 3.93922 6.31156 4.36465 6.296C4.79008 6.28044 5.19396 6.10486 5.49553 5.80437V5.80437Z",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10"
+}), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M9.67632 5.60322L10.2737 5.00586M8.08359 7.19595L8.48196 6.79795M6.49087 8.78903L6.88887 8.39067M4.69878 10.5808L5.29614 9.9834",
+  stroke: "#747474",
+  "stroke-width": "1.56863",
+  "stroke-miterlimit": "10",
+  "stroke-linecap": "round"
+})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Solved Ticket ")])], -1 /* HOISTED */);
+var _hoisted_22 = {
+  "class": "middle_part"
+};
+var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "last_part"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Ticket Solved And Closed")])])], -1 /* HOISTED */);
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "section_gaps"
+}, null, -1 /* HOISTED */);
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "section_gaps"
+}, null, -1 /* HOISTED */);
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, "Add Support ticket", -1 /* HOISTED */);
+var _hoisted_27 = {
+  "class": "form-group mb-2 mt-4"
+};
+var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "merchants"
+}, "Merchant *", -1 /* HOISTED */);
+var _hoisted_29 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  disabled: "",
+  value: ""
+}, "Please select one", -1 /* HOISTED */);
+var _hoisted_30 = ["value"];
+var _hoisted_31 = {
+  key: 0,
+  "class": "validation-error-message"
+};
+var _hoisted_32 = {
   "class": "form-group mb-2"
 };
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+var _hoisted_33 = {
+  key: 0,
+  "class": "validation-error-message"
+};
+var _hoisted_34 = {
+  "class": "form-group mb-2"
+};
+var _hoisted_35 = {
+  key: 0,
+  "class": "validation-error-message"
+};
+var _hoisted_36 = {
+  "class": "form-group mb-2"
+};
+var _hoisted_37 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": ""
 }, "Attachments *", -1 /* HOISTED */);
-var _hoisted_12 = {
+var _hoisted_38 = {
   key: 0,
   "class": "validation-error-message"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_support_ticket_list = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("support-ticket-list");
   var _component_Modal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Modal");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_support_ticket_list, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" item 1"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Header Part "), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Middle Part "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.total), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" last_part "), _hoisted_8])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" item 2"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Header Part "), _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Middle Part "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.open), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" last_part "), _hoisted_13])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" item 3"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Header Part "), _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Middle Part "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.processing), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" last_part "), _hoisted_18])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" item 4"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Header Part "), _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Middle Part "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.solved), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" last_part "), _hoisted_23])])])])]), _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_support_ticket_list, {
     onAdd: _cache[0] || (_cache[0] = function ($event) {
       return [$data.showModal = true, $data.errors = {}];
-    })
-  }), _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
+    }),
+    tickets: $data.tickets
+  }, null, 8 /* PROPS */, ["tickets"]), _hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
     "class": "mt-4",
-    onSubmit: _cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+    onSubmit: _cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $options.handleSubmit && $options.handleSubmit.apply($options, arguments);
     }, ["prevent"])),
     enctype: "multipart/form-data"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
     show: $data.showModal,
-    onClose: _cache[8] || (_cache[8] = function ($event) {
+    onClose: _cache[10] || (_cache[10] = function ($event) {
       return $data.showModal = false;
     })
   }, {
     header: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_4];
+      return [_hoisted_26];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [_hoisted_28, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "class": "form-control",
+        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+          return $data.form.user_id = $event;
+        }),
+        onChange: _cache[2] || (_cache[2] = function ($event) {
+          return $options.validate('user_id');
+        })
+      }, [_hoisted_29, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.merchant_list, function (item) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+          value: item.id,
+          key: item.id
+        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.name), 9 /* TEXT, PROPS */, _hoisted_30);
+      }), 128 /* KEYED_FRAGMENT */))], 544 /* HYDRATE_EVENTS, NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.form.user_id]]), !!$data.errors.user_id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_31, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errors.user_id), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
         "for": "subject",
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(['mb-0', !!$data.errors.subject && 'validation-error-label'])
       }, "Subject *", 2 /* CLASS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "text",
-        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+        "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
           return $data.form.subject = $event;
         }),
         name: "subject",
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(['form-control', !!$data.errors.subject && 'validation-error']),
-        onBlur: _cache[2] || (_cache[2] = function ($event) {
+        onBlur: _cache[4] || (_cache[4] = function ($event) {
           return $options.validate('subject');
         }),
-        onKeypress: _cache[3] || (_cache[3] = function ($event) {
+        onKeypress: _cache[5] || (_cache[5] = function ($event) {
           return $options.validate('subject');
         })
-      }, null, 34 /* CLASS, HYDRATE_EVENTS */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.subject]]), !!$data.errors.subject ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errors.subject), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+      }, null, 34 /* CLASS, HYDRATE_EVENTS */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.subject]]), !!$data.errors.subject ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errors.subject), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
         "for": "description",
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(['mb-0', !!$data.errors.content && 'validation-error-label'])
       }, "Description *", 2 /* CLASS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
         type: "text",
-        "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+        "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
           return $data.form.content = $event;
         }),
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(['form-control', !!$data.errors.content && 'validation-error']),
         rows: "5",
-        onBlur: _cache[5] || (_cache[5] = function ($event) {
+        onBlur: _cache[7] || (_cache[7] = function ($event) {
           return $options.validate('content');
         }),
-        onKeypress: _cache[6] || (_cache[6] = function ($event) {
+        onKeypress: _cache[8] || (_cache[8] = function ($event) {
           return $options.validate('content');
         })
-      }, null, 34 /* CLASS, HYDRATE_EVENTS */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.content]]), !!$data.errors.content ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errors.description), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      }, null, 34 /* CLASS, HYDRATE_EVENTS */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.content]]), !!$data.errors.content ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errors.content), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_36, [_hoisted_37, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "file",
         name: "attachment",
         "class": "file-control",
-        onChange: _cache[7] || (_cache[7] = function () {
+        onChange: _cache[9] || (_cache[9] = function () {
           return $options.fileUpload && $options.fileUpload.apply($options, arguments);
         })
-      }, null, 32 /* HYDRATE_EVENTS */), !!$data.errors.attachment ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errors.attachment), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])];
+      }, null, 32 /* HYDRATE_EVENTS */), !!$data.errors.attachment ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_38, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errors.attachment), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])];
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["show"])], 32 /* HYDRATE_EVENTS */)]);
@@ -20363,14 +20552,79 @@ var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVN
 var _hoisted_10 = {
   "class": "FilterBy_item"
 };
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"col-lg-12\"><div class=\"table_part\"><table class=\"table\"><tbody><tr><th>SL</th><th>Client Name</th><th>Client ID</th><th>Ticket No.</th><th>Subject For Ticket</th><th>Submission Time</th><th>Assignee</th><th>Status</th></tr><!-- item --><tr><td>01</td><td class=\"name\">M.H. Neshad</td><td>1577</td><td>922</td><td class=\"subject_for_ticket\"><a href=\"support_ticket_details.html\">Lorem ipsum dolor sit amet, consectetur.....</a></td><td>12:45 PM ; 1 Feb, 2020</td><td>Claire</td><td><div class=\"dropdown_part\"><span class=\"dropdown-toggle d_flex\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"> Active <div class=\"arrow\"><svg width=\"11\" height=\"6\" viewBox=\"0 0 11 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0.244629 0.501221L5.40989 5.66649L10.5752 0.501221H0.244629Z\" fill=\"#747474\"></path></svg></div></span><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\"><li><a class=\"dropdown-item\" href=\"#\">Action</a></li><li><a class=\"dropdown-item\" href=\"#\">Another action</a></li><li><a class=\"dropdown-item\" href=\"#\">Something else here</a></li><!-- up arrow --><div class=\"up_arrow\"><svg width=\"11\" height=\"6\" viewBox=\"0 0 11 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M10.3306 5.16528L5.1653 1.6953e-05L3.48091e-05 5.16528L10.3306 5.16528Z\" fill=\"#F3ECFF\"></path></svg></div></ul></div></td></tr></tbody></table></div></div>", 1);
+var _hoisted_11 = {
+  "class": "col-lg-12"
+};
+var _hoisted_12 = {
+  "class": "table_part"
+};
+var _hoisted_13 = {
+  "class": "table"
+};
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "SL"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Client Name"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Ticket No."), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Subject For Ticket"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Submission Time"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Assignee"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Status")], -1 /* HOISTED */);
+var _hoisted_15 = {
+  "class": "name"
+};
+var _hoisted_16 = {
+  "class": "subject_for_ticket"
+};
+var _hoisted_17 = {
+  href: "support_ticket_details.html"
+};
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "dropdown_part"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  "class": "dropdown-toggle d_flex",
+  id: "dropdownMenuButton1",
+  "data-bs-toggle": "dropdown",
+  "aria-expanded": "false"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Active "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "arrow"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  width: "11",
+  height: "6",
+  viewBox: "0 0 11 6",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M0.244629 0.501221L5.40989 5.66649L10.5752 0.501221H0.244629Z",
+  fill: "#747474"
+})])])]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", {
+  "class": "dropdown-menu",
+  "aria-labelledby": "dropdownMenuButton1"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+  "class": "dropdown-item",
+  href: "#"
+}, "Action")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+  "class": "dropdown-item",
+  href: "#"
+}, "Another action")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+  "class": "dropdown-item",
+  href: "#"
+}, "Something else here")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" up arrow "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "up_arrow"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  width: "11",
+  height: "6",
+  viewBox: "0 0 11 6",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M10.3306 5.16528L5.1653 1.6953e-05L3.48091e-05 5.16528L10.3306 5.16528Z",
+  fill: "#F3ECFF"
+})])])])])], -1 /* HOISTED */);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Header "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Filter By Item "), _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Filter By Item "), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Filter By Item "), _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return _ctx.$emit('add');
     }),
     "class": "btn btn-default"
-  }, "Add New")])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Table Part  "), _hoisted_11])])]);
+  }, "Add New")])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Table Part  "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" item "), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.tickets, function (ticket, index) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
+      key: ticket.id
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(index + 1), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ticket['merchant']['name']), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "#" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ticket['ticket_id']), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ticket.subject), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ticket.created_at), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ticket.staff_id), 1 /* TEXT */), _hoisted_18]);
+  }), 128 /* KEYED_FRAGMENT */))])])])])])])]);
 }
 
 /***/ }),
