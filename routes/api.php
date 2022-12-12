@@ -31,22 +31,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 //client api
-Route::prefix('v1/customer')->name('customer.')->group(function(){
-    Route::get('categories',[CustomerCategory::class,'index'])->name('categories.index');
-    Route::get('categories/{category}',[CustomerCategory::class,'show'])->name('categories.show');
-    Route::get('products',[CustomerProduct::class,'index'])->name('products.index');
-    Route::get('products/{product}',[CustomerProduct::class,'show'])->name('products.show');
+Route::prefix('v1/customer')->name('customer.')->group(function () {
+    Route::get('categories', [CustomerCategory::class, 'index'])->name('categories.index');
+    Route::get('categories/{category}', [CustomerCategory::class, 'show'])->name('categories.show');
+    Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
+    Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
 });
 
 //merchant api
-Route::post('login', [LoginController::class,'merchant_login'])->name('merchant.login');
-Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(function(){
-    Route::get('logout', [LoginController::class,'merchant_logout'])->name('logout');
-    Route::prefix('settings')->name('settings.')->group(function(){
-       Route::post('update-merchant-info',[MerchantSetting::class,'update_merchant_info'])->name('update.merchant.info'); 
+Route::post('login', [LoginController::class, 'merchant_login'])->name('merchant.login');
+Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(function () {
+    Route::get('logout', [LoginController::class, 'merchant_logout'])->name('logout');
+    Route::prefix('settings')->name('settings.')->group(function () {
+
+        //business info
+        Route::get('business-info', [MerchantSetting::class, 'business_info'])->name('business.info');
+        Route::post('business-info/update', [MerchantSetting::class, 'business_info_update'])->name('business.info.update');
+
+        //owner info
+        Route::get('owner-info', [MerchantSetting::class, 'owner_info'])->name('owner.info');
+        Route::post('owner-info/update', [MerchantSetting::class, 'owner_info_update'])->name('owner.info.update');
+
+        //password & security
+        Route::post('password-security/update', [MerchantSetting::class, 'password_security_update'])->name('password.security.update');
+
     });
-    Route::resource('sliders',ClientSlider::class);
-    Route::resource('orders',ClientOrder::class);
-    Route::resource('products',ClientProduct::class);
-    Route::resource('categories',ClientCategory::class);
+    Route::resource('sliders', ClientSlider::class);
+    Route::resource('orders', ClientOrder::class);
+    Route::resource('products', ClientProduct::class);
+    Route::resource('categories', ClientCategory::class);
 });
