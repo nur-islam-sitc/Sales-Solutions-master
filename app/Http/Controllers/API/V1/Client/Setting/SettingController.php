@@ -8,7 +8,8 @@ use App\Models\Media;
 use App\Models\MerchantInfo;
 use App\Models\Shop;
 use App\Models\User;
-use DB;
+use App\Models\WebsiteSetting;
+use DB, File;
 use Illuminate\Support\Facades\Hash;
 
 class SettingController extends Controller
@@ -154,6 +155,7 @@ class SettingController extends Controller
                     'msg' =>  'Merchant not Found',
                 ], 404);
             }
+
             $merchantInfo  = MerchantInfo::where('user_id', $merchant->id)->first();
             if (!$merchantInfo) {
                 return response()->json([
@@ -196,9 +198,9 @@ class SettingController extends Controller
                     'msg' =>  'Merchant not Found',
                 ], 404);
             }
-            
+
             #Match The Old Password
-            if(!Hash::check($request->old_password, $merchant->password)){
+            if (!Hash::check($request->old_password, $merchant->password)) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Old Password Doesn\'t match!',
@@ -209,11 +211,144 @@ class SettingController extends Controller
             User::whereId($merchant->id)->update([
                 'password' => Hash::make($request->new_password)
             ]);
-            
+
             DB::commit();
             return response()->json([
                 'success' => true,
                 'msg' => 'merchant setting password update successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
+    }
+
+
+    public function website_update(MerchantSettingRequest $request)
+    {
+        try {
+
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
+            $websiteSetting = WebsiteSetting::where('user_id', $merchant->id)->first();
+
+            if (!$websiteSetting) {
+                DB::beginTransaction();
+                $web = new WebsiteSetting();
+                $web->cash_on_delivery = $request->cash_on_delivery;
+                $web->invoice_id = $request->invoice_id;
+                $web->custom_domain = $request->custom_domain;
+                $web->shop_name = $request->shop_name;
+                $web->shop_address = $request->shop_address;
+                $web->website_shop_id = $request->website_shop_id;
+                $web->shop_id = auth()->user()->shop->id;
+                $web->user_id = auth()->user()->id;
+                $web->meta_title = $request->meta_title;
+                $web->meta_description = $request->meta_description;
+                $web->save();
+
+                if ($request->hasFile('website_shop_logo')) {
+                    $mainImageName = time() . '_website_shop_logo.' . $request->website_shop_logo->extension();
+                    $request->website_shop_logo->move(public_path('images'), $mainImageName);
+                    $media = new Media();
+                    $media->name = '/images/' . $mainImageName;
+                    $media->parent_id = $web->id;
+                    $media->type = 'website_shop_logo';
+                    $media->save();
+                    if ($media) {
+                        $web['website_shop_logo'] = $media->name;
+                    }
+                }
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'msg' => 'merchant website setting update successfully',
+                    'data' =>    $web,
+                ], 200);
+            }
+            
+            $oldLogo = $websiteSetting->website_shop_logo;
+            DB::beginTransaction();
+            
+            $websiteSetting->cash_on_delivery = $request->cash_on_delivery;
+            $websiteSetting->invoice_id = $request->invoice_id;
+            $websiteSetting->custom_domain = $request->custom_domain;
+            $websiteSetting->shop_name = $request->shop_name;
+            $websiteSetting->shop_address = $request->shop_address;
+            $websiteSetting->website_shop_id = $request->website_shop_id;
+            $websiteSetting->meta_title = $request->meta_title;
+            $websiteSetting->meta_description = $request->meta_description;
+            $websiteSetting->save();
+
+            if ($oldLogo) {
+                File::delete(public_path($oldLogo->name));
+                $oldLogo->delete();
+            }
+            
+
+            if ($request->hasFile('website_shop_logo')) {
+                $mainImageName = time() . '_website_shop_logo.' . $request->website_shop_logo->extension();
+                $request->website_shop_logo->move(public_path('images'), $mainImageName);
+                $media = new Media();
+                $media->name = '/images/' . $mainImageName;
+                $media->parent_id = $websiteSetting->id;
+                $media->type = 'website_shop_logo';
+                $media->save();
+                if ($media) {
+                    $websiteSetting['website_shop_logo'] = $media->name;
+                }
+            }
+
+            
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'msg' => 'merchant website setting update successfully',
+                'data' =>    $websiteSetting,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    public function website()
+    {
+        try {
+            DB::beginTransaction();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+            $websiteSetting  = WebsiteSetting::with('website_shop_logo')->where('user_id', $merchant->id)->first();
+            if (!$websiteSetting) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Website setting not Found',
+                ], 404);
+            }
+
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'data' =>   $websiteSetting,
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();

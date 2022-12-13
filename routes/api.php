@@ -55,6 +55,11 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         //password & security
         Route::post('password-security/update', [MerchantSetting::class, 'password_security_update'])->name('password.security.update');
 
+        //website 
+        Route::get('website', [MerchantSetting::class, 'website'])->name('website');
+        Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
+        
+
     });
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
