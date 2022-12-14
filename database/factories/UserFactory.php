@@ -43,4 +43,20 @@ class UserFactory extends Factory
             ];
         });
     }
+
+
+    /**
+     * @return Factory
+     */
+    public function staff(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => $this->faker->name,
+                'email' => $this->faker->unique()->email(),
+                'phone' => $this->faker->unique()->phoneNumber(),
+                'role' => 'staff',
+            ];
+        });
+    }
 }

@@ -138,9 +138,9 @@
                         <li class="page-item" :class="{disabled: currentPage === 1}" @click="prevPage(merchants.prev_page_url)">
                             <a class="page-link" tabindex="-1">Previous</a>
                         </li>
-                        <li v-for="pageNumber in merchants.last_page" v-if="Math.abs(pageNumber - merchants.current_page) < 6 || pageNumber === merchants.last_page - 1 || pageNumber === 0" class="page-item" :class="{active: merchants.current_page === pageNumber }">
-                            <a class="page-link" @click="fetchMerchants(pageNumber), setCurrentPage(pageNumber)" :class="{disabled: merchants.current_page === pageNumber , last: (pageNumber === merchants.last_page - 1 && Math.abs(pageNumber - merchants.current_page) > 3), first:(pageNumber === 0 && Math.abs(pageNumber - merchants.current_page) > 3)}">{{ pageNumber }}</a></li>
-                        <li class="page-item" :class="{disabled: currentPage === merchants.last_page}" @click="nextPage(merchants.next_page_url)">
+                        <li v-for="pageNumber in totalPage" v-if="Math.abs((pageNumber - currentPage)) > 6 || pageNumber === totalPage - 1 || pageNumber === 0" class="page-item" :class="{active: currentPage === pageNumber }">
+                            <a class="page-link" @click="setCurrentPage(pageNumber)" :class="{disabled: currentPage === pageNumber , last: (pageNumber === totalPage - 1 && Math.abs(pageNumber - currentPage) > 3), first:(pageNumber === 0 && Math.abs(pageNumber - currentPage) > 3)}">{{ pageNumber }}</a></li>
+                        <li class="page-item" :class="{disabled: currentPage === totalPage}" @click="nextPage(merchants['next_page_url'])">
                             <a class="page-link">Next</a>
                         </li>
                     </ul>
@@ -155,17 +155,19 @@
 export default {
     data() {
         return {
+            pageNumber: 0,
             merchants: [],
             statusList: [],
             currentPage: 1,
-            totalPage: '',
-            statusText: ''
+            totalPage: 0,
+            statusText: '',
+            nextPageUrl: null,
         }
     },
     mounted() {
+        console.log(Math.abs(0 - 1) < 6 )
         this.fetchMerchants();
         this.fetchStatues();
-        console.log('current_page', this.currentPage)
     },
     methods: {
         capitalized(name) {
@@ -185,8 +187,8 @@ export default {
         fetchMerchants(page = 0, status = '',  search = '', joining_date = '') {
             axios.get('/panel/merchants/merchants', {params: {page, status, search, joining_date }}).then(response => {
                 this.merchants = response.data
-                this.currentPage = response.data.current_page
-                this.totalPage = response.data.last_page
+                this.currentPage = response.data["current_page"]
+                this.totalPage = response.data["last_page"]
             })
         },
         fetchStatues() {
@@ -199,7 +201,6 @@ export default {
             this.fetchMerchants(this.currentPage,  status)
         },
         updateStatus(merchant, status) {
-
             axios.post('/panel/merchants/'+merchant+'/update-status', {status}).then(response => {
                 this.fetchMerchants();
             })
@@ -211,12 +212,14 @@ export default {
         },
         setCurrentPage(page) {
             this.currentPage = page
+
+            this.fetchMerchants(page)
         },
         nextPage(url) {
             if(this.currentPage < this.totalPage) {
                 axios.get(url).then(response => {
                     this.merchants = response.data
-                    this.currentPage = response.data.current_page
+                    this.currentPage = response.data["current_page"]
                 })
             }
         },
