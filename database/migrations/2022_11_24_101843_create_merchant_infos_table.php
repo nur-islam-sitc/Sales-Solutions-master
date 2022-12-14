@@ -23,6 +23,7 @@ class CreateMerchantInfosTable extends Migration
             $table->text('description')->nullable();
             $table->string('brand_color')->nullable();
             $table->string('brand_border_color')->nullable();
+            $table->text('other_info')->nullable();
             $table->timestamps();
         });
     }

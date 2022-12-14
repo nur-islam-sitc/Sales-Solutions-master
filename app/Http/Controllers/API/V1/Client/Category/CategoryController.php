@@ -58,8 +58,8 @@ class CategoryController extends Controller
             $category->name = $request->name;
             $category->slug = Str::slug($request->name);
             $category->description = $request->description;
-            $category->shop_id = 1;
-            $category->user_id = 1;
+            $category->shop_id = auth()->user()->shop->id;
+            $category->user_id = auth()->user()->id;
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
             $category->save();

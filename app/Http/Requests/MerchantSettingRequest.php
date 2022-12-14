@@ -25,16 +25,55 @@ class MerchantSettingRequest extends FormRequest
      */
     public function rules()
     {
-        if(\Request::route()->getName() === "client.settings.update.merchant.info"){
+        if (\Request::route()->getName() === "client.settings.business.info.update") {
+
             return [
-                'short_address' => 'required|string|max:255',
-                'address' => 'nullable|string|max:255',
-                'fb_page' => 'required|string|max:255',
-                'short_description' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'brand_color' => 'nullable|string|max:255',
-                'brand_border_color' => 'nullable|string|max:255',
+                'shop_name' => 'required|string|max:255',
+                'shop_address' => 'nullable|string|max:255',
+                'shop_logo' => 'nullable|image',
+                'shop_id' => 'nullable|integer',
+                'shop_meta_title' => 'nullable|string',
+                'shop_meta_description' => 'nullable|string',
             ];
+        }
+
+        if (\Request::route()->getName() === "client.settings.owner.info.update") {
+
+            return [
+                'owner_name' => 'required|string|max:255',
+                'owner_number' => 'required|string|max:255',
+                'owner_email' => 'required|string|max:255',
+                'owner_address' => 'nullable|string|max:255',
+                'owner_other_info' => 'nullable|string|max:255',
+            ];
+
+        }
+
+        if (\Request::route()->getName() === "client.settings.password.security.update") {
+
+            return [
+                'old_password' => 'required',
+                'new_password' => 'required|min:6|same:password_confirmation',
+                'password_confirmation' => 'required|min:6'
+            ];
+
+        }
+
+        if (\Request::route()->getName() === "client.settings.website.update") {
+
+            return [
+                'cash_on_delivery' => 'required|boolean',
+                'invoice_id' => 'required|integer',
+                'custom_domain' => 'required|string',
+                'shop_name' => 'required|string|max:255',
+                'shop_address' => 'nullable|string|max:255',
+                'website_shop_logo' => 'nullable|image',
+                'shop_id' => 'nullable|integer',
+                'meta_title' => 'nullable|string',
+                'meta_description' => 'nullable|string',
+                
+            ];
+
         }
         return [];
     }
@@ -42,9 +81,9 @@ class MerchantSettingRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
-            "success"=>false,
-            "errors"=>$validator->errors(),
-            "msg"=>$validator->messages("*")->first()
+            "success" => false,
+            "errors" => $validator->errors(),
+            "msg" => $validator->messages("*")->first()
         ], 400));
     }
 }
