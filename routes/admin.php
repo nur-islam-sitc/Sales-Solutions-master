@@ -39,9 +39,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
 
     Route::group(['prefix' => 'support-ticket'], function (){
         Route::get('/', [SupportTicketController::class, 'index'])->name('admin.support_ticket');
-        Route::get('/create', [SupportTicketController::class, 'create'])->name('admin.support_ticket.create');
-        Route::post('/store', [SupportTicketController::class, 'store'])->name('admin.support_ticket.store');
-
+        Route::get('/tickets', [SupportTicketController::class, 'tickets']);
+        Route::post('/store', [SupportTicketController::class, 'store']);
     });
 
 
