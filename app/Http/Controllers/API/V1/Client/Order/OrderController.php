@@ -149,4 +149,32 @@ class OrderController extends Controller
     {
         //
     }
+
+
+    public function order_status_update(OrderRequest $request)
+    {
+        try {
+
+            $order = Order::with('order_details')->where('id', $request->order_id)->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Order not Found!',
+                ], 404);
+            }
+
+            $order->order_status = $request->status;
+            $order->save();
+
+            return response()->json([
+                'success' => true,
+                'msg' =>   'Order Status Update Successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
+    }
 }
