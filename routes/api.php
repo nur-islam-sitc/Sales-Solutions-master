@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
+use App\Http\Controllers\API\V1\Client\CourierController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
@@ -8,6 +9,7 @@ use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Merchant\Auth\LoginController;
+use App\Services\Courier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,14 +57,22 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         //password & security
         Route::post('password-security/update', [MerchantSetting::class, 'password_security_update'])->name('password.security.update');
 
-        //website 
+        //website
         Route::get('website', [MerchantSetting::class, 'website'])->name('website');
         Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
-        
+
 
     });
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
     Route::resource('categories', ClientCategory::class);
+
+
+
+});
+
+Route::group(['prefix' => 'courier'], function () {
+    Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
+    Route::post('/track-order', [CourierController::class, 'trackOrder']);
 });
