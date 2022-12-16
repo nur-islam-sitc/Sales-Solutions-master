@@ -56,7 +56,7 @@ class ProductRequest extends FormRequest
                 'short_description' => 'required|string',
                 'long_description' => 'required|string',
                 'main_image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-                'other_image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'other_image' => 'nullable|image|array|mimes:png,jpg,jpeg|max:2048',
                 'meta_tag' => 'required|string',
                 'meta_description' => 'required|string',
                 'status' => 'required|boolean',

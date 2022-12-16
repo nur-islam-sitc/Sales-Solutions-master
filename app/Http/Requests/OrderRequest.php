@@ -47,6 +47,13 @@ class OrderRequest extends FormRequest
                 'product_qty' => 'required|array|min:1',
             ];
         }
+
+        if(Request::route()->getName() === "client.orders.status.update"){
+            return [
+                'order_id' => 'required|integer',
+                'status' => 'required|string|max:255',
+            ];
+        }
         return [];
     }
 

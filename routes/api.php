@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
+use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
@@ -58,9 +59,11 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         //website 
         Route::get('website', [MerchantSetting::class, 'website'])->name('website');
         Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
-        
-
     });
+
+    Route::get('sales-target',[SalesTargetController::class,'sales_target'])->name('sales.target');
+    Route::post('sales-target/update',[SalesTargetController::class,'sales_target_update'])->name('sales.target.update');
+    Route::post('orders/status/update',[ClientOrder::class,'order_status_update'])->name('orders.status.update');
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
