@@ -26,13 +26,16 @@
 </head>
 <body>
 
-<div id="app">
+<div>
     @include('panel.partials.__sidebar')
     @include('panel.partials.__header')
 
     <div class="section_gaps"></div>
 
-    @yield('content')
+    <div id="app">
+        @yield('content')
+    </div>
+
 
 </div>
 <script src="{{ mix('/js/app.js') }}"></script>

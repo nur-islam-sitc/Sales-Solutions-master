@@ -36,6 +36,8 @@ class DatabaseSeeder extends Seeder
             ]);
         });
 
+        User::factory(200)->staff()->create();
+
 
         $roles = [
             [
