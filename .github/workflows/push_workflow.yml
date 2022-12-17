@@ -16,8 +16,8 @@ jobs:
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: master_dev@salesolutionbd.com
-          password: master_dev@@##
+          server: ftp.funnelliner.com
+          username: theme@funnelliner.com
+          password: NAQ9V{S0*@FT
           protocol: ftps
           port: 21 # todo replace with your web hosts ftps port
