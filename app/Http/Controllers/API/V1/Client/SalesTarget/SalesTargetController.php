@@ -79,7 +79,6 @@ class SalesTargetController extends Controller
             $salesTarget->monthly = $request->monthly;
             $salesTarget->save();
 
-            
             return response()->json([
                 'success' => true,
                 'msg' => 'Sales target updated successfully',

@@ -33,15 +33,11 @@ class ProductRequest extends FormRequest
                 'product_name' => 'required|string',
                 'price' => 'required|integer',
                 'discount' => 'required|integer',
-                'size' => 'required|string',
-                'color' => 'required|string',
-                'short_description' => 'required|string',
-                'long_description' => 'required|string',
+                'short_description' => 'nullable|string',
                 'main_image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-                'other_image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-                'meta_tag' => 'required|string',
-                'meta_description' => 'required|string',
-                'status' => 'required|boolean',
+                'other_image' => 'nullable',
+                'other_image.*' => 'image|mimes:png,jpg,jpeg|max:2048',
+                'status' => 'nullable|boolean',
             ];
         }
 
@@ -50,16 +46,11 @@ class ProductRequest extends FormRequest
                 'category_id' => 'required|integer',
                 'product_name' => 'required|string',
                 'price' => 'required|integer',
-                'discount' => 'required|integer',
-                'size' => 'required|string',
-                'color' => 'required|string',
-                'short_description' => 'required|string',
-                'long_description' => 'required|string',
+                'discount' => 'nullable|integer',
+                'short_description' => 'nullable|string',
                 'main_image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'other_image' => 'nullable|image|array|mimes:png,jpg,jpeg|max:2048',
-                'meta_tag' => 'required|string',
-                'meta_description' => 'required|string',
-                'status' => 'required|boolean',
+                'status' => 'nullable|boolean',
             ];
         }
         return [];
