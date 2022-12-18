@@ -24,13 +24,8 @@ class CreateProductsTable extends Migration
             $table->string('slug');
             $table->float('price',8,2);
             $table->float('discount',8,2);
-            $table->string('size');
-            $table->string('color');
-            $table->text('short_description');
-            $table->longText('long_description');
-            $table->string('meta_tag');
-            $table->string('meta_description');
-            $table->boolean('status');
+            $table->text('short_description')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
