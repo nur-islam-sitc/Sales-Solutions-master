@@ -19,8 +19,9 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->unique();
+            $table->string('address')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'merchant', 'customer', 'staff']);
+            $table->enum('role', ['admin', 'merchant', 'customer', 'staff',]);
             $table->string('token')->nullable();
             $table->string('status')->default(User::STATUS_ACTIVE);
             $table->string('api_token')->nullable();

@@ -206,8 +206,11 @@ class CategoryController extends Controller
                     'msg' => 'category not Found',
                 ], 404);
             }
-            File::delete(public_path($category->category_image->name));
-            $category->category_image->delete();
+            if($category->category_image){
+                File::delete(public_path($category->category_image->name));
+                $category->category_image->delete();
+            }
+           
             $category->delete();
             return response()->json([
                 'success' => true,
