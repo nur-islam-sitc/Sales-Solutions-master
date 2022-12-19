@@ -170,7 +170,7 @@ class ProductController extends Controller
         try {
 
             DB::beginTransaction();
-            $product  = Product::with(['main_image', 'other_image'])->find($id);
+            $product  = Product::with('main_image')->find($id);
             if (!$product) {
                 return response()->json([
                     'success' => false,
@@ -189,6 +189,7 @@ class ProductController extends Controller
             $product->save();
 
             if ($request->has('main_image')) {
+
                 $image_path = $product->main_image->name;
                 File::delete(public_path($image_path));
 
@@ -197,21 +198,11 @@ class ProductController extends Controller
                 $media = Media::where('type', 'product_main_image')->where('parent_id', $product->id)->update([
                     'name' => '/images/' . $imageName
                 ]);
+
+
             }
-            if ($request->has('other_image')) {
-
-                
-                $image_path = $product->other_image->name;
-                File::delete(public_path($image_path));
-
-                $imageName = time() . rand(1000, 9999) . '_other_image.' . $request->other_image->extension();
-                $request->other_image->move(public_path('images'), $imageName);
-                $media = Media::where('type', 'product_other_image')->where('parent_id', $product->id)->update([
-                    'name' => '/images/' . $imageName
-                ]);
-            }
-
-            $updatedProduct = Product::with(['main_image', 'other_image'])->where('id', $id)->first();
+            
+            $updatedProduct = Product::with(['main_image'])->where('id', $id)->first();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -236,17 +227,29 @@ class ProductController extends Controller
     public function destroy($id)
     {
         try {
-            $product  = Product::with(['main_image', 'other_image'])->find($id);
+            $product  = Product::with(['main_image'])->find($id);
             if (!$product) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Product not Found',
                 ], 404);
             }
-            File::delete(public_path($product->main_image->name));
-            $product->main_image->delete();
-            File::delete(public_path($product->other_image->name));
-            $product->other_image->delete();
+            if($product->main_image){
+                File::delete(public_path($product->main_image->name));
+                $product->main_image->delete();
+            }
+
+            $other_images = Media::where('parent_id', $product->id)->where('type','product_other_image')->get();
+            
+            if(count($other_images) > 0){
+                foreach($other_images as $image){
+                    File::delete(public_path($image->name));
+                    $image->delete();
+                }
+                
+            }
+            
+            
             $product->delete();
             return response()->json([
                 'success' => true,
