@@ -21,10 +21,16 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $product  = Product::with(['main_image', 'other_image'])->get();
+            $allProduct = [];
+            $products   = Product::with('main_image')->get();
+            foreach($products as $product){
+                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+                $product['other_images']= $other_images;
+                $allProduct[] = $product;
+            }
             return response()->json([
                 'success' => true,
-                'data' => $product,
+                'data' => $allProduct,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -121,7 +127,9 @@ class ProductController extends Controller
     public function show($slug)
     {
         try {
-            $product  = Product::with(['main_image', 'other_image'])->where('slug', $slug)->first();
+            $product  = Product::with('main_image')->where('slug', $slug)->first();
+            $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+            $product['other_images']= $other_images;
             if (!$product) {
                 return response()->json([
                     'success' => false,
