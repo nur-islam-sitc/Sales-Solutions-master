@@ -8,6 +8,7 @@ use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduc
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
+use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Merchant\Auth\LoginController;
@@ -73,6 +74,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::resource('products', ClientProduct::class);
     Route::resource('pages', ClientPage::class);
     Route::resource('categories', ClientCategory::class);
+    Route::get('top-selling-product', [TopSellingProduct::class,'index']);
 });
 
 
