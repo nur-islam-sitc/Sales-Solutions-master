@@ -21,10 +21,28 @@ class OrderController extends Controller
     public function index()
     {
         try {
+
+            $allOrder = [];
             $orders  = Order::with('order_details')->get();
+            foreach($orders as $order){
+                $customer = User::where('id', $order->user_id)->where('role','customer')->first();
+                if (!$customer) {
+                    return response()->json([
+                        'success' => false,
+                        'msg' =>  'Customer not Found',
+                    ], 404);
+                }
+
+                $allOrder[] = [
+                    'order' => $order,
+                    'customer' => $customer,
+                ];
+                
+            }
+
             return response()->json([
                 'success' => true,
-                'data' => $orders,
+                'data' => $allOrder,
             ]);
         } catch (\Exception $e) {
             return response()->json([
