@@ -62,10 +62,10 @@ class MerchantSettingRequest extends FormRequest
         if (\Request::route()->getName() === "client.settings.website.update") {
 
             return [
-                'cash_on_delivery' => 'required|boolean',
-                'invoice_id' => 'required|integer',
-                'custom_domain' => 'required|string',
-                'shop_name' => 'required|string|max:255',
+                'cash_on_delivery' => 'nullable|boolean',
+                'invoice_id' => 'nullable|integer',
+                'custom_domain' => 'nullable|string',
+                'shop_name' => 'nullable|string|max:255',
                 'shop_address' => 'nullable|string|max:255',
                 'website_shop_logo' => 'nullable|image',
                 'shop_id' => 'nullable|integer',
