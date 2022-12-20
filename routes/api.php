@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
+use App\Http\Controllers\API\V1\Client\Customer\MerchantCustomerController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
@@ -56,10 +57,12 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         //password & security
         Route::post('password-security/update', [MerchantSetting::class, 'password_security_update'])->name('password.security.update');
 
-        //website 
+        //website
         Route::get('website', [MerchantSetting::class, 'website'])->name('website');
         Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
     });
+
+    Route::get('/customers/{id}', [MerchantCustomerController::class, 'getCustomerByMerchant']);
 
     Route::get('sales-target',[SalesTargetController::class,'sales_target'])->name('sales.target');
     Route::post('sales-target/update',[SalesTargetController::class,'sales_target_update'])->name('sales.target.update');
@@ -69,3 +72,5 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::resource('products', ClientProduct::class);
     Route::resource('categories', ClientCategory::class);
 });
+
+

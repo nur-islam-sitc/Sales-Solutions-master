@@ -16,6 +16,7 @@ class CreateCustomerInfosTable extends Migration
         Schema::create('customer_infos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('merchant_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('type', ['guest', 'user'])->default('guest');
             $table->text('address')->nullable();
             $table->timestamps();
