@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
+use App\Http\Controllers\API\V1\Client\CourierController;
+use App\Http\Controllers\API\V1\Client\Customer\MerchantCustomerController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
+use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
@@ -71,10 +74,11 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::resource('categories', ClientCategory::class);
 
 
-
 });
 
 Route::group(['prefix' => 'courier'], function () {
+
+    Route::post('/provider', [CourierController::class, 'store']);
     Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
     Route::post('/track-order', [CourierController::class, 'trackOrder']);
 });
