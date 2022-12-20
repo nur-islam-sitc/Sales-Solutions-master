@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1\Client\Page;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PageRequest;
 use Illuminate\Http\Request;
+use App\Models\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 

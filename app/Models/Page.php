@@ -9,13 +9,6 @@ class Page extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id','shop_id','title','slug','page_content','theme'];
-
-
-    public function theme()
-    {
-        return $this->belongsTo(Page::class);
-    }
-
    
     
 }
