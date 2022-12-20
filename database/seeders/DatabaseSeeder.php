@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CustomerInfo;
 use App\Models\MerchantInfo;
 use App\Models\Role;
 use App\Models\Shop;
@@ -23,7 +24,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create();
         $this->faker = Faker::create();
 
-        User::factory(200)->customer()->create()->each(function (User $user) {
+        User::factory(10)->merchant()->create()->each(function (User $user) {
             Shop::query()->create([
                 'user_id' => $user->id,
                 'name' => $this->faker->name(),
@@ -35,6 +36,21 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user->id,
             ]);
         });
+
+        $merchant = User::query()->where('role', 'merchant')->pluck('id');
+
+
+        User::factory(10)->customer()->create()->each(function (User $user) use ($merchant) {
+
+            CustomerInfo::query()->create([
+                'user_id' => $user->id,
+                'merchant_id' => $this->faker->randomElement($merchant)
+            ]);
+
+
+        });
+
+
 
         User::factory(200)->staff()->create();
 
