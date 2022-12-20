@@ -10,5 +10,9 @@ class Page extends Model
     use HasFactory;
     protected $fillable = ['user_id','shop_id','title','slug','page_content','theme'];
    
-    
+    protected $casts = [
+        'user_id' => 'integer',
+        'shop_id' => 'integer',
+        'theme' => 'integer'
+    ];
 }

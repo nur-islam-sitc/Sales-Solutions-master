@@ -29,7 +29,7 @@ class PageRequest extends FormRequest
         if(Request::route()->getName() === "client.page.store"){
             return [
                 'title' => 'required|string|max:255',
-                'theme' => 'required|string',
+                'theme' => 'required|integer',
                 'page_content' => 'nullable',
             ];
         }
@@ -37,7 +37,7 @@ class PageRequest extends FormRequest
         if(Request::route()->getName() === "client.page.update"){
             return [
                 'title' => 'required|string|max:255',
-                'theme' => 'required|string',
+                'theme' => 'required|integer',
                 'page_content' => 'nullable',
             ];
         }
