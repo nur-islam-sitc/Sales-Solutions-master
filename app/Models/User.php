@@ -127,6 +127,11 @@ class User extends Authenticatable
         return $this->hasMany(SupportTicket::class);
     }
 
+    public function customer_info()
+    {
+        return $this->hasOne(CustomerInfo::class);
+    }
+
     public function createApiToken(): string
     {
         $token = Str::random(64);

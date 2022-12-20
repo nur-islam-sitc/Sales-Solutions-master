@@ -21,10 +21,16 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $product  = Product::with(['main_image','other_image'])->get();
+            $allProduct = [];
+            $products   = Product::with('main_image')->get();
+            foreach($products as $product){
+                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+                $product['other_images']= $other_images;
+                $allProduct[] = $product;
+            }
             return response()->json([
                 'success' => true,
-                'data' => $product,
+                'data' => $allProduct,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -41,7 +47,6 @@ class ProductController extends Controller
      */
     public function create()
     {
-        
     }
 
     /**
@@ -52,50 +57,51 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+        //return $request->all();
         try {
-
+            
             DB::beginTransaction();
             $product  = new Product();
-            $product->category_id  = $request->category_id; 
-            $product->user_id  = auth()->user()->id; 
+            $product->category_id  = $request->category_id;
+            $product->user_id  = auth()->user()->id;
             $product->shop_id  = auth()->user()->shop->id;
-            $product->product_name = $request->product_name; 
-            $product->slug = Str::slug($request->product_name); 
-            $product->price = $request->price; 
-            $product->product_code = $request->product_code; 
-            $product->product_qty = $request->product_qty; 
-            $product->discount = $request->discount; 
-            $product->size = $request->size; 
-            $product->color = $request->color; 
-            $product->short_description = $request->short_description; 
-            $product->long_description = $request->long_description; 
-            $product->meta_tag = $request->meta_tag; 
-            $product->meta_description = $request->meta_description; 
-            $product->status = $request->status; 
+            $product->product_name = $request->product_name;
+            $product->slug = Str::slug($request->product_name);
+            $product->price = $request->price;
+            $product->product_code = $request->product_code;
+            $product->product_qty = $request->product_qty;
+            $product->discount = $request->discount;
+            $product->short_description = $request->short_description;
             $product->save();
 
-             //store product main image
-             $mainImageName = time() . '_main_image.' . $request->main_image->extension();
-             $request->main_image->move(public_path('images'), $mainImageName);
-             $media = new Media();
-             $media->name = '/images/' . $mainImageName;
-             $media->parent_id = $product->id;
-             $media->type = 'product_main_image';
-             $media->save();
- 
-             $product['main_image'] = $media->name;
+            //store product main image
+            $mainImageName = time() . '_main_image.' . $request->main_image->extension();
+            $request->main_image->move(public_path('images'), $mainImageName);
+            $media = new Media();
+            $media->name = '/images/' . $mainImageName;
+            $media->parent_id = $product->id;
+            $media->type = 'product_main_image';
+            $media->save();
 
-              //store product other image
-              $otherImageName = time() . '_other_image.' . $request->other_image->extension();
-              $request->other_image->move(public_path('images'), $otherImageName);
-              $mediaOther = new Media();
-              $mediaOther->name = '/images/' . $otherImageName;
-              $mediaOther->parent_id = $product->id;
-              $mediaOther->type = 'product_other_image';
-              $mediaOther->save();
-  
-              $product['other_image'] = $mediaOther->name;
-            
+            $product['main_image'] = $media->name;
+
+
+            if ($request->hasFile('other_image')) {
+
+                foreach($request->other_image as $key => $image){
+                //store product other image
+                $otherImageName = time() .rand(1000,9999). '_other_image.' . $image->extension();
+                $image->move(public_path('images'), $otherImageName);
+                $mediaOther = new Media();
+                $mediaOther->name = '/images/' . $otherImageName;
+                $mediaOther->parent_id = $product->id;
+                $mediaOther->type = 'product_other_image';
+                $mediaOther->save();
+                $product['other_image_'.$key] = $mediaOther->name;
+                }
+            }
+
+
 
             DB::commit();
             return response()->json([
@@ -121,8 +127,10 @@ class ProductController extends Controller
     public function show($slug)
     {
         try {
-            $product  = Product::with(['main_image','other_image'])->where('slug',$slug)->first();
-            if(!$product){
+            $product  = Product::with('main_image')->where('slug', $slug)->first();
+            $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+            $product['other_images']= $other_images;
+            if (!$product) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Product not Found',
@@ -148,7 +156,6 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        
     }
 
     /**
@@ -163,30 +170,26 @@ class ProductController extends Controller
         try {
 
             DB::beginTransaction();
-            $product  = Product::with(['main_image','other_image'])->find($id);
-            if(!$product){
+            $product  = Product::with('main_image')->find($id);
+            if (!$product) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Product not Found',
                 ], 404);
             }
-            $product->category_id  = $request->category_id; 
-            $product->product_name = $request->product_name; 
-            $product->slug = Str::slug($request->product_name); 
-            $product->price = $request->price; 
-            $product->product_code = $request->product_code; 
-            $product->product_qty = $request->product_qty; 
-            $product->discount = $request->discount; 
-            $product->size = $request->size; 
-            $product->color = $request->color; 
-            $product->short_description = $request->short_description; 
-            $product->long_description = $request->long_description; 
-            $product->meta_tag = $request->meta_tag; 
-            $product->meta_description = $request->meta_description; 
-            $product->status = $request->status; 
+            $product->category_id  = $request->category_id;
+            $product->product_name = $request->product_name;
+            $product->slug = Str::slug($request->product_name);
+            $product->price = $request->price;
+            $product->product_code = $request->product_code;
+            $product->product_qty = $request->product_qty;
+            $product->discount = $request->discount;
+            $product->short_description = $request->short_description;
+            $product->status = $request->status ? $request->status : null;
             $product->save();
 
             if ($request->has('main_image')) {
+
                 $image_path = $product->main_image->name;
                 File::delete(public_path($image_path));
 
@@ -195,19 +198,11 @@ class ProductController extends Controller
                 $media = Media::where('type', 'product_main_image')->where('parent_id', $product->id)->update([
                     'name' => '/images/' . $imageName
                 ]);
-            }
-            if ($request->has('other_image')) {
-                $image_path = $product->other_image->name;
-                File::delete(public_path($image_path));
 
-                $imageName = time() . '_other_image.' . $request->other_image->extension();
-                $request->other_image->move(public_path('images'), $imageName);
-                $media = Media::where('type', 'product_other_image')->where('parent_id', $product->id)->update([
-                    'name' => '/images/' . $imageName
-                ]);
-            }
 
-            $updatedProduct = Product::with(['main_image','other_image'])->where('id',$id)->first();
+            }
+            
+            $updatedProduct = Product::with(['main_image'])->where('id', $id)->first();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -232,17 +227,29 @@ class ProductController extends Controller
     public function destroy($id)
     {
         try {
-            $product  = Product::with(['main_image','other_image'])->find($id);
-            if(!$product){
+            $product  = Product::with(['main_image'])->find($id);
+            if (!$product) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Product not Found',
                 ], 404);
             }
-            File::delete(public_path($product->main_image->name));
-            $product->main_image->delete();
-            File::delete(public_path($product->other_image->name));
-            $product->other_image->delete();
+            if($product->main_image){
+                File::delete(public_path($product->main_image->name));
+                $product->main_image->delete();
+            }
+
+            $other_images = Media::where('parent_id', $product->id)->where('type','product_other_image')->get();
+            
+            if(count($other_images) > 0){
+                foreach($other_images as $image){
+                    File::delete(public_path($image->name));
+                    $image->delete();
+                }
+                
+            }
+            
+            
             $product->delete();
             return response()->json([
                 'success' => true,

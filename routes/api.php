@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
-use App\Http\Controllers\API\V1\Client\CourierController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
@@ -9,7 +8,6 @@ use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Merchant\Auth\LoginController;
-use App\Services\Courier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -60,9 +58,13 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         //website
         Route::get('website', [MerchantSetting::class, 'website'])->name('website');
         Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
-
-
     });
+
+    Route::get('/customers/{id}', [MerchantCustomerController::class, 'getCustomerByMerchant']);
+
+    Route::get('sales-target',[SalesTargetController::class,'sales_target'])->name('sales.target');
+    Route::post('sales-target/update',[SalesTargetController::class,'sales_target_update'])->name('sales.target.update');
+    Route::post('orders/status/update',[ClientOrder::class,'order_status_update'])->name('orders.status.update');
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
@@ -76,3 +78,5 @@ Route::group(['prefix' => 'courier'], function () {
     Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
     Route::post('/track-order', [CourierController::class, 'trackOrder']);
 });
+
+

@@ -64,7 +64,8 @@ class CategoryController extends Controller
             $category->status = $request->status;
             $category->save();
 
-            //store category image
+            if($request->hasFile('category_image')){
+                 //store category image
             $imageName = time() . '.' . $request->category_image->extension();
             $request->category_image->move(public_path('images'), $imageName);
             $media = new Media();
@@ -72,8 +73,11 @@ class CategoryController extends Controller
             $media->parent_id = $category->id;
             $media->type = 'category';
             $media->save();
-            DB::commit();
+           
             $category['image'] = $media->name;
+            }
+            DB::commit();
+           
 
             return response()->json([
                 'success' => true,
@@ -105,6 +109,12 @@ class CategoryController extends Controller
                     'msg' =>  'Category not Found',
                 ], 404);
             }
+
+            $subCategory = Category::where('parent_id',$category->id)->get();
+            if($subCategory){
+                $category['subcategory']= $subCategory;
+            }
+
             return response()->json([
                 'success' => true,
                 'data' =>   $category,
@@ -196,8 +206,11 @@ class CategoryController extends Controller
                     'msg' => 'category not Found',
                 ], 404);
             }
-            File::delete(public_path($category->category_image->name));
-            $category->category_image->delete();
+            if($category->category_image){
+                File::delete(public_path($category->category_image->name));
+                $category->category_image->delete();
+            }
+           
             $category->delete();
             return response()->json([
                 'success' => true,

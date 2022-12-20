@@ -32,7 +32,7 @@ class UserFactory extends Factory
      *
      * @return Factory
      */
-    public function customer(): Factory
+    public function merchant(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
@@ -40,6 +40,18 @@ class UserFactory extends Factory
                 'email' => $this->faker->unique()->email(),
                 'phone' => $this->faker->unique()->phoneNumber(),
                 'role' => 'merchant',
+            ];
+        });
+    }
+
+    public function customer(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => $this->faker->name,
+                'email' => $this->faker->unique()->email(),
+                'phone' => $this->faker->unique()->phoneNumber(),
+                'role' => 'customer',
             ];
         });
     }

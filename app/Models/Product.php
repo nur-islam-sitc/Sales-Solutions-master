@@ -16,8 +16,6 @@ class Product extends Model
         return $this->belongsTo(Media::class,'id','parent_id')->where('type','product_main_image');
     }
 
-    public function other_image()
-    {
-        return $this->belongsTo(Media::class,'id','parent_id')->where('type','product_other_image');
-    }
+   
+    
 }

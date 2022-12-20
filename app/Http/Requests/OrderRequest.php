@@ -39,12 +39,20 @@ class OrderRequest extends FormRequest
 
         if(Request::route()->getName() === "client.orders.update"){
             return [
+                'shop_id' => 'required|integer',
                 'customer_name' => 'required|string|max:255',
                 'customer_phone' => 'required|string|max:255',
                 'customer_address' => 'required|string|max:255',
                 'product_id' => 'required|array|min:1',
                 'product_id.*' => 'required|integer|distinct|min:1',
                 'product_qty' => 'required|array|min:1',
+            ];
+        }
+
+        if(Request::route()->getName() === "client.orders.status.update"){
+            return [
+                'order_id' => 'required|integer',
+                'status' => 'required|string|max:255',
             ];
         }
         return [];

@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\User;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Hash;
 
 class OrderController extends Controller
 {
@@ -53,13 +55,17 @@ class OrderController extends Controller
         //return $request->all();
         try {
             DB::beginTransaction();
+            $user = new User();
+            $user->name = $request->customer_name;
+            $user->email = 'guest'.rand(1000,9999).'@gmail.com';
+            $user->phone  = $request->customer_phone;
+            $user->address  = $request->customer_address;
+            $user->password = Hash::make(12345678);
+            $user->save();
             $order = new Order();
             $order->order_no = rand(100,9999);
-            $order->customer_name = $request->customer_name;
-            $order->customer_phone = $request->customer_phone;
-            $order->customer_address = $request->customer_address;
-            $order->shop_id = 1;
-            $order->user_id = 1;
+            $order->shop_id = $request->shop_id;
+            $order->user_id = $user->id;
             $order->save();
 
             //store order details
@@ -148,5 +154,33 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function order_status_update(OrderRequest $request)
+    {
+        try {
+
+            $order = Order::with('order_details')->where('id', $request->order_id)->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Order not Found!',
+                ], 404);
+            }
+
+            $order->order_status = $request->status;
+            $order->save();
+
+            return response()->json([
+                'success' => true,
+                'msg' =>   'Order Status Update Successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
     }
 }
