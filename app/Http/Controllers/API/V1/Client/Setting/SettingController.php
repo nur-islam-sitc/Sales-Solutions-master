@@ -244,16 +244,35 @@ class SettingController extends Controller
             if (!$websiteSetting) {
                 DB::beginTransaction();
                 $web = new WebsiteSetting();
-                $web->cash_on_delivery = $request->cash_on_delivery;
-                $web->invoice_id = $request->invoice_id;
-                $web->custom_domain = $request->custom_domain;
-                $web->shop_name = $request->shop_name;
-                $web->shop_address = $request->shop_address;
-                $web->website_shop_id = $request->website_shop_id;
+                if($request->cash_on_delivery){
+                    $web->cash_on_delivery = $request->cash_on_delivery;
+                }
+                if($request->invoice_id){
+                    $web->invoice_id = $request->invoice_id;
+                }
+                if($request->custom_domain){
+                    $web->custom_domain = $request->custom_domain;
+                }
+                if($request->shop_name){
+                    $web->shop_name = $request->shop_name;
+                }
+                if($request->shop_address){
+                    $web->shop_address = $request->shop_address;
+                }
+                if($request->website_shop_id){
+                    $web->website_shop_id = $request->website_shop_id;
+                }
+               
+               
                 $web->shop_id = auth()->user()->shop->id;
                 $web->user_id = auth()->user()->id;
-                $web->meta_title = $request->meta_title;
-                $web->meta_description = $request->meta_description;
+                if($request->meta_title){
+                    $web->meta_title = $request->meta_title;
+                }
+                if($request->meta_description){
+                    $web->meta_description = $request->meta_description;
+                }
+                
                 $web->save();
 
                 if ($request->hasFile('website_shop_logo')) {
@@ -279,14 +298,34 @@ class SettingController extends Controller
             $oldLogo = $websiteSetting->website_shop_logo;
             DB::beginTransaction();
             
-            $websiteSetting->cash_on_delivery = $request->cash_on_delivery;
-            $websiteSetting->invoice_id = $request->invoice_id;
-            $websiteSetting->custom_domain = $request->custom_domain;
-            $websiteSetting->shop_name = $request->shop_name;
-            $websiteSetting->shop_address = $request->shop_address;
-            $websiteSetting->website_shop_id = $request->website_shop_id;
-            $websiteSetting->meta_title = $request->meta_title;
-            $websiteSetting->meta_description = $request->meta_description;
+            if($request->cash_on_delivery){
+                $websiteSetting->cash_on_delivery = $request->cash_on_delivery;
+            }
+            if($request->invoice_id){
+                $websiteSetting->invoice_id = $request->invoice_id;
+            }
+            if($request->custom_domain){
+                $websiteSetting->custom_domain = $request->custom_domain;
+            }
+            if($request->shop_name){
+                $websiteSetting->shop_name = $request->shop_name;
+            }
+            if($request->shop_address){
+                $websiteSetting->shop_address = $request->shop_address;
+            }
+            if($request->website_shop_id){
+                $websiteSetting->website_shop_id = $request->website_shop_id;
+            }
+           
+           
+            $websiteSetting->shop_id = auth()->user()->shop->id;
+            $websiteSetting->user_id = auth()->user()->id;
+            if($request->meta_title){
+                $websiteSetting->meta_title = $request->meta_title;
+            }
+            if($request->meta_description){
+                $websiteSetting->meta_description = $request->meta_description;
+            }
             $websiteSetting->save();
 
             if ($oldLogo) {
