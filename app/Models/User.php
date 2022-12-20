@@ -127,6 +127,16 @@ class User extends Authenticatable
         return $this->hasMany(SupportTicket::class);
     }
 
+    public function customer()
+    {
+        return $this->belongsToMany(User::class, 'merchant_customer', 'customer_id');
+    }
+
+    public function merchant()
+    {
+        return $this->belongsToMany(User::class, 'merchant_customer', 'merchant_id');
+    }
+
     public function createApiToken(): string
     {
         $token = Str::random(64);
