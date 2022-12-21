@@ -72,7 +72,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
-    Route::resource('pages',PageController::class);
+    Route::resource('pages', PageController::class);
     Route::resource('categories', ClientCategory::class);
     Route::get('top-selling-product', [TopSellingProduct::class,'index']);
 });
