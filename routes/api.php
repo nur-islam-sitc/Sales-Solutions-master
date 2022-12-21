@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
+use App\Http\Controllers\API\V1\Client\CourierController;
 use App\Http\Controllers\API\V1\Client\Customer\MerchantCustomerController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
+use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
@@ -28,9 +29,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 
 //client api
@@ -82,7 +85,16 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::resource('pages', PageController::class);
     Route::resource('categories', ClientCategory::class);
     Route::get('top-selling-product', [TopSellingProduct::class, 'index']);
+
+
 });
 
+Route::group(['prefix' => 'courier'], function () {
+
+    Route::post('/provider', [CourierController::class, 'store']);
+    Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
+    Route::post('/track-order', [CourierController::class, 'trackOrder']);
+
+});
 
 
