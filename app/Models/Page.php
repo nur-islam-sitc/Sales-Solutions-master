@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id','shop_id','title','slug','page_content','theme'];
+    protected $fillable = ['user_id','shop_id','title','slug','page_content','theme','status'];
    
     protected $casts = [
         'user_id' => 'integer',
         'shop_id' => 'integer',
-        'theme' => 'integer'
+        'theme' => 'integer',
+        'status' => 'integer'
     ];
 }

@@ -21,7 +21,7 @@ class PageController extends Controller
     {
         try {
             
-            $Page = Page::select('id','user_id','shop_id','title','slug','page_content','theme')->get();
+            $Page = Page::select('id','user_id','shop_id','title','slug','page_content','theme','status')->get();
             
             return response()->json([
                 'success' => true,

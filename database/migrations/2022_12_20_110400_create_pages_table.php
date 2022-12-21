@@ -21,6 +21,7 @@ class CreatePagesTable extends Migration
             $table->string('slug')->unique();
             $table->longText('page_content')->nullable();
             $table->unsignedBigInteger('theme')->default(1);
+            $table->unsignedBigInteger('status')->default(0);
             $table->timestamps();
         });
     }

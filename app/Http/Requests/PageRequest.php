@@ -30,6 +30,7 @@ class PageRequest extends FormRequest
             return [
                 'title' => 'required|string|max:255',
                 'theme' => 'required|integer',
+                'status' => 'required|integer',
                 'page_content' => 'nullable',
             ];
         }
@@ -38,6 +39,7 @@ class PageRequest extends FormRequest
             return [
                 'title' => 'required|string|max:255',
                 'theme' => 'required|integer',
+                'status' => 'required|integer',
                 'page_content' => 'nullable',
             ];
         }
@@ -48,7 +50,7 @@ class PageRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        throw new   HttpResponseException(response()->json(
+        throw new HttpResponseException(response()->json(
             [
                 'success' => false,
                 'msg'  => $validator->errors(),
