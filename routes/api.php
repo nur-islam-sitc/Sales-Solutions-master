@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\V1\Client\Page\PageController as ClientPage;
+use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
 use App\Http\Controllers\API\V1\Client\Customer\MerchantCustomerController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
@@ -72,7 +72,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
-    Route::resource('pages', ClientPage::class);
+    Route::resource('pages',PageController::class);
     Route::resource('categories', ClientCategory::class);
     Route::get('top-selling-product', [TopSellingProduct::class,'index']);
 });

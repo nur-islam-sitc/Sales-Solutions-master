@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\V1\Client\Page;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PageRequest;
-use Illuminate\Http\Request;
 use App\Models\Page;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -19,11 +19,12 @@ class PageController extends Controller
     public function index()
     {
         try {
-            $allPage = Page::with('theme')->get();
+            
+            $Page = Page::select('id','user_id','shop_id','title','slug','page_content','theme')->get();
             
             return response()->json([
                 'success' => true,
-                'data' => $allPage,
+                'data' => $Page,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -133,7 +134,7 @@ class PageController extends Controller
             if (!$product) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'page not Found',
+                    'msg' =>  'Page not Found',
                 ], 404);
             }
 
