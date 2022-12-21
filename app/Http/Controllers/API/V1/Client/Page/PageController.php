@@ -90,7 +90,7 @@ class PageController extends Controller
     public function show($slug)
     {
         try {
-            $page = Page::with('theme')->where('id', $id)->first();
+            $page = Page::where('id', $id)->first();
             if (!$page) {
                 return response()->json([
                     'success' => false,
@@ -131,7 +131,7 @@ class PageController extends Controller
         try {
 
             DB::beginTransaction();
-            $page  = Page::with('theme')->find($id);
+            $page  = Page::find($id);
             if (!$page) {
                 return response()->json([
                     'success' => false,
@@ -146,7 +146,7 @@ class PageController extends Controller
             $page->save();
             
             
-            $updatedPage = Page::with(['theme'])->where('id', $id)->first();
+            $updatedPage = Page::where('id', $id)->first();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -171,7 +171,7 @@ class PageController extends Controller
     public function destroy($id)
     {
         try {
-            $page  = Page::with(['theme'])->find($id);
+            $page  = Page::find($id);
             if (!$page) {
                 return response()->json([
                     'success' => false,
