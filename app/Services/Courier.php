@@ -18,7 +18,6 @@ class Courier
 
     public function createOrder($credentials, $data)
     {
-
         return $this->request($credentials)->post('create_order', [
             'invoice' => $data['order_no'],
             'recipient_name' => $data['customer_name'],

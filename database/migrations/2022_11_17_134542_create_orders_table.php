@@ -23,6 +23,8 @@ class CreateOrdersTable extends Migration
             $table->boolean('cod')->default(true);
             $table->boolean('invoice_print')->default(false);
             $table->boolean('courier_entry')->default(false);
+            $table->string('consignment_id')->nullable();
+            $table->string('tracking_code')->nullable();
             $table->timestamps();
         });
     }

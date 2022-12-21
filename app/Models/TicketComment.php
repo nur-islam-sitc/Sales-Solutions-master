@@ -12,4 +12,21 @@ class TicketComment extends Model
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    protected $guarded = [];
+
+    public function support_ticket()
+    {
+        return $this->belongsTo(SupportTicket::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function attachment()
+    {
+        return $this->belongsTo(Attachment::class);
+    }
 }

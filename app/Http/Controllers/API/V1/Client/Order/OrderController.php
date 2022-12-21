@@ -21,10 +21,28 @@ class OrderController extends Controller
     public function index()
     {
         try {
+
+            $allOrder = [];
             $orders  = Order::with('order_details')->get();
+            foreach($orders as $order){
+                $customer = User::where('id', $order->user_id)->where('role','customer')->first();
+                if (!$customer) {
+                    return response()->json([
+                        'success' => false,
+                        'msg' =>  'Customer not Found',
+                    ], 404);
+                }
+
+                $allOrder[] = [
+                    'order' => $order,
+                    'customer' => $customer,
+                ];
+                
+            }
+
             return response()->json([
                 'success' => true,
-                'data' => $orders,
+                'data' => $allOrder,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -57,6 +75,7 @@ class OrderController extends Controller
             DB::beginTransaction();
             $user = new User();
             $user->name = $request->customer_name;
+            $user->role = 'customer';
             $user->email = 'guest'.rand(1000,9999).'@gmail.com';
             $user->phone  = $request->customer_phone;
             $user->address  = $request->customer_address;
@@ -103,13 +122,24 @@ class OrderController extends Controller
     public function show($id)
     {
         try {
-            $order = Order::with('order_details')->where('id', $id)->first();
+            $order = Order::with(['order_details'])->where('id', $id)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Category not Found',
+                    'msg' =>  'Order not Found',
                 ], 404);
             }
+
+            $customer = User::where('id', $order->user_id)->where('role','customer')->first();
+            if (!$customer) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Customer not Found',
+                ], 404);
+            }
+
+            $order['customer']= $customer;
+
             return response()->json([
                 'success' => true,
                 'data' =>   $order,

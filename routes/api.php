@@ -4,10 +4,13 @@ use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCate
 use App\Http\Controllers\API\V1\Client\CourierController;
 use App\Http\Controllers\API\V1\Client\Customer\MerchantCustomerController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
+use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
+use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
+use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Merchant\Auth\LoginController;
@@ -63,15 +66,25 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
     });
 
+    // Support ticket
+    Route::group(['prefix' => 'support-ticket'], function () {
+        Route::post('/list', [SupportTicketController::class, 'index']);
+        Route::post('/store', [SupportTicketController::class, 'store']);
+        Route::get('/{merchant}/details/{id}', [SupportTicketController::class, 'show']);
+        Route::post('/{id}/reply', [SupportTicketController::class, 'reply']);
+    });
+
     Route::get('/customers/{id}', [MerchantCustomerController::class, 'getCustomerByMerchant']);
 
-    Route::get('sales-target',[SalesTargetController::class,'sales_target'])->name('sales.target');
-    Route::post('sales-target/update',[SalesTargetController::class,'sales_target_update'])->name('sales.target.update');
-    Route::post('orders/status/update',[ClientOrder::class,'order_status_update'])->name('orders.status.update');
+    Route::get('sales-target', [SalesTargetController::class, 'sales_target'])->name('sales.target');
+    Route::post('sales-target/update', [SalesTargetController::class, 'sales_target_update'])->name('sales.target.update');
+    Route::post('orders/status/update', [ClientOrder::class, 'order_status_update'])->name('orders.status.update');
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
+    Route::resource('pages', PageController::class);
     Route::resource('categories', ClientCategory::class);
+    Route::get('top-selling-product', [TopSellingProduct::class, 'index']);
 
 
 });
@@ -81,6 +94,7 @@ Route::group(['prefix' => 'courier'], function () {
     Route::post('/provider', [CourierController::class, 'store']);
     Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
     Route::post('/track-order', [CourierController::class, 'trackOrder']);
+
 });
 
 
