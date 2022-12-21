@@ -63,6 +63,14 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
     });
 
+    // Support ticket
+    Route::group(['prefix' => 'support-ticket'], function () {
+        Route::post('/list', [SupportTicketController::class, 'index']);
+        Route::post('/store', [SupportTicketController::class, 'store']);
+        Route::get('/{merchant}/details/{id}', [SupportTicketController::class, 'show']);
+        Route::post('/{id}/reply', [SupportTicketController::class, 'reply']);
+    });
+
     Route::get('/customers/{id}', [MerchantCustomerController::class, 'getCustomerByMerchant']);
 
     Route::get('sales-target', [SalesTargetController::class, 'sales_target'])->name('sales.target');
@@ -77,10 +85,4 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 });
 
 
-Route::group(['prefix' => 'support-ticket'], function () {
-    Route::post('/list', [SupportTicketController::class, 'index']);
-    Route::post('/store', [SupportTicketController::class, 'store']);
-    Route::get('/{merchant}/details/{id}', [SupportTicketController::class, 'show']);
-    Route::post('/{id}/reply', [SupportTicketController::class, 'reply']);
 
-});
