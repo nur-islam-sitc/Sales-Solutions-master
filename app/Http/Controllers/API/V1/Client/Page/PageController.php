@@ -56,13 +56,14 @@ class PageController extends Controller
         try {
             
             DB::beginTransaction();
-            $page  = new Page();
-            $page->user_id  = auth()->user()->id;
-            $page->shop_id  = auth()->user()->shop->id;
+            $page = new Page();
+            $page->user_id = auth()->user()->id;
+            $page->shop_id = auth()->user()->shop->id;
             $page->title = $request->title;
             $page->slug = Str::slug($request->title);
             $page->page_content = $request->page_content;
             $page->theme = $request->theme;
+            $page->status = $request->status;
             $page->save();
 
 
@@ -76,7 +77,7 @@ class PageController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'msg' =>  $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
