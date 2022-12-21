@@ -54,7 +54,7 @@ class SupportTicketController extends Controller
             'attachment_id' => $attachment->id ?: null,
         ]);
 
-        $ticket->load('attachments');
+        $ticket->load('attachment');
         return response()->json($ticket);
     }
 
