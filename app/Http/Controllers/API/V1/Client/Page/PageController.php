@@ -130,8 +130,8 @@ class PageController extends Controller
         try {
 
             DB::beginTransaction();
-            $page  = page::with('theme')->find($id);
-            if (!$product) {
+            $page  = Page::with('theme')->find($id);
+            if (!$page) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Page not Found',
