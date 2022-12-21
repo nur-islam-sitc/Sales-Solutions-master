@@ -11,4 +11,9 @@ class Attachment extends Model
     use HasFactory, HasUuid;
     protected $guarded = [];
 
+    public function getPathAttribute($value)
+    {
+        return $value ? asset($value) : null;
+    }
+
 }

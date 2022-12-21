@@ -8,6 +8,7 @@ use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduc
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
+use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
 use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
@@ -27,11 +28,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 
 
 //client api
@@ -66,15 +65,22 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     Route::get('/customers/{id}', [MerchantCustomerController::class, 'getCustomerByMerchant']);
 
-    Route::get('sales-target',[SalesTargetController::class,'sales_target'])->name('sales.target');
-    Route::post('sales-target/update',[SalesTargetController::class,'sales_target_update'])->name('sales.target.update');
-    Route::post('orders/status/update',[ClientOrder::class,'order_status_update'])->name('orders.status.update');
+    Route::get('sales-target', [SalesTargetController::class, 'sales_target'])->name('sales.target');
+    Route::post('sales-target/update', [SalesTargetController::class, 'sales_target_update'])->name('sales.target.update');
+    Route::post('orders/status/update', [ClientOrder::class, 'order_status_update'])->name('orders.status.update');
     Route::resource('sliders', ClientSlider::class);
     Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
     Route::resource('pages', PageController::class);
     Route::resource('categories', ClientCategory::class);
-    Route::get('top-selling-product', [TopSellingProduct::class,'index']);
+    Route::get('top-selling-product', [TopSellingProduct::class, 'index']);
 });
 
 
+Route::group(['prefix' => 'support-ticket'], function () {
+    Route::post('/list', [SupportTicketController::class, 'index']);
+    Route::post('/store', [SupportTicketController::class, 'store']);
+    Route::get('/{merchant}/details/{id}', [SupportTicketController::class, 'show']);
+    Route::post('/{id}/reply', [SupportTicketController::class, 'reply']);
+
+});

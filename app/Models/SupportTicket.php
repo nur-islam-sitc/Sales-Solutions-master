@@ -20,4 +20,14 @@ class SupportTicket extends Model
     {
         return $this->belongsTo(User::class, 'staff_id');
     }
+
+    public function attachment()
+    {
+        return $this->belongsTo(Attachment::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(TicketComment::class, 'ticket_id');
+    }
 }
