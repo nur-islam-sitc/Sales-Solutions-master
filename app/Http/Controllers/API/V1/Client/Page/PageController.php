@@ -16,23 +16,24 @@ class PageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+
     public function index()
     {
-        try {
+        // try {
             
-            $Page = Page::select('id','user_id','shop_id','title','slug','page_content','theme')->get();
+        //     $Page = Page::select('id','user_id','shop_id','title','slug','page_content','theme')->get();
             
-            return response()->json([
-                'success' => true,
-                'data' => $Page,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>  $e->getMessage(),
-            ], 400);
-        }
+        //     return response()->json([
+        //         'success' => true,
+        //         'data' => $Page,
+        //     ]);
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'msg' =>  $e->getMessage(),
+        //     ], 400);
+        // }
+        return Page::select('id','user_id','shop_id','title','slug','page_content','theme')->get();
     }
 
     /**
