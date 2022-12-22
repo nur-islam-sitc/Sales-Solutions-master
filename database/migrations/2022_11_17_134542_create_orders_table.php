@@ -25,6 +25,8 @@ class CreateOrdersTable extends Migration
             $table->boolean('courier_entry')->default(false);
             $table->string('consignment_id')->nullable();
             $table->string('tracking_code')->nullable();
+            $table->date('return_order_date')->nullable();
+            $table->string('return_order_note')->nullable();
             $table->timestamps();
         });
     }

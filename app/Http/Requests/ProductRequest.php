@@ -53,6 +53,28 @@ class ProductRequest extends FormRequest
                 'status' => 'nullable|boolean',
             ];
         }
+
+        if(Request::route()->getName() === "client.inventory.update"){
+            return [
+                'product_id' => 'required|integer',
+                'product_name' => 'nullable|string',
+                'product_code' => 'nullable|string',
+                'selling_price' => 'nullable|integer',
+                'main_image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            ];
+        }
+        if(Request::route()->getName() === "client.stock.in.update"){
+            return [
+                'product_id' => 'required|integer',
+                'stock_quantity' => 'required|integer',
+            ];
+        }
+        if(Request::route()->getName() === "product.return.update"){
+            return [
+                'product_id' => 'required|integer',
+                'renturn_product_note' => 'nullable|integer',
+            ];
+        }
         return [];
         
     }

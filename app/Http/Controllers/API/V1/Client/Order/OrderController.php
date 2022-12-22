@@ -22,8 +22,22 @@ class OrderController extends Controller
     {
         try {
 
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
             $allOrder = [];
-            $orders  = Order::with('order_details')->get();
+            $orders  = Order::with('order_details')->where('shop_id',$merchant->shop->id)->get();
+            if (!$orders) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Customer not Found',
+                ], 404);
+            }
             foreach($orders as $order){
                 $customer = User::where('id', $order->user_id)->where('role','customer')->first();
                 if (!$customer) {
@@ -122,7 +136,15 @@ class OrderController extends Controller
     public function show($id)
     {
         try {
-            $order = Order::with(['order_details'])->where('id', $id)->first();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
+            $order = Order::with(['order_details'])->where('id', $id)->where('shop_id',$merchant->shop->id)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,
@@ -191,7 +213,15 @@ class OrderController extends Controller
     {
         try {
 
-            $order = Order::with('order_details')->where('id', $request->order_id)->first();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
+            $order = Order::with('order_details')->where('id', $request->order_id)->where('shop_id',$merchant->shop->id)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,
@@ -200,6 +230,10 @@ class OrderController extends Controller
             }
 
             $order->order_status = $request->status;
+            if($request->status == 'returned'){
+                $order->return_order_date = $request->return_order_date;
+                $order->return_order_note = $request->return_order_note;
+            }
             $order->save();
 
             return response()->json([
