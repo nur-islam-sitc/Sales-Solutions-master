@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Merchant\Auth;
 
 use App\Http\Controllers\Controller;
-
+use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
@@ -28,7 +28,22 @@ class LoginController extends Controller
     {
         return view('auth.register');
     }
-
+    private function create_subdomain($domain, $dir){
+         $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
+        try{
+            
+            $parameters = [
+                'domain' => $domain,
+                'rootdomain' => 'funnelliner.com',
+                'dir' => $dir,
+                'disallowdot' => 1,
+            ];
+             $result = $cPanel->execute('api2',"SubDomain", "addsubdomain" , $parameters); 
+             return ["status"=>true, "response"=>$result];
+        }catch(Exception $exception) {
+            return ["status"=>false, "response"=>$exception];
+        }
+    }
     public function register(MerchantRegister $request)
     {
 
