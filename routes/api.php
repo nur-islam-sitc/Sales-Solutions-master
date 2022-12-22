@@ -45,6 +45,7 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
 
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
 //merchant api
