@@ -53,6 +53,14 @@ class OrderRequest extends FormRequest
             return [
                 'order_id' => 'required|integer',
                 'status' => 'required|string|max:255',
+                'return_order_date' => 'required_if:status,returned',
+                'return_order_note' => 'required_if:status,returned',
+            ];
+        }
+        if(Request::route()->getName() === "client.product.return.update"){
+            return [
+                'order_id' => 'required|integer',
+                'return_order_note' => 'required|string|max:255',
             ];
         }
         return [];

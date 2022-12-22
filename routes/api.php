@@ -9,6 +9,9 @@ use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduc
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
+use App\Http\Controllers\API\V1\Client\Stock\Inventroy\InventoryController;
+use App\Http\Controllers\API\V1\Client\Stock\ProductReturn\ProductReturnController;
+use App\Http\Controllers\API\V1\Client\Stock\StockIn\StockInController;
 use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
 use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
@@ -85,6 +88,24 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::resource('pages', PageController::class);
     Route::resource('categories', ClientCategory::class);
     Route::get('top-selling-product', [TopSellingProduct::class, 'index']);
+
+    Route::prefix('stocks')->name('stocks.')->group(function () {
+
+        //Inventory
+        Route::get('inventory/list', [InventoryController::class, 'index'])->name('inventory.list');
+        Route::get('inventory/show/{id}', [InventoryController::class, 'show'])->name('inventory.show');
+        Route::post('inventory/update', [InventoryController::class, 'update'])->name('inventory.update');
+
+        //Stock In
+        Route::get('stock-in/list', [StockInController::class, 'index'])->name('stock.in.list');
+        Route::get('stock-in/show/{id}', [StockInController::class, 'show'])->name('stock.in.show');
+        Route::post('stock-in/update', [StockInController::class, 'update'])->name('stock.in.update');
+
+         //Product return
+         Route::get('product-return/list', [ProductReturnController::class, 'index'])->name('product.return.list');
+         Route::post('product-return/update', [ProductReturnController::class, 'update'])->name('product.return.update');
+
+    });
 
 
 });

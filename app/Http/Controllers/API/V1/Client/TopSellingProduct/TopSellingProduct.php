@@ -20,15 +20,18 @@ class TopSellingProduct extends Controller
             $shopID = $merchant->shop->id;
             $orderIds = [];
             $orders = Order::with('order_details')->where('order_status', 'delivery')->where('shop_id', $shopID)->get();
-            foreach ($orders as $order) {
-                $orderIds[] = $order->id;
-            }
-            if (!$order) {
+
+            if (!$orders) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Order not Found',
                 ], 404);
             }
+
+            foreach ($orders as $order) {
+                $orderIds[] = $order->id;
+            }
+            
 
             $orderDetails = OrderDetails::select('product_id', 'product_qty')->whereIn('order_id', $orderIds)->get();
             if (!$orderDetails) {
