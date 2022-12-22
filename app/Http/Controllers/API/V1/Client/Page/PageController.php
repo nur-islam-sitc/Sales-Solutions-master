@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\V1\Client\Page;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PageRequest;
-use Illuminate\Http\Request;
 use App\Models\Page;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -16,14 +16,16 @@ class PageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    
     public function index()
     {
         try {
-            $allPage = Page::with('theme')->get();
+            
+            $Page = Page::select('id','user_id','shop_id','title','slug','page_content','theme','status')->get();
             
             return response()->json([
                 'success' => true,
-                'data' => $allPage,
+                'data' => $Page,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -54,13 +56,14 @@ class PageController extends Controller
         try {
             
             DB::beginTransaction();
-            $page  = new Page();
-            $page->user_id  = auth()->user()->id;
-            $page->shop_id  = auth()->user()->shop->id;
+            $page = new Page();
+            $page->user_id = auth()->user()->id;
+            $page->shop_id = auth()->user()->shop->id;
             $page->title = $request->title;
             $page->slug = Str::slug($request->title);
             $page->page_content = $request->page_content;
             $page->theme = $request->theme;
+            $page->status = $request->status;
             $page->save();
 
 
@@ -74,7 +77,7 @@ class PageController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'msg' =>  $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
@@ -88,7 +91,7 @@ class PageController extends Controller
     public function show($slug)
     {
         try {
-            $page = Page::with('theme')->where('id', $id)->first();
+            $page = Page::where('id', $id)->first();
             if (!$page) {
                 return response()->json([
                     'success' => false,
@@ -129,11 +132,11 @@ class PageController extends Controller
         try {
 
             DB::beginTransaction();
-            $page  = page::with('theme')->find($id);
-            if (!$product) {
+            $page  = Page::find($id);
+            if (!$page) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'page not Found',
+                    'msg' =>  'Page not Found',
                 ], 404);
             }
 
@@ -144,7 +147,7 @@ class PageController extends Controller
             $page->save();
             
             
-            $updatedPage = Page::with(['theme'])->where('id', $id)->first();
+            $updatedPage = Page::where('id', $id)->first();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -169,7 +172,7 @@ class PageController extends Controller
     public function destroy($id)
     {
         try {
-            $page  = Page::with(['theme'])->find($id);
+            $page  = Page::find($id);
             if (!$page) {
                 return response()->json([
                     'success' => false,
