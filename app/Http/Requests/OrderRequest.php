@@ -29,7 +29,7 @@ class OrderRequest extends FormRequest
         if(Request::route()->getName() === "client.orders.store"){
             return [
                 'customer_name' => 'required|string|max:255',
-                'customer_phone' => 'required|string|max:255',
+                'customer_phone' => 'required|string|unique:users,phone|max:255',
                 'customer_address' => 'required|string|max:255',
                 'product_id' => 'required|array|min:1',
                 'product_id.*' => 'required|integer|distinct|min:1',

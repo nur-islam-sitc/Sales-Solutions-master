@@ -112,6 +112,12 @@ class OrderController extends Controller
             }
             $createdOrder = Order::with('order_details')->where('id',$order->id)->first();
 
+            foreach($createdOrder->order_details as $details){
+                $details->product->update([
+                    'product_qty'=> $details->product->product_qty - $details->product_qty
+                ]);
+            }
+
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -233,6 +239,11 @@ class OrderController extends Controller
             if($request->status == 'returned'){
                 $order->return_order_date = $request->return_order_date;
                 $order->return_order_note = $request->return_order_note;
+                foreach($order->order_details as $details){
+                    $details->product->update([
+                        'product_qty' => $details->product->product_qty + $details->product_qty
+                    ]);
+                }
             }
             $order->save();
 
