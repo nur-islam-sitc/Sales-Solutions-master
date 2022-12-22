@@ -11,6 +11,7 @@ use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSett
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
 use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
+use App\Http\Controllers\API\V1\Customer\AuthController;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Merchant\Auth\LoginController;
@@ -42,6 +43,8 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('categories/{category}', [CustomerCategory::class, 'show'])->name('categories.show');
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
     Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
+
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
 //merchant api
