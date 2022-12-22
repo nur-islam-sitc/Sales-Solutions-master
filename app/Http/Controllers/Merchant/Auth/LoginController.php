@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Auth;
-use Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -31,14 +33,14 @@ class LoginController extends Controller
     private function create_subdomain($domain, $dir){
          $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
         try{
-            
+
             $parameters = [
                 'domain' => $domain,
                 'rootdomain' => 'funnelliner.com',
                 'dir' => $dir,
                 'disallowdot' => 1,
             ];
-             $result = $cPanel->execute('api2',"SubDomain", "addsubdomain" , $parameters); 
+             $result = $cPanel->execute('api2',"SubDomain", "addsubdomain" , $parameters);
              return ["status"=>true, "response"=>$result];
         }catch(Exception $exception) {
             return ["status"=>false, "response"=>$exception];
@@ -56,9 +58,11 @@ class LoginController extends Controller
                 'name' => $request->input('shop_name'),
                 'domain' => $request->input('domain'),
             ]);
-
             $merchant->merchantinfo()->create();
-            return redirect()->route('thank_you');
+            $this->create_subdomain($request->input('domain').'.dashboard', 'dashboard.funnelliner.com');
+            $this->create_subdomain($request->input('domain').'.web', 'web.funnelliner.com');
+            $url = $request->input('domain').'.dashboard.funnelliner.com';
+            return Redirect::to($url);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
