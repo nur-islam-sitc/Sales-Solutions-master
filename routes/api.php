@@ -16,6 +16,8 @@ use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
 use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
+use App\Http\Controllers\API\V1\Theme\Landing\LandingPageTemplateController;
+use App\Http\Controllers\API\V1\Theme\Multiple\MultiplePageTemplateController;
 use App\Http\Controllers\Merchant\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -107,6 +109,21 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     });
 
+    //themes
+    Route::prefix('themes')->name('themes.')->group(function () {
+
+        //landing
+        Route::prefix('landing')->name('landing.')->group(function(){
+            Route::post('active',[LandingPageTemplateController::class,'active'])->name('active');
+        });
+
+        //multiple
+        Route::prefix('multiple')->name('multiple.')->group(function(){
+            Route::post('active',[MultiplePageTemplateController::class,'active'])->name('active');
+        });
+
+    });
+
 
 });
 
@@ -115,6 +132,18 @@ Route::group(['prefix' => 'courier'], function () {
     Route::post('/provider', [CourierController::class, 'store']);
     Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
     Route::post('/track-order', [CourierController::class, 'trackOrder']);
+
+});
+
+//Themes
+Route::group(['prefix' => 'themes','name' => 'themes.'], function () {
+
+    Route::group(['prefix' => 'landing','name' => 'landing.'], function () {
+        Route::get('list', [LandingPageTemplateController::class,'index']);
+    });
+    Route::group(['prefix' => 'multiple','name' => 'multiple.'], function () {
+        Route::get('list', [MultiplePageTemplateController::class,'index']);
+    });
 
 });
 
