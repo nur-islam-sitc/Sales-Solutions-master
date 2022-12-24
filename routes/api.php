@@ -14,6 +14,7 @@ use App\Http\Controllers\API\V1\Client\Stock\ProductReturn\ProductReturnControll
 use App\Http\Controllers\API\V1\Client\Stock\StockIn\StockInController;
 use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
 use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
+use App\Http\Controllers\API\V1\Customer\AuthController;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\API\V1\Theme\Landing\LandingPageTemplateController;
@@ -47,6 +48,9 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('categories/{category}', [CustomerCategory::class, 'show'])->name('categories.show');
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
     Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
+
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
 //merchant api
