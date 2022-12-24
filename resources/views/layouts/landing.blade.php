@@ -8,8 +8,6 @@
     <title>Sales Solution</title>
 
 
-    <link rel="icon" href="{{ asset('landing/images/Logo.png') }}">
-
     <!-- FONT LINK -->
     <!-- font-family: 'Montserrat', sans-serif; -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
