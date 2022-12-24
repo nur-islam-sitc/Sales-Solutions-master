@@ -62,7 +62,7 @@ class LoginController extends Controller
             $this->create_subdomain($request->input('domain').'.dashboard', 'dashboard.funnelliner.com');
             $this->create_subdomain($request->input('domain').'.web', 'web.funnelliner.com');
             $url = $request->input('domain').'.dashboard.funnelliner.com';
-            return Redirect::to($url);
+            return Redirect::to('https://'.$url);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
