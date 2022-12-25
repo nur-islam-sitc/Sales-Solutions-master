@@ -13,10 +13,18 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+       
         try {
-            $category  = Category::with('category_image')->get();
+            $shopId = $request->header('shop_id');
+            $category  = Category::with('category_image')->where('shop_id',$shopId)->get();
+            if(count($category) < 1){
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'Category not found',
+                ], 400);
+            }
             return response()->json([
                 'success' => true,
                 'data' => $category,
@@ -36,10 +44,12 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show(Request $request,$slug)
     {
         try {
-            $category = Category::with('category_image')->where('slug', $slug)->first();
+            
+            $shopId = $request->header('shop_id');
+            $category = Category::with('category_image')->where('slug', $slug)->where('shop_id',$shopId)->first();
             if (!$category) {
                 return response()->json([
                     'success' => false,

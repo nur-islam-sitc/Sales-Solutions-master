@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Media;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -21,8 +22,18 @@ class ProductController extends Controller
     public function index()
     {
         try {
+
             $allProduct = [];
-            $products   = Product::with('main_image')->get();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
+
+            $products   = Product::with('main_image')->where('shop_id',$merchant->shop->id)->get();
             foreach($products as $product){
                 $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
                 $product['other_images']= $other_images;
@@ -127,7 +138,15 @@ class ProductController extends Controller
     public function show($slug)
     {
         try {
-            $product  = Product::with('main_image')->where('slug', $slug)->first();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
+            $product  = Product::with('main_image')->where('shop_id',$merchant->shop->id)->where('slug', $slug)->first();
             $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
             $product['other_images']= $other_images;
             if (!$product) {

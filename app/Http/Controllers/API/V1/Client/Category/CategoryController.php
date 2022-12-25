@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Models\Media;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use File;
@@ -21,7 +22,15 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $category  = Category::with('category_image')->get();
+
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+            $category  = Category::with('category_image')->where('shop_id',$merchant->shop->id)->get();
             return response()->json([
                 'success' => true,
                 'data' => $category,
@@ -102,7 +111,14 @@ class CategoryController extends Controller
     public function show($slug)
     {
         try {
-            $category = Category::with('category_image')->where('slug', $slug)->first();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+            $category = Category::with('category_image')->where('slug', $slug)->where('shop_id',$merchant->shop->id)->first();
             if (!$category) {
                 return response()->json([
                     'success' => false,
