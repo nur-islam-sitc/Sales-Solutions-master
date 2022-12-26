@@ -110,7 +110,6 @@ class AuthController extends Controller
                         $user->save();
                         return response()->json(['message' => 'Otp Has been sent to your mobile']);
                     }
-                    return response()->json(['message' => 'Invalid Credentials']);
                 }
 
                 return response()->json(['message' => 'Invalid Credentials']);
@@ -131,7 +130,6 @@ class AuthController extends Controller
                         $user->save();
                         return response()->json(['message' => 'Otp Has been sent to your email']);
                     }
-                    return response()->json(['message' => 'Invalid Credentials']);
                 }
 
                 return response()->json(['message' => 'User already exists with this email']);
