@@ -344,7 +344,7 @@ export default {
         },
         fetchTickets() {
             axios.get('/panel/support-ticket/tickets').then(response => {
-                console.log(response.data['counts']['active'])
+                console.log(response.data)
                 this.tickets = response.data.tickets.data
                 this.total =response.data.tickets.total
                 this.open = response.data['counts']['active']
