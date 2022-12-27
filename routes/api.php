@@ -114,20 +114,10 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     });
 
-    //themes
-    Route::prefix('themes')->name('themes.')->group(function () {
-
-
-        //landing
-        Route::prefix('landing')->name('landing.')->group(function(){
-            Route::post('active',[LandingPageTemplateController::class,'active'])->name('active');
-        });
-
-        //multiple
-        Route::prefix('multiple')->name('multiple.')->group(function(){
-            Route::post('active',[MultiplePageTemplateController::class,'active'])->name('active');
-        });
-
+    Route::group(['prefix' => 'themes'], function () {
+        Route::post('/list', [ThemeController::class, 'getThemesByType']);
+        Route::post('/import-theme', [ThemeController::class, 'import']);
+        Route::post('/merchant/themes', [ThemeController::class, 'getMerchantsTheme']);
     });
 
 
@@ -141,18 +131,5 @@ Route::group(['prefix' => 'courier'], function () {
 
 });
 
-//Themes
-Route::group(['prefix' => 'themes','name' => 'themes.'], function () {
 
-    Route::group(['prefix' => 'landing','name' => 'landing.'], function () {
-        Route::get('list', [LandingPageTemplateController::class,'index']);
-    });
-    Route::group(['prefix' => 'multiple','name' => 'multiple.'], function () {
-        Route::get('list', [MultiplePageTemplateController::class,'index']);
-    });
 
-});
-
-Route::group(['prefix' => 'themes'], function () {
-    Route::post('/list', [ThemeController::class, 'getThemesByType']);
-});

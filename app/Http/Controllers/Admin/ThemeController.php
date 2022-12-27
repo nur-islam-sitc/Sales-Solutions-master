@@ -26,7 +26,7 @@ class ThemeController extends Controller
             'image' => ['required'],
         ]);
 
-        $file = $request->file('image');
+        $file = $request->file('image')->getClientOriginalName();
         $path = '/upload/themes';
         $image = $request->file('image')->storeAs($path, $file, 'local');
 
@@ -36,7 +36,7 @@ class ThemeController extends Controller
         ]);
 
         $preview_image = Media::query()->create([
-            'name' => $file,
+            'name' => $path.'/'.$file,
             'parent_id' => $theme->id,
             'type' => 'template',
         ]);

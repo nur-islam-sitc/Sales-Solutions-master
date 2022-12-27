@@ -15,4 +15,5 @@ class Theme extends Model
     {
         return $this->belongsTo(Media::class,'id','parent_id');
     }
+
 }
