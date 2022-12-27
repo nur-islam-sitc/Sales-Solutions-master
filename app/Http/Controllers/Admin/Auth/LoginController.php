@@ -48,9 +48,6 @@ class LoginController extends Controller
             ]);
         }
 
-
-        $this->generateToken($admin->id);
-
         return redirect()->route('admin.dashboard');
 
     }
@@ -68,7 +65,6 @@ class LoginController extends Controller
                             ->first();
 
         if($admin && Hash::check($request->input('password'), $admin->password)) {
-
             Auth::login($admin);
             return $admin;
         }

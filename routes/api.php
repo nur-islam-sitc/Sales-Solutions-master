@@ -19,6 +19,7 @@ use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\API\V1\Theme\Landing\LandingPageTemplateController;
 use App\Http\Controllers\API\V1\Theme\Multiple\MultiplePageTemplateController;
+use App\Http\Controllers\API\V1\Theme\ThemeController;
 use App\Http\Controllers\Merchant\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -116,6 +117,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     //themes
     Route::prefix('themes')->name('themes.')->group(function () {
 
+
         //landing
         Route::prefix('landing')->name('landing.')->group(function(){
             Route::post('active',[LandingPageTemplateController::class,'active'])->name('active');
@@ -151,4 +153,6 @@ Route::group(['prefix' => 'themes','name' => 'themes.'], function () {
 
 });
 
-
+Route::group(['prefix' => 'themes'], function () {
+    Route::post('/list', [ThemeController::class, 'getThemesByType']);
+});

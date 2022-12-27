@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+
+
     <section id="ClientList" class="openTicket">
 
         <div class="container custom_width">
@@ -149,11 +151,12 @@
                                 <td>{{ $staff->phone }}</td>
                                 <td>{{ $staff->email }}</td>
                                 <td>{{ $staff->created_at }}</td>
+
                                 <td class="Role">
                                     <div class="dropdown_part">
                                     <span class="dropdown-toggle d_flex" id="dropdownMenuButton1"
                                           data-bs-toggle="dropdown" aria-expanded="false">
-                                        {{ $staff->roles[0]->name }}
+                                        {{ $staff->roles->isNotEmpty() ? $staff->roles[0]->name : 'No roles Assigned'}}
                                         <div class="arrow">
                                             <svg width="11" height="6" viewBox="0 0 11 6" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
@@ -177,8 +180,6 @@
                                                         fill="#F3ECFF"/>
                                                 </svg>
                                             </div>
-
-
                                         </ul>
 
                                     </div>
