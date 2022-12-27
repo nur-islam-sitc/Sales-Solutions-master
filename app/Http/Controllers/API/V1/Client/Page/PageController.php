@@ -91,7 +91,7 @@ class PageController extends Controller
     public function show($slug)
     {
         try {
-            $page = Page::where('id', $id)->first();
+            $page = Page::where('slug', $slug)->first();
             if (!$page) {
                 return response()->json([
                     'success' => false,
