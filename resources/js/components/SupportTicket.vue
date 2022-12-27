@@ -1,4 +1,4 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
     <div>
         <section id="Total_order" class="openTicket">
 
@@ -344,7 +344,7 @@ export default {
         },
         fetchTickets() {
             axios.get('/panel/support-ticket/tickets').then(response => {
-                console.log(response.data['counts']['active'])
+                console.log(response.data)
                 this.tickets = response.data.tickets.data
                 this.total =response.data.tickets.total
                 this.open = response.data['counts']['active']

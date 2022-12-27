@@ -9,4 +9,9 @@ class Media extends Model
 {
     use HasFactory;
     protected $fillable = ["name","parent_id","type"];
+
+    public function getNameAttribute($value): ?string
+    {
+        return $value ? asset($value) : null;
+    }
 }

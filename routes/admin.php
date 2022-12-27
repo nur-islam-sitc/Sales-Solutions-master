@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\MerchantController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\SupportTicketController;
+use App\Http\Controllers\Admin\ThemeController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -43,7 +44,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
         Route::post('/store', [SupportTicketController::class, 'store']);
     });
 
-
+    Route::group(['prefix' => 'themes'], function () {
+        Route::get('/',[ThemeController::class, 'index'])->name('admin.themes');
+        Route::get('/list', [ThemeController::class, 'getThemes']);
+        Route::post('/store', [ThemeController::class, 'store']);
+    });
 
 
 });

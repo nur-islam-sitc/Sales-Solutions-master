@@ -23,7 +23,7 @@ class StaffController extends Controller
     public function index()
     {
         $roles = Role::all();
-        $staffs = User::query()->with('roles')->where('role', User::STAFF)->get();
+        $staffs = User::query()->with('roles')->where('role', User::STAFF)->paginate();
         return view('panel.staffs.index', compact('staffs', 'roles'));
     }
 
