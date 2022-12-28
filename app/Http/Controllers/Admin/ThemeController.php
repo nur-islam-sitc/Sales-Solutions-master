@@ -48,6 +48,6 @@ class ThemeController extends Controller
     {
         $themes = Theme::all();
         $themes->load('media');
-        return $this->sendApiResponse($themes, 'Template Added successfully');
+        return $this->sendApiResponse($themes);
     }
 }
