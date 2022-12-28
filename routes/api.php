@@ -8,6 +8,7 @@ use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
+use App\Http\Controllers\API\V1\Client\Shop\ShopController;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Client\Stock\Inventroy\InventoryController;
 use App\Http\Controllers\API\V1\Client\Stock\ProductReturn\ProductReturnController;
@@ -120,16 +121,25 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('/merchant/themes', [ThemeController::class, 'getMerchantsTheme']);
     });
 
+    Route::group(['prefix' => 'shops'], function () {
+        Route::post('/info', [ShopController::class, 'index']);
+    });
+
+    Route::group(['prefix' => 'courier'], function () {
+
+        Route::post('/provider', [CourierController::class, 'store']);
+        Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
+        Route::post('/track-order', [CourierController::class, 'trackOrder']);
+
+    });
+
 
 });
 
-Route::group(['prefix' => 'courier'], function () {
 
-    Route::post('/provider', [CourierController::class, 'store']);
-    Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
-    Route::post('/track-order', [CourierController::class, 'trackOrder']);
 
-});
+
+
 
 
 

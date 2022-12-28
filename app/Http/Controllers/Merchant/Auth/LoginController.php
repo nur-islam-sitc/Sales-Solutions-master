@@ -31,7 +31,12 @@ class LoginController extends Controller
         return view('auth.register');
     }
 
-    private function create_subdomain($domain, $dir)
+    /**
+     * @param $domain
+     * @param $dir
+     * @return void
+     */
+    private function create_subdomain($domain, $dir): void
     {
 
         $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
@@ -44,9 +49,9 @@ class LoginController extends Controller
                 'disallowdot' => 1,
             ];
             $result = $cPanel->execute('api2', "SubDomain", "addsubdomain", $parameters);
-            return ["status" => true, "response" => $result];
+            return;
         } catch (Exception $exception) {
-            return ["status" => false, "response" => $exception];
+            return;
         }
     }
 
@@ -61,6 +66,7 @@ class LoginController extends Controller
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
                 'domain' => $request->input('domain'),
+                'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
             $this->create_subdomain($request->input('domain') . '-dashboard', 'dashboard.funnelliner.com');
