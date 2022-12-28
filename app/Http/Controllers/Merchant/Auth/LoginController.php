@@ -83,10 +83,7 @@ class LoginController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
 
-        if (Auth::attempt([
-            'email' => $request->email,
-            'password' => $request->password,
-            'role' => User::MERCHANT])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => User::MERCHANT])) {
             $token = auth()->user()->createApiToken(); #Generate token
             return response()->json(['status' => 'Authorised', 'token' => $token, 'merchant' => [
                 'id' => auth()->user()->id,
@@ -94,7 +91,7 @@ class LoginController extends Controller
                 'email' => auth()->user()->email,
                 'phone' => auth()->user()->phone,
                 'role' => auth()->user()->role,
-                'shop_id' => auth()->user()->shop->id,
+                'shop_id' => auth()->user()->shop->shop_id,
                 'avatar' => auth()->user()->avatar,
             ]], 200);
         } else {

@@ -126,10 +126,10 @@
 
                     <div class="col-lg-12">
                         <div class="row">
-                            <div class="col-lg-3">
+                            <div class="col-lg-3" v-for="theme in themes" :key="theme.id">
                                 <div class="bg-white border rounded-2 p-4">
                                     <div class="template-image">
-                                        <img src="/images/Drone.png" alt="">
+                                        <img :src="theme?.media?.name" alt="">
                                     </div>
                                     <div class="template-info">
                                         <button class="">Preview</button>
@@ -249,6 +249,7 @@ export default {
                         this.form.type = ""
                         this.form.name = ""
                         this.form.image = null
+                        this.fetchThemes()
 
                     }).catch(error => {
                         console.log('validation', error)
@@ -266,7 +267,7 @@ export default {
         },
         fetchThemes() {
             axios.get('/panel/themes/list').then((res) => {
-
+                this.themes = res.data.data
             })
         }
     },
