@@ -30,9 +30,17 @@ class LoginController extends Controller
     {
         return view('auth.register');
     }
-    private function create_subdomain($domain, $dir){
-         $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
-        try{
+
+    /**
+     * @param $domain
+     * @param $dir
+     * @return void
+     */
+    private function create_subdomain($domain, $dir): void
+    {
+
+        $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
+        try {
 
             $parameters = [
                 'domain' => $domain,
@@ -40,12 +48,13 @@ class LoginController extends Controller
                 'dir' => $dir,
                 'disallowdot' => 1,
             ];
-             $result = $cPanel->execute('api2',"SubDomain", "addsubdomain" , $parameters);
-             return ["status"=>true, "response"=>$result];
-        }catch(Exception $exception) {
-            return ["status"=>false, "response"=>$exception];
+            $result = $cPanel->execute('api2', "SubDomain", "addsubdomain", $parameters);
+            return;
+        } catch (Exception $exception) {
+            return;
         }
     }
+
     public function register(MerchantRegister $request)
     {
 
@@ -57,51 +66,51 @@ class LoginController extends Controller
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
                 'domain' => $request->input('domain'),
+                'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
-            $this->create_subdomain($request->input('domain').'.dashboard', 'dashboard.funnelliner.com');
-            $this->create_subdomain($request->input('domain').'.web', 'web.funnelliner.com');
-            $url = $request->input('domain').'.dashboard.funnelliner.com';
-            return Redirect::to($url);
+            $this->create_subdomain($request->input('domain') . '-dashboard', 'dashboard.funnelliner.com');
+            $this->create_subdomain($request->input('domain') . '-web', 'web.funnelliner.com');
+            $url = $request->input('domain') . '-dashboard.funnelliner.com';
+            return Redirect::to('https://' . $url);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
     }
 
-    public function merchant_login(Request $request) {
+    public function merchant_login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 401);
         }
 
-        if(Auth::attempt([
-            'email' => $request->email,
-            'password' => $request->password,
-            'role' => User::MERCHANT])){
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => User::MERCHANT])) {
             $token = auth()->user()->createApiToken(); #Generate token
-            return response()->json(['status' => 'Authorised', 'token' => $token,'merchant'=> [
+            return response()->json(['status' => 'Authorised', 'token' => $token, 'merchant' => [
                 'id' => auth()->user()->id,
                 'name' => auth()->user()->name,
+                'domain' => auth()->user()->shop->domain,
                 'email' => auth()->user()->email,
                 'phone' => auth()->user()->phone,
                 'role' => auth()->user()->role,
-                'shop_id' => auth()->user()->shop->id,
+                'shop_id' => auth()->user()->shop->shop_id,
                 'avatar' => auth()->user()->avatar,
-                ] ], 200);
+            ]], 200);
         } else {
-            return response()->json(['status'=>'Unauthorised'], 401);
+            return response()->json(['status' => 'Unauthorised'], 401);
         }
     }
 
 
     public function merchant_logout()
     {
-       $userRemoveToken = auth()->user()->removeApiToken();
-       return response()->json(['msg' => $userRemoveToken],200);
+        $userRemoveToken = auth()->user()->removeApiToken();
+        return response()->json(['msg' => $userRemoveToken], 200);
 
 
     }

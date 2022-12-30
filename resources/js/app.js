@@ -19,7 +19,9 @@ import   { createApp } from 'vue'
 import Merchants from "./components/Merchants.vue";
 import SupportTicket from "./components/SupportTicket.vue";
 import SupportTicketList from "./components/SupportTicketList.vue";
+import Themes from "./components/Themes.vue";
 import Modal from "./components/Modal.vue";
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -30,5 +32,6 @@ const app = createApp({})
 app.component('merchants', Merchants)
 app.component('support-ticket', SupportTicket)
 app.component('support-ticket-list', SupportTicketList)
+app.component('themes', Themes)
 app.component('modal', Modal)
 app.mount('#app')
