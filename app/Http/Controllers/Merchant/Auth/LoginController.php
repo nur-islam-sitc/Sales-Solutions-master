@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Merchant\Auth;
 
-use App\Http\Controllers\Controller;
+
+use App\Http\Controllers\MerchantBaseController;
 use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
@@ -10,14 +11,13 @@ use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
-class LoginController extends Controller
+class LoginController extends MerchantBaseController
 {
 
     /**
