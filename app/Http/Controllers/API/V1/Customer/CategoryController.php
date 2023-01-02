@@ -30,28 +30,16 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $slug
+     * @return JsonResponse
      */
-    public function show($slug)
+    public function show($slug): JsonResponse
     {
-        try {
-            $category = Category::with('category_image')->where('slug', $slug)->first();
-            if (!$category) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Category not Found',
-                ], 404);
-            }
-            return response()->json([
-                'success' => true,
-                'data' =>   $category,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>   $e->getMessage(),
-            ], 400);
+        $category = Category::with('category_image')->where('slug', $slug)->first();
+
+        if(!$category) {
+            return $this->sendApiResponse('', 'No data available');
         }
+        return $this->sendApiResponse($category);
     }
 }

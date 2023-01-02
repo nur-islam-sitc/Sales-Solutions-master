@@ -14,7 +14,7 @@ class OrderRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,9 +24,9 @@ class OrderRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        if(Request::route()->getName() === "client.orders.store"){
+        if(Request::route()->getName() === "customer.order.store"){
             return [
                 'customer_name' => 'required|string|max:255',
                 'customer_phone' => 'required|string|unique:users,phone|max:255',

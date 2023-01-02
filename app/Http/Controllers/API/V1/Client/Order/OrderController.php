@@ -26,24 +26,24 @@ class OrderController extends Controller
             if (!$merchant) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Merchant not Found',
+                    'msg' => 'Merchant not Found',
                 ], 404);
             }
 
             $allOrder = [];
-            $orders  = Order::with('order_details')->where('shop_id',$merchant->shop->id)->get();
+            $orders = Order::with('order_details')->where('shop_id', $merchant->shop->id)->get();
             if (!$orders) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Customer not Found',
+                    'msg' => 'Customer not Found',
                 ], 404);
             }
-            foreach($orders as $order){
-                $customer = User::where('id', $order->user_id)->where('role','customer')->first();
+            foreach ($orders as $order) {
+                $customer = User::where('id', $order->user_id)->where('role', 'customer')->first();
                 if (!$customer) {
                     return response()->json([
                         'success' => false,
-                        'msg' =>  'Customer not Found',
+                        'msg' => 'Customer not Found',
                     ], 404);
                 }
 
@@ -51,7 +51,7 @@ class OrderController extends Controller
                     'order' => $order,
                     'customer' => $customer,
                 ];
-                
+
             }
 
             return response()->json([
@@ -61,7 +61,7 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'msg' =>  $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
@@ -76,33 +76,27 @@ class OrderController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(OrderRequest $request)
     {
-        //return $request->all();
         try {
             DB::beginTransaction();
             $user = new User();
-            $user->name = $request->customer_name;
+            $user->name = $request->input('customer_name');
             $user->role = 'customer';
-            $user->email = 'guest'.rand(1000,9999).'@gmail.com';
-            $user->phone  = $request->customer_phone;
-            $user->address  = $request->customer_address;
+            $user->email = 'guest' . rand(1000, 9999) . '@gmail.com';
+            $user->phone = $request->input('customer_phone');
+            $user->address = $request->input('customer_address');
             $user->password = Hash::make(12345678);
             $user->save();
             $order = new Order();
-            $order->order_no = rand(100,9999);
-            $order->shop_id = $request->shop_id;
+            $order->order_no = rand(100, 9999);
+            $order->shop_id = $request->header('shop_id');
             $order->user_id = $user->id;
             $order->save();
 
             //store order details
-            foreach($request->product_id as $key => $val){
+            foreach ($request->input('product_id') as $key => $val) {
 
                 $orderDetails = new OrderDetails();
                 $orderDetails->order_id = $order->id;
@@ -110,11 +104,11 @@ class OrderController extends Controller
                 $orderDetails->product_qty = $request->product_qty[$key];
                 $orderDetails->save();
             }
-            $createdOrder = Order::with('order_details')->where('id',$order->id)->first();
+            $createdOrder = Order::with('order_details')->where('id', $order->id)->first();
 
-            foreach($createdOrder->order_details as $details){
+            foreach ($createdOrder->order_details as $details) {
                 $details->product->update([
-                    'product_qty'=> $details->product->product_qty - $details->product_qty
+                    'product_qty' => $details->product->product_qty - $details->product_qty
                 ]);
             }
 
@@ -122,13 +116,13 @@ class OrderController extends Controller
             return response()->json([
                 'success' => true,
                 'msg' => 'Order created Successfully',
-                'data' =>   $createdOrder,
+                'data' => $createdOrder,
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'msg' =>   $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
@@ -136,7 +130,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -146,36 +140,36 @@ class OrderController extends Controller
             if (!$merchant) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Merchant not Found',
+                    'msg' => 'Merchant not Found',
                 ], 404);
             }
 
-            $order = Order::with(['order_details'])->where('id', $id)->where('shop_id',$merchant->shop->id)->first();
+            $order = Order::with(['order_details'])->where('id', $id)->where('shop_id', $merchant->shop->id)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Order not Found',
+                    'msg' => 'Order not Found',
                 ], 404);
             }
 
-            $customer = User::where('id', $order->user_id)->where('role','customer')->first();
+            $customer = User::where('id', $order->user_id)->where('role', 'customer')->first();
             if (!$customer) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Customer not Found',
+                    'msg' => 'Customer not Found',
                 ], 404);
             }
 
-            $order['customer']= $customer;
+            $order['customer'] = $customer;
 
             return response()->json([
                 'success' => true,
-                'data' =>   $order,
+                'data' => $order,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'msg' =>   $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
@@ -183,7 +177,7 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -194,8 +188,8 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -206,7 +200,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -223,23 +217,23 @@ class OrderController extends Controller
             if (!$merchant) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Merchant not Found',
+                    'msg' => 'Merchant not Found',
                 ], 404);
             }
 
-            $order = Order::with('order_details')->where('id', $request->order_id)->where('shop_id',$merchant->shop->id)->first();
+            $order = Order::with('order_details')->where('id', $request->order_id)->where('shop_id', $merchant->shop->id)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Order not Found!',
+                    'msg' => 'Order not Found!',
                 ], 404);
             }
 
             $order->order_status = $request->status;
-            if($request->status == 'returned'){
+            if ($request->status == 'returned') {
                 $order->return_order_date = $request->return_order_date;
                 $order->return_order_note = $request->return_order_note;
-                foreach($order->order_details as $details){
+                foreach ($order->order_details as $details) {
                     $details->product->update([
                         'product_qty' => $details->product->product_qty + $details->product_qty
                     ]);
@@ -249,12 +243,12 @@ class OrderController extends Controller
 
             return response()->json([
                 'success' => true,
-                'msg' =>   'Order Status Update Successfully',
+                'msg' => 'Order Status Update Successfully',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'msg' =>   $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
