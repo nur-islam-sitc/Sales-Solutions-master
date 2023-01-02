@@ -94,6 +94,7 @@ class LoginController extends Controller
             return response()->json(['status' => 'Authorised', 'token' => $token, 'merchant' => [
                 'id' => auth()->user()->id,
                 'name' => auth()->user()->name,
+                'domain' => auth()->user()->shop->domain,
                 'email' => auth()->user()->email,
                 'phone' => auth()->user()->phone,
                 'role' => auth()->user()->role,
