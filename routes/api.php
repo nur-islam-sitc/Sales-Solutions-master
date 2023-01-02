@@ -3,7 +3,7 @@
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
 use App\Http\Controllers\API\V1\Client\CourierController;
 use App\Http\Controllers\API\V1\Client\Customer\MerchantCustomerController;
-use App\Http\Controllers\API\V1\Client\Order\OrderController as CustomerOrderController;
+use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
@@ -51,7 +51,6 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
     Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
 
-    Route::post('/order-store', [CustomerOrderController::class, 'store'])->name('order.store');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
@@ -92,7 +91,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::post('sales-target/update', [SalesTargetController::class, 'sales_target_update'])->name('sales.target.update');
     Route::post('orders/status/update', [ClientOrder::class, 'order_status_update'])->name('orders.status.update');
     Route::resource('sliders', ClientSlider::class);
-
+    Route::resource('orders', ClientOrder::class);
     Route::resource('products', ClientProduct::class);
     Route::resource('pages', PageController::class);
     Route::resource('categories', ClientCategory::class);

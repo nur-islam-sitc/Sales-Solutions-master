@@ -91,7 +91,7 @@ class OrderController extends Controller
             $user->save();
             $order = new Order();
             $order->order_no = rand(100, 9999);
-            $order->shop_id = $request->header('shop_id');
+            $order->shop_id = $request->input('shop_id');
             $order->user_id = $user->id;
             $order->save();
 
