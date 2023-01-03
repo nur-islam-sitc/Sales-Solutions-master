@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\API\V1\Client\Shop;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\MerchantBaseController;
 use App\Models\Shop;
 use App\Traits\sendApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class ShopController extends Controller
+class ShopController extends MerchantBaseController
 {
     use sendApiResponse;
 
