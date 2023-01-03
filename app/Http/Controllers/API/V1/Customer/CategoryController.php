@@ -33,12 +33,27 @@ class CategoryController extends Controller
      * @param $slug
      * @return JsonResponse
      */
-    public function show($slug): JsonResponse
+    public function show(Request $request,$slug)
     {
-        $category = Category::with('category_image')->where('slug', $slug)->first();
-
-        if(!$category) {
-            return $this->sendApiResponse('', 'No data available');
+        try {
+            
+            $shopId = $request->header('shop_id');
+            $category = Category::with('category_image')->where('slug', $slug)->where('shop_id',$shopId)->first();
+            if (!$category) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Category not Found',
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'data' =>   $category,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
         }
         return $this->sendApiResponse($category);
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Models\Media;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use File;
@@ -21,7 +22,15 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $category  = Category::with('category_image')->get();
+
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+            $category  = Category::with('category_image')->where('shop_id',$merchant->shop->shop_id)->get();
             return response()->json([
                 'success' => true,
                 'data' => $category,
@@ -58,7 +67,7 @@ class CategoryController extends Controller
             $category->name = $request->name;
             $category->slug = Str::slug($request->name);
             $category->description = $request->description;
-            $category->shop_id = auth()->user()->shop->id;
+            $category->shop_id = auth()->user()->shop->shop_id;
             $category->user_id = auth()->user()->id;
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
@@ -102,7 +111,14 @@ class CategoryController extends Controller
     public function show($slug)
     {
         try {
-            $category = Category::with('category_image')->where('slug', $slug)->first();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+            $category = Category::with('category_image')->where('slug', $slug)->where('shop_id',$merchant->shop->shop_id)->first();
             if (!$category) {
                 return response()->json([
                     'success' => false,

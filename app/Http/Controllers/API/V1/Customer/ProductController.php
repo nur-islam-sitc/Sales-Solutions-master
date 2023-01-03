@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Media;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -13,13 +14,30 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $product  = Product::with(['main_image','other_image'])->get();
+
+            $allProduct = [];
+            
+
+            $shopId = $request->header('shop_id');
+            $products   = Product::with('main_image')->where('shop_id',$shopId)->get();
+            foreach($products as $product){
+                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+                $product['other_images']= $other_images;
+                $allProduct[] = $product;
+            }
+
+            if(count($allProduct) < 1){
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'Product not found',
+                ], 400);
+            }
             return response()->json([
                 'success' => true,
-                'data' => $product,
+                'data' => $allProduct,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -36,16 +54,20 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show(Request $request,$slug)
     {
         try {
-            $product  = Product::with(['main_image','other_image'])->where('slug',$slug)->first();
-            if(!$product){
+            
+            $shopId = $request->header('shop_id');
+            $product  = Product::with('main_image')->where('shop_id',$shopId)->where('slug', $slug)->first();
+            if (!$product) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Product not Found',
                 ], 404);
             }
+            $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+            $product['other_images']= $other_images;
             return response()->json([
                 'success' => true,
                 'data' => $product,
