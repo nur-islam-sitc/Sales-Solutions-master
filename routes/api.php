@@ -51,6 +51,9 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
     Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
 
+    //Orders
+    Route::post('/order/store', [\App\Http\Controllers\API\V1\Customer\OrderController::class, 'store'])->name('order.store');
+
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
@@ -119,6 +122,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('/list', [ThemeController::class, 'getThemesByType']);
         Route::post('/import-theme', [ThemeController::class, 'import']);
         Route::post('/merchant/themes', [ThemeController::class, 'getMerchantsTheme']);
+
     });
 
     Route::group(['prefix' => 'shops'], function () {

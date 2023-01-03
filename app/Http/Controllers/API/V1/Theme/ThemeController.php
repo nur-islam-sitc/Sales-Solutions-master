@@ -46,6 +46,8 @@ class ThemeController extends Controller
 
             return $this->sendApiResponse($themes);
         }
+
+        return $this->sendApiResponse('', 'Please add shop_id for request');
     }
 
     public function import(Request $request)

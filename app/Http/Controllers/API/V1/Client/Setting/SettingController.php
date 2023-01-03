@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\API\V1\Client\Setting;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\MerchantBaseController;
 use App\Http\Requests\MerchantSettingRequest;
 use App\Models\Media;
 use App\Models\MerchantInfo;
 use App\Models\Shop;
 use App\Models\User;
 use App\Models\WebsiteSetting;
-use DB, File;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 
-class SettingController extends Controller
+class SettingController extends MerchantBaseController
 {
     public function business_info(MerchantSettingRequest $request)
     {
@@ -262,8 +263,8 @@ class SettingController extends Controller
                 if($request->website_shop_id){
                     $web->website_shop_id = $request->website_shop_id;
                 }
-               
-               
+
+
                 $web->shop_id = auth()->user()->shop->id;
                 $web->user_id = auth()->user()->id;
                 if($request->meta_title){
@@ -272,7 +273,7 @@ class SettingController extends Controller
                 if($request->meta_description){
                     $web->meta_description = $request->meta_description;
                 }
-                
+
                 $web->save();
 
                 if ($request->hasFile('website_shop_logo')) {
@@ -294,10 +295,10 @@ class SettingController extends Controller
                     'data' =>    $web,
                 ], 200);
             }
-            
+
             $oldLogo = $websiteSetting->website_shop_logo;
             DB::beginTransaction();
-            
+
             if($request->cash_on_delivery){
                 $websiteSetting->cash_on_delivery = $request->cash_on_delivery;
             }
@@ -316,8 +317,8 @@ class SettingController extends Controller
             if($request->website_shop_id){
                 $websiteSetting->website_shop_id = $request->website_shop_id;
             }
-           
-           
+
+
             $websiteSetting->shop_id = auth()->user()->shop->id;
             $websiteSetting->user_id = auth()->user()->id;
             if($request->meta_title){
@@ -332,7 +333,7 @@ class SettingController extends Controller
                 File::delete(public_path($oldLogo->name));
                 $oldLogo->delete();
             }
-            
+
 
             if ($request->hasFile('website_shop_logo')) {
                 $mainImageName = time() . '_website_shop_logo.' . $request->website_shop_logo->extension();
@@ -347,7 +348,7 @@ class SettingController extends Controller
                 }
             }
 
-            
+
 
             DB::commit();
             return response()->json([
