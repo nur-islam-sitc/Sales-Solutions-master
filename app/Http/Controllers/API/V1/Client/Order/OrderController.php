@@ -7,8 +7,9 @@ use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class OrderController extends Controller
@@ -16,54 +17,34 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        try {
-
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Merchant not Found',
-                ], 404);
-            }
-
-            $allOrder = [];
-            $orders  = Order::with('order_details')->where('shop_id', $merchant->shop->shop_id)->get();
-            if (!$orders) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Order not Found',
-                ], 404);
-            }
-            foreach ($orders as $order) {
-                $customer = User::where('id', $order->customer_id)->where('role', 'customer')->first();
-                if (!$customer) {
-                    return response()->json([
-                        'success' => false,
-                        'msg' => 'Customer not Found',
-                    ], 404);
-                }
-
-                $allOrder[] = [
-                    'order' => $order,
-                    'customer' => $customer,
-                ];
-
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $allOrder,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        $merchant = User::query()->where('role', 'merchant')->find(auth()->user()->id);
+        if (!$merchant) {
+            return $this->sendApiResponse('', 'Merchant not found');
         }
+
+        $allOrder = [];
+        $orders = Order::with('order_details')->where('shop_id', $merchant->shop->shop_id)->get();
+        if (!$orders) {
+            return $this->sendApiResponse('', 'Orders not found');
+        }
+        foreach ($orders as $order) {
+            $customer = User::query()->where('id', $order->customer_id)->where('role', 'customer')->first();
+            if (!$customer) {
+                return $this->sendApiResponse('', 'Customer not found');
+            }
+
+            $allOrder[] = [
+                'order' => $order,
+                'customer' => $customer,
+            ];
+
+        }
+        return $this->sendApiResponse($allOrder);
+
     }
 
     /**
@@ -87,7 +68,7 @@ class OrderController extends Controller
             $customerID = null;
             $findCustomer = User::where('phone', $request->customer_phone)->where('role', 'customer')->first();
 
-            if($findCustomer){
+            if ($findCustomer) {
                 $customerID = $findCustomer->id;
             }
 
@@ -96,8 +77,8 @@ class OrderController extends Controller
                 $customer->name = $request->customer_name;
                 $customer->role = 'customer';
                 $customer->email = 'customer' . rand(1000, 9999) . '@gmail.com';
-                $customer->phone  = $request->customer_phone;
-                $customer->address  = $request->customer_address;
+                $customer->phone = $request->customer_phone;
+                $customer->address = $request->customer_address;
                 $customer->password = Hash::make(12345678);
                 $customer->save();
 
@@ -109,7 +90,7 @@ class OrderController extends Controller
             $order->order_no = rand(100, 9999);
             $order->shop_id = auth()->user()->shop->shop_id;
             $order->user_id = auth()->user()->id;
-            $order->customer_id =  $customerID;
+            $order->customer_id = $customerID;
             $order->save();
 
             //store order details
@@ -274,12 +255,7 @@ class OrderController extends Controller
     {
 
 
-        try {<div class="col-xl-3 col-xxl-3 col-lg-6 col-sm-6">
-            <div class="card btn-gp gray">
-                <a href="{{ route('parents.coach.index') }}" ><span>My Coaches</span></a>
-            </div>
-        </div>
-
+        try {
             $orderID = $request->header('order_id');
             $shopID = $request->header('shop_id');
 
@@ -287,18 +263,18 @@ class OrderController extends Controller
             if (!$order) {
                 return response()->json([
                     'success' => false,
-                    'data' =>  "Order not found!",
+                    'data' => "Order not found!",
                 ], 401);
             }
 
             return response()->json([
                 'success' => true,
-                'data' =>   $order,
+                'data' => $order,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'msg' =>   $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
