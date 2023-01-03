@@ -61,8 +61,6 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
         try {
-
-
             DB::beginTransaction();
 
             $customerID = null;
@@ -129,47 +127,28 @@ class OrderController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        try {
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Merchant not Found',
-                ], 404);
-            }
-
-            $order = Order::with(['order_details'])->where('id', $id)->where('shop_id', $merchant->shop->shop_id)->first();
-            if (!$order) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Order not Found',
-                ], 404);
-            }
-
-            $customer = User::where('id', $order->customer_id)->where('role', 'customer')->first();
-            if (!$customer) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Customer not Found',
-                ], 404);
-            }
-
-            $order['customer'] = $customer;
-
-            return response()->json([
-                'success' => true,
-                'data' => $order,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        $merchant = User::query()->where('role', 'merchant')->find(auth()->user()->id);
+        if (!$merchant) {
+            return $this->sendApiResponse('', 'Merchant not found');
         }
+
+        $order = Order::with(['order_details'])->where('id', $id)->where('shop_id', $merchant->shop->shop_id)->first();
+        if (!$order) {
+            return $this->sendApiResponse('', 'Order not found');
+        }
+
+        $customer = User::where('id', $order->customer_id)->where('role', 'customer')->first();
+        if (!$customer) {
+            return $this->sendApiResponse('', 'Customer not found');
+        }
+
+        $order['customer'] = $customer;
+        return $this->sendApiResponse($order);
+
     }
 
     /**
