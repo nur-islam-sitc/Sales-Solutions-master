@@ -274,7 +274,11 @@ class OrderController extends Controller
     {
 
 
-        try {
+        try {<div class="col-xl-3 col-xxl-3 col-lg-6 col-sm-6">
+            <div class="card btn-gp gray">
+                <a href="{{ route('parents.coach.index') }}" ><span>My Coaches</span></a>
+            </div>
+        </div>
 
             $orderID = $request->header('order_id');
             $shopID = $request->header('shop_id');
