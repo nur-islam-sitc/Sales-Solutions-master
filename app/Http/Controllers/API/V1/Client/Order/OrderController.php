@@ -61,6 +61,7 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
         try {
+            
             DB::beginTransaction();
 
             $customerID = null;
