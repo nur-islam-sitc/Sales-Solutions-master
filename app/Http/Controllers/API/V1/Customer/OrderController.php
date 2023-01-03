@@ -51,6 +51,7 @@ class OrderController extends Controller
             $order->order_no = rand(100, 9999);
             $order->shop_id = $shop->shop_id;
             $order->user_id = $shop->user_id;
+            $order->customer_id = $customerID;
             $order->save();
 
             //store order details
