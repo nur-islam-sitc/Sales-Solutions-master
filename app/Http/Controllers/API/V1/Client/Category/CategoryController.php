@@ -30,7 +30,7 @@ class CategoryController extends Controller
                     'msg' =>  'Merchant not Found',
                 ], 404);
             }
-            $category  = Category::with('category_image')->where('shop_id',$merchant->shop->id)->get();
+            $category  = Category::with('category_image')->where('shop_id',$merchant->shop->shop_id)->get();
             return response()->json([
                 'success' => true,
                 'data' => $category,
@@ -67,7 +67,7 @@ class CategoryController extends Controller
             $category->name = $request->name;
             $category->slug = Str::slug($request->name);
             $category->description = $request->description;
-            $category->shop_id = auth()->user()->shop->id;
+            $category->shop_id = auth()->user()->shop->shop_id;
             $category->user_id = auth()->user()->id;
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
@@ -118,7 +118,7 @@ class CategoryController extends Controller
                     'msg' =>  'Merchant not Found',
                 ], 404);
             }
-            $category = Category::with('category_image')->where('slug', $slug)->where('shop_id',$merchant->shop->id)->first();
+            $category = Category::with('category_image')->where('slug', $slug)->where('shop_id',$merchant->shop->shop_id)->first();
             if (!$category) {
                 return response()->json([
                     'success' => false,

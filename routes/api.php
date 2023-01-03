@@ -136,6 +136,9 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
 });
 
+Route::get('v1/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');
+
+
 
 
 

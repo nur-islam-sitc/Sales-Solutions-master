@@ -33,7 +33,7 @@ class ProductController extends Controller
             }
 
 
-            $products   = Product::with('main_image')->where('shop_id',$merchant->shop->id)->get();
+            $products   = Product::with('main_image')->where('shop_id',$merchant->shop->shop_id)->get();
             foreach($products as $product){
                 $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
                 $product['other_images']= $other_images;
@@ -75,7 +75,7 @@ class ProductController extends Controller
             $product  = new Product();
             $product->category_id  = $request->category_id;
             $product->user_id  = auth()->user()->id;
-            $product->shop_id  = auth()->user()->shop->id;
+            $product->shop_id  = auth()->user()->shop->shop_id;
             $product->product_name = $request->product_name;
             $product->slug = Str::slug($request->product_name);
             $product->price = $request->price;
@@ -146,7 +146,7 @@ class ProductController extends Controller
                 ], 404);
             }
 
-            $product  = Product::with('main_image')->where('shop_id',$merchant->shop->id)->where('slug', $slug)->first();
+            $product  = Product::with('main_image')->where('shop_id',$merchant->shop->shop_id)->where('slug', $slug)->first();
             $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
             $product['other_images']= $other_images;
             if (!$product) {

@@ -31,15 +31,15 @@ class OrderController extends Controller
             }
 
             $allOrder = [];
-            $orders  = Order::with('order_details')->where('shop_id',$merchant->shop->id)->get();
+            $orders  = Order::with('order_details')->where('shop_id', $merchant->shop->shop_id)->get();
             if (!$orders) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Customer not Found',
+                    'msg' =>  'Order not Found',
                 ], 404);
             }
-            foreach($orders as $order){
-                $customer = User::where('id', $order->user_id)->where('role','customer')->first();
+            foreach ($orders as $order) {
+                $customer = User::where('id', $order->customer_id)->where('role', 'customer')->first();
                 if (!$customer) {
                     return response()->json([
                         'success' => false,
@@ -51,7 +51,6 @@ class OrderController extends Controller
                     'order' => $order,
                     'customer' => $customer,
                 ];
-                
             }
 
             return response()->json([
@@ -86,23 +85,40 @@ class OrderController extends Controller
     {
         //return $request->all();
         try {
+
+
             DB::beginTransaction();
-            $user = new User();
-            $user->name = $request->customer_name;
-            $user->role = 'customer';
-            $user->email = 'guest'.rand(1000,9999).'@gmail.com';
-            $user->phone  = $request->customer_phone;
-            $user->address  = $request->customer_address;
-            $user->password = Hash::make(12345678);
-            $user->save();
+
+            $customerID = null;
+            $findCustomer = User::where('phone', $request->customer_phone)->where('role', 'customer')->first();
+
+            if($findCustomer){
+                $customerID = $findCustomer->id;
+            }
+
+            if (!$findCustomer) {
+                $customer = new User();
+                $customer->name = $request->customer_name;
+                $customer->role = 'customer';
+                $customer->email = 'customer' . rand(1000, 9999) . '@gmail.com';
+                $customer->phone  = $request->customer_phone;
+                $customer->address  = $request->customer_address;
+                $customer->password = Hash::make(12345678);
+                $customer->save();
+
+                $customerID = $customer->id;
+            }
+
+
             $order = new Order();
-            $order->order_no = rand(100,9999);
-            $order->shop_id = $request->shop_id;
-            $order->user_id = $user->id;
+            $order->order_no = rand(100, 9999);
+            $order->shop_id = auth()->user()->shop->shop_id;
+            $order->user_id = auth()->user()->id;
+            $order->customer_id =  $customerID;
             $order->save();
 
             //store order details
-            foreach($request->product_id as $key => $val){
+            foreach ($request->product_id as $key => $val) {
 
                 $orderDetails = new OrderDetails();
                 $orderDetails->order_id = $order->id;
@@ -110,11 +126,11 @@ class OrderController extends Controller
                 $orderDetails->product_qty = $request->product_qty[$key];
                 $orderDetails->save();
             }
-            $createdOrder = Order::with('order_details')->where('id',$order->id)->first();
+            $createdOrder = Order::with('order_details')->where('id', $order->id)->first();
 
-            foreach($createdOrder->order_details as $details){
+            foreach ($createdOrder->order_details as $details) {
                 $details->product->update([
-                    'product_qty'=> $details->product->product_qty - $details->product_qty
+                    'product_qty' => $details->product->product_qty - $details->product_qty
                 ]);
             }
 
@@ -150,7 +166,7 @@ class OrderController extends Controller
                 ], 404);
             }
 
-            $order = Order::with(['order_details'])->where('id', $id)->where('shop_id',$merchant->shop->id)->first();
+            $order = Order::with(['order_details'])->where('id', $id)->where('shop_id', $merchant->shop->shop_id)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,
@@ -158,7 +174,7 @@ class OrderController extends Controller
                 ], 404);
             }
 
-            $customer = User::where('id', $order->user_id)->where('role','customer')->first();
+            $customer = User::where('id', $order->customer_id)->where('role', 'customer')->first();
             if (!$customer) {
                 return response()->json([
                     'success' => false,
@@ -166,7 +182,7 @@ class OrderController extends Controller
                 ], 404);
             }
 
-            $order['customer']= $customer;
+            $order['customer'] = $customer;
 
             return response()->json([
                 'success' => true,
@@ -227,7 +243,7 @@ class OrderController extends Controller
                 ], 404);
             }
 
-            $order = Order::with('order_details')->where('id', $request->order_id)->where('shop_id',$merchant->shop->id)->first();
+            $order = Order::with('order_details')->where('id', $request->order_id)->where('shop_id', $merchant->shop->shop_id)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,
@@ -236,10 +252,10 @@ class OrderController extends Controller
             }
 
             $order->order_status = $request->status;
-            if($request->status == 'returned'){
+            if ($request->status == 'returned') {
                 $order->return_order_date = $request->return_order_date;
                 $order->return_order_note = $request->return_order_note;
-                foreach($order->order_details as $details){
+                foreach ($order->order_details as $details) {
                     $details->product->update([
                         'product_qty' => $details->product->product_qty + $details->product_qty
                     ]);
@@ -250,6 +266,35 @@ class OrderController extends Controller
             return response()->json([
                 'success' => true,
                 'msg' =>   'Order Status Update Successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    public function order_invoice(Request $request)
+    {
+
+
+        try {
+
+            $orderID = $request->header('order_id');
+            $shopID = $request->header('shop_id');
+
+            $order = Order::with('order_details')->where('id', $orderID)->where('shop_id', $shopID)->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'data' =>  "Order not found!",
+                ], 401);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' =>   $order,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
