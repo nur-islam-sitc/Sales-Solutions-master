@@ -4,16 +4,13 @@ namespace App\Http\Controllers\API\V1\Theme;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActiveTheme;
-use App\Models\Media;
 use App\Models\Shop;
 use App\Models\Theme;
 use App\Models\ThemeEdit;
 use App\Traits\sendApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
-use PhpParser\Node\Expr\Array_;
 
 class ThemeController extends Controller
 {
@@ -54,28 +51,41 @@ class ThemeController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
+        $data = $request->validate([
             'title' => 'required',
             'content' => 'required',
-            'logo' => 'required',
+            'type' => 'required',
+            'page' => 'required',
+            'menu' => 'required',
+            'theme' => 'nullable'
         ]);
+        $data['shop_id'] = $request->header('shop_id');
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo')->getClientOriginalName();
+            $path = '/themes/images';
+            $image = $request->file('logo')->storeAs($path, $file, 'local');
+            $data['logo'] = $image;
+        }
 
-        $file = $request->file('logo')->getClientOriginalName();
-        $path = '/themes/images';
-        $image = $request->file('image')->storeAs($path, $file, 'local');
-
-        $theme = ThemeEdit::query()->create([
-            'title' => $request->input('title'),
-            'content' => $request->input('content'),
-            'shop_id' => $request->header('shop_id'),
-            'type' => $request->input('type'),
-            'page' => $request->input('page'),
-            'theme' => $request->input('theme'),
-            'menu' => $request->input('menu'),
-            'logo' => $path.'/'.$image,
-        ]);
+        $theme = ThemeEdit::query()->create($data);
 
         return $this->sendApiResponse($theme, 'Data Created Successfully');
+    }
+
+    public function update(Request $request, $id): JsonResponse
+    {
+        $data = ThemeEdit::query()->findOrFail($id);
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo')->getClientOriginalName();
+            $path = '/themes/images';
+            $image = $request->file('logo')->storeAs($path, $file, 'local');
+            $data->logo = $image;
+            $data->save();
+        }
+
+        $data->update($request->except('logo'));
+
+        return $this->sendApiResponse($data, 'Data Updated Successfully');
     }
 
     public function import(Request $request)
