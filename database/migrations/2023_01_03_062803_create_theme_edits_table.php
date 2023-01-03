@@ -18,7 +18,7 @@ class CreateThemeEditsTable extends Migration
             $table->string('title');
             $table->text('menu');
             $table->text('content');
-            $table->string('logo');
+            $table->string('logo')->nullable();
             $table->string('page');
             $table->string('theme');
             $table->string('type');
