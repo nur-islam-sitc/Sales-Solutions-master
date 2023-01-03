@@ -6,12 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\ActiveTheme;
 use App\Models\Shop;
 use App\Models\Theme;
+use App\Models\ThemeEdit;
 use App\Traits\sendApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
-use PhpParser\Node\Expr\Array_;
 
 class ThemeController extends Controller
 {
@@ -36,7 +35,7 @@ class ThemeController extends Controller
             if ($request->filled('type')) {
                 $query->where('type', $request->input('type'));
             }
-            if(!$imported_themes->isEmpty()) {
+            if (!$imported_themes->isEmpty()) {
                 $query->whereNotIn('id', $imported_themes);
             }
             $themes = $query->get();
@@ -50,11 +49,50 @@ class ThemeController extends Controller
         return $this->sendApiResponse('', 'Please add shop_id for request');
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'type' => 'required',
+            'page' => 'required',
+            'menu' => 'required',
+            'theme' => 'nullable'
+        ]);
+        $data['shop_id'] = $request->header('shop_id');
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo')->getClientOriginalName();
+            $path = '/themes/images';
+            $image = $request->file('logo')->storeAs($path, $file, 'local');
+            $data['logo'] = $image;
+        }
+
+        $theme = ThemeEdit::query()->create($data);
+
+        return $this->sendApiResponse($theme, 'Data Created Successfully');
+    }
+
+    public function update(Request $request, $id): JsonResponse
+    {
+        $data = ThemeEdit::query()->findOrFail($id);
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo')->getClientOriginalName();
+            $path = '/themes/images';
+            $image = $request->file('logo')->storeAs($path, $file, 'local');
+            $data->logo = $image;
+            $data->save();
+        }
+
+        $data->update($request->except('logo'));
+
+        return $this->sendApiResponse($data, 'Data Updated Successfully');
+    }
+
     public function import(Request $request)
     {
         $request->validate([
-           'type' => ['required'],
-           'theme_id' => ['required'],
+            'type' => ['required'],
+            'theme_id' => ['required'],
         ]);
 
         if ($request->hasHeader('shop_id') && $request->header('shop_id') !== null) {
@@ -69,7 +107,7 @@ class ThemeController extends Controller
 
             $theme = Theme::query()->where('id', $request->input('theme_id'))->first();
 
-            if(!$theme) {
+            if (!$theme) {
                 return $this->sendApiResponse('', 'Theme not available right now', 'themeNotFound', '', 401);
             }
 
@@ -101,7 +139,7 @@ class ThemeController extends Controller
             $active_themes = ActiveTheme::query()->where('shop_id', $shop->shop_id)->pluck('theme_id');
             $theme = Theme::query()->with('media')->where('type', $request->input('type'))->whereIn('id', $active_themes)->get();
 
-            if($theme->isEmpty()) {
+            if ($theme->isEmpty()) {
                 return $this->sendApiResponse('', 'No theme has been imported', 'themeNotFound', '', 401);
             }
             return $this->sendApiResponse($theme);

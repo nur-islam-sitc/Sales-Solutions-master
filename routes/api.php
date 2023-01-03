@@ -122,6 +122,8 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('/list', [ThemeController::class, 'getThemesByType']);
         Route::post('/import-theme', [ThemeController::class, 'import']);
         Route::post('/merchant/themes', [ThemeController::class, 'getMerchantsTheme']);
+        Route::post('/custom/store', [ThemeController::class, 'store']);
+        Route::post('/custom/{id}/update', [ThemeController::class, 'update']);
 
     });
 
@@ -141,6 +143,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 });
 
 Route::get('v1/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');
+
 
 
 
