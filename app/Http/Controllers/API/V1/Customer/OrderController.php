@@ -16,6 +16,7 @@ class OrderController extends Controller
 {
     public function store(OrderRequest $request): JsonResponse
     {
+        return $request->all();
         try {
             DB::beginTransaction();
 
