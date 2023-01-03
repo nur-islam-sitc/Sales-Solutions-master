@@ -25,11 +25,11 @@ class OrderController extends Controller
             $user->address = $request->input('customer_address');
             $user->password = Hash::make(12345678);
             $user->save();
+
             $order = new Order();
             $order->order_no = rand(100, 9999);
             $order->shop_id = $request->header('shop_id');
             $order->user_id = $user->id;
-
             $order->save();
 
             //store order details
@@ -41,7 +41,9 @@ class OrderController extends Controller
                 $orderDetails->product_qty = $request->product_qty[$key];
                 $orderDetails->save();
             }
+
             $createdOrder = Order::with('order_details')->where('id', $order->id)->first();
+
 
             foreach ($createdOrder->order_details as $details) {
                 $details->product->update([

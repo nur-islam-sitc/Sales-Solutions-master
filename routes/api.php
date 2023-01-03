@@ -122,6 +122,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('/list', [ThemeController::class, 'getThemesByType']);
         Route::post('/import-theme', [ThemeController::class, 'import']);
         Route::post('/merchant/themes', [ThemeController::class, 'getMerchantsTheme']);
+
     });
 
     Route::group(['prefix' => 'shops'], function () {
