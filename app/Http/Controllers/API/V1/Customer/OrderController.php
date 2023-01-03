@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -17,19 +18,39 @@ class OrderController extends Controller
     {
         try {
             DB::beginTransaction();
-            $user = new User();
-            $user->name = $request->input('customer_name');
-            $user->role = 'customer';
-            $user->email = 'guest' . rand(1000, 9999) . '@gmail.com';
-            $user->phone = $request->input('customer_phone');
-            $user->address = $request->input('customer_address');
-            $user->password = Hash::make(12345678);
-            $user->save();
+
+            $customerID = null;
+            $findCustomer = User::where('phone', $request->customer_phone)->where('role', 'customer')->first();
+
+            if($findCustomer){
+                $customerID = $findCustomer->id;
+            }
+
+            if (!$findCustomer) {
+                $customer = new User();
+                $customer->name = $request->customer_name;
+                $customer->role = 'customer';
+                $customer->email = 'customer' . rand(1000, 9999) . '@gmail.com';
+                $customer->phone  = $request->customer_phone;
+                $customer->address  = $request->customer_address;
+                $customer->password = Hash::make(12345678);
+                $customer->save();
+
+                $customerID = $customer->id;
+            }
+
+            $shop = Shop::where('shop_id', $request->header('shop_id'))->first();
+            if (!$shop) {
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'Shop Not Found',
+                ], 404);
+            }
 
             $order = new Order();
             $order->order_no = rand(100, 9999);
-            $order->shop_id = $request->header('shop_id');
-            $order->user_id = $user->id;
+            $order->shop_id = $shop->shop_id;
+            $order->user_id = $shop->user_id;
             $order->save();
 
             //store order details
