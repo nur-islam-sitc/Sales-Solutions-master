@@ -49,6 +49,15 @@ class ThemeController extends Controller
         return $this->sendApiResponse('', 'Please add shop_id for request');
     }
 
+    public function getListByPage(Request $request, $page):JsonResponse
+    {
+        $query = ThemeEdit::query()->where('shop_id', $request->header('shop_id'))->where('page',$page)->get();
+        if ($query->isEmpty()) {
+            return $this->sendApiResponse('', 'No data available');
+        }
+        return $this->sendApiResponse($query);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([

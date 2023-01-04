@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AdminBaseController;
 use App\Models\Media;
 use App\Models\Theme;
 use App\Traits\sendApiResponse;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ThemeController extends Controller
+class ThemeController extends AdminBaseController
 {
     use sendApiResponse;
     public function index()
