@@ -58,7 +58,7 @@ class PageController extends Controller
             DB::beginTransaction();
             $page = new Page();
             $page->user_id = auth()->user()->id;
-            $page->shop_id = auth()->user()->shop->id;
+            $page->shop_id = auth()->user()->shop->shop_id;
             $page->title = $request->title;
             $page->slug = Str::slug($request->title);
             $page->page_content = $request->page_content;
