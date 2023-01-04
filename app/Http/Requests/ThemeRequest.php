@@ -29,11 +29,13 @@ class ThemeRequest extends FormRequest
                 'landing_theme_id' => 'required|integer',
             ];
         }
+
         if(\Request::route()->getName() === "client.themes.multiple.active"){
             return [
                 'multiple_theme_id' => 'required|integer',
             ];
         }
+        
         return [];
     }
 

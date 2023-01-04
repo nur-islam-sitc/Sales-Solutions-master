@@ -85,7 +85,7 @@
                     <div class="Login">
 
                         <a href="">Log In</a>
-                        <a href="">Sign Up</a>
+                        <a href="{{ route('merchant.register') }}">Sign Up</a>
 
                     </div>
 

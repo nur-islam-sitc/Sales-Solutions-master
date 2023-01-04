@@ -15,10 +15,9 @@ class CreateActiveThemesTable extends Migration
     {
         Schema::create('active_themes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('shop_id');
-            $table->unsignedBigInteger('landing_theme_id')->nullable();
-            $table->unsignedBigInteger('multiple_theme_id')->nullable();
+            $table->foreignId('theme_id')->constrained('themes')->onDelete('cascade');
+            $table->enum('type', ['landing', 'multiple']);
             $table->timestamps();
         });
     }

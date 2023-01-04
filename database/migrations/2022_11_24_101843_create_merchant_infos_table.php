@@ -15,15 +15,16 @@ class CreateMerchantInfosTable extends Migration
     {
         Schema::create('merchant_infos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->string('short_address')->default("");
             $table->text('address')->nullable();
             $table->string('fb_page')->default("");
             $table->string('short_description')->default("");
             $table->text('description')->nullable();
-            $table->string('brand_color')->nullable();
-            $table->string('brand_border_color')->nullable();
             $table->text('other_info')->nullable();
+            $table->float('allocate_balance', 8, 2)->default(0);
             $table->timestamps();
         });
     }

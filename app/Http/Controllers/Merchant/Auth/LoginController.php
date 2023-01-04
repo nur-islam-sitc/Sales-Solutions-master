@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Merchant\Auth;
 
-use App\Http\Controllers\Controller;
+
+use App\Http\Controllers\MerchantBaseController;
 use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
@@ -10,14 +11,13 @@ use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
-class LoginController extends Controller
+class LoginController extends MerchantBaseController
 {
 
     /**
@@ -31,8 +31,14 @@ class LoginController extends Controller
         return view('auth.register');
     }
 
-    private function create_subdomain($domain, $dir)
+    /**
+     * @param $domain
+     * @param $dir
+     * @return void
+     */
+    private function create_subdomain($domain, $dir): void
     {
+
         $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
         try {
 
@@ -43,9 +49,9 @@ class LoginController extends Controller
                 'disallowdot' => 1,
             ];
             $result = $cPanel->execute('api2', "SubDomain", "addsubdomain", $parameters);
-            return ["status" => true, "response" => $result];
+            return;
         } catch (Exception $exception) {
-            return ["status" => false, "response" => $exception];
+            return;
         }
     }
 
@@ -60,12 +66,13 @@ class LoginController extends Controller
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
                 'domain' => $request->input('domain'),
+                'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
-            $this->create_subdomain($request->input('domain') . '.dashboard', 'dashboard.funnelliner.com');
-            $this->create_subdomain($request->input('domain') . '.web', 'web.funnelliner.com');
-            $url = $request->input('domain') . '.dashboard.funnelliner.com';
-            return Redirect::to($url);
+            $this->create_subdomain($request->input('domain') . '-dashboard', 'dashboard.funnelliner.com');
+            $this->create_subdomain($request->input('domain') . '-web', 'web.funnelliner.com');
+            $url = $request->input('domain') . '-dashboard.funnelliner.com';
+            return Redirect::to('https://' . $url);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
@@ -82,18 +89,16 @@ class LoginController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
 
-        if (Auth::attempt([
-            'email' => $request->email,
-            'password' => $request->password,
-            'role' => User::MERCHANT])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => User::MERCHANT])) {
             $token = auth()->user()->createApiToken(); #Generate token
             return response()->json(['status' => 'Authorised', 'token' => $token, 'merchant' => [
                 'id' => auth()->user()->id,
                 'name' => auth()->user()->name,
+                'domain' => auth()->user()->shop->domain,
                 'email' => auth()->user()->email,
                 'phone' => auth()->user()->phone,
                 'role' => auth()->user()->role,
-                'shop_id' => auth()->user()->shop->id,
+                'shop_id' => auth()->user()->shop->shop_id,
                 'avatar' => auth()->user()->avatar,
             ]], 200);
         } else {

@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
                 'name' => $this->faker->name(),
                 'domain' => $this->faker->domainWord(),
                 'address' => $this->faker->address(),
+                'shop_id' => mt_rand(111111, 999999),
             ]);
 
             MerchantInfo::query()->create([

@@ -127,7 +127,7 @@ class User extends Authenticatable
         return $this->hasMany(SupportTicket::class);
     }
 
-    public function customer_info()
+    public function customer_info(): HasOne
     {
         return $this->hasOne(CustomerInfo::class);
     }

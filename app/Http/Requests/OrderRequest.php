@@ -26,10 +26,21 @@ class OrderRequest extends FormRequest
      */
     public function rules()
     {
-        if(Request::route()->getName() === "client.orders.store"){
+        if(Request::route()->getName() == 'customer.order.store') {
             return [
                 'customer_name' => 'required|string|max:255',
-                'customer_phone' => 'required|string|unique:users,phone|max:255',
+                'customer_phone' => 'required|string|max:255',
+                'customer_address' => 'required|string|max:255',
+                'product_id' => 'required|array|min:1',
+                'product_id.*' => 'required|integer|distinct|min:1',
+                'product_qty' => 'required|array|min:1',
+            ];
+        }
+        if(Request::route()->getName() === "client.orders.store"){
+            return [
+                'shop_id' => 'required|integer',
+                'customer_name' => 'required|string|max:255',
+                'customer_phone' => 'required|string|max:255',
                 'customer_address' => 'required|string|max:255',
                 'product_id' => 'required|array|min:1',
                 'product_id.*' => 'required|integer|distinct|min:1',

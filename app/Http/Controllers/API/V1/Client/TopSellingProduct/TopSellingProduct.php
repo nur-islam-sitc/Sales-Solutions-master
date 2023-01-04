@@ -17,7 +17,7 @@ class TopSellingProduct extends Controller
         try {
 
             $merchant = auth()->user();
-            $shopID = $merchant->shop->id;
+            $shopID = $merchant->shop->shop_id;
             $orderIds = [];
             $orders = Order::with('order_details')->where('order_status', 'delivery')->where('shop_id', $shopID)->get();
 

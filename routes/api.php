@@ -8,16 +8,19 @@ use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
 use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
+use App\Http\Controllers\API\V1\Client\Shop\ShopController;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
 use App\Http\Controllers\API\V1\Client\Stock\Inventroy\InventoryController;
 use App\Http\Controllers\API\V1\Client\Stock\ProductReturn\ProductReturnController;
 use App\Http\Controllers\API\V1\Client\Stock\StockIn\StockInController;
 use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
 use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
+use App\Http\Controllers\API\V1\Customer\AuthController;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\API\V1\Theme\Landing\LandingPageTemplateController;
 use App\Http\Controllers\API\V1\Theme\Multiple\MultiplePageTemplateController;
+use App\Http\Controllers\API\V1\Theme\ThemeController;
 use App\Http\Controllers\Merchant\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +50,12 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('categories/{category}', [CustomerCategory::class, 'show'])->name('categories.show');
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
     Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
+
+    //Orders
+    Route::post('/order/store', [\App\Http\Controllers\API\V1\Customer\OrderController::class, 'store'])->name('order.store');
+
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
 //merchant api
@@ -109,42 +118,40 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     });
 
-    //themes
-    Route::prefix('themes')->name('themes.')->group(function () {
+    Route::group(['prefix' => 'themes'], function () {
+        Route::post('/list', [ThemeController::class, 'getThemesByType']);
+        Route::post('/import-theme', [ThemeController::class, 'import']);
+        Route::post('/merchant/themes', [ThemeController::class, 'getMerchantsTheme']);
 
-        //landing
-        Route::prefix('landing')->name('landing.')->group(function(){
-            Route::post('active',[LandingPageTemplateController::class,'active'])->name('active');
-        });
+        Route::get('/list/{page}', [ThemeController::class, 'getListByPage']);
+        Route::post('/custom/store', [ThemeController::class, 'store']);
+        Route::post('/custom/{id}/update', [ThemeController::class, 'update']);
 
-        //multiple
-        Route::prefix('multiple')->name('multiple.')->group(function(){
-            Route::post('active',[MultiplePageTemplateController::class,'active'])->name('active');
-        });
+    });
+
+    Route::group(['prefix' => 'shops'], function () {
+        Route::post('/info', [ShopController::class, 'index']);
+    });
+
+    Route::group(['prefix' => 'courier'], function () {
+
+        Route::post('/provider', [CourierController::class, 'store']);
+        Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
+        Route::post('/track-order', [CourierController::class, 'trackOrder']);
 
     });
 
 
 });
 
-Route::group(['prefix' => 'courier'], function () {
+Route::get('v1/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');
 
-    Route::post('/provider', [CourierController::class, 'store']);
-    Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
-    Route::post('/track-order', [CourierController::class, 'trackOrder']);
 
-});
 
-//Themes
-Route::group(['prefix' => 'themes','name' => 'themes.'], function () {
 
-    Route::group(['prefix' => 'landing','name' => 'landing.'], function () {
-        Route::get('list', [LandingPageTemplateController::class,'index']);
-    });
-    Route::group(['prefix' => 'multiple','name' => 'multiple.'], function () {
-        Route::get('list', [MultiplePageTemplateController::class,'index']);
-    });
 
-});
+
+
+
 
 
