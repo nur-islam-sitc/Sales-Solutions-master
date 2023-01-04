@@ -20,7 +20,7 @@ class CreateCategoriesTable extends Migration
             $table->string('description')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('shop_id');
-            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->default(0);
             $table->integer('status')->comment('1 for active 2 for inactive');
             $table->timestamps();
         });

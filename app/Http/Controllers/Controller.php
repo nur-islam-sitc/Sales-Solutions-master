@@ -17,15 +17,15 @@ class Controller extends BaseController
 
     public function __construct(Request $request)
     {
-        if ($request->header('shop_id') && $request->header('shop_id') !== null) {
-            $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
+        // if ($request->header('shop_id') && $request->header('shop_id') !== null) {
+        //     $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
 
-            if(!$shop) {
-                abort(404, 'Invalid shop id');
-            }
-            return $request;
-        }
-        abort(404, 'Please add valid shop id to request headers');
+        //     if(!$shop) {
+        //         abort(404, 'Invalid shop id');
+        //     }
+        //     return $request;
+        // }
+        // abort(404, 'Please add valid shop id to request headers');
 
     }
 
