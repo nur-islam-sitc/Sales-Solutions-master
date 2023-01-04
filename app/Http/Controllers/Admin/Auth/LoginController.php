@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AdminBaseController;
+use App\Http\Controllers\MerchantBaseController;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 
-class LoginController extends Controller
+class LoginController extends AdminBaseController
 {
     use AuthenticatesUsers;
 
