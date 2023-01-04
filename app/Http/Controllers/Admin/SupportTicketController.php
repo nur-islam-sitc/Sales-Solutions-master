@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AdminBaseController;
 use App\Models\Attachment;
 use App\Models\SupportTicket;
 use App\Models\User;
@@ -12,7 +12,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-class SupportTicketController extends Controller
+class SupportTicketController extends AdminBaseController
 {
     /**
      * @return Application|Factory|View

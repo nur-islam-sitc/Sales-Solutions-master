@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AdminBaseController;
 use App\Http\Requests\StaffStoreRequest;
 use App\Http\Requests\StaffUpdateRequest;
 use App\Models\Role;
@@ -15,7 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 
-class StaffController extends Controller
+class StaffController extends AdminBaseController
 {
     /**
      * @return Application|Factory|View
