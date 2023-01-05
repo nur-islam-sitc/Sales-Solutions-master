@@ -24,6 +24,7 @@ class ThemeController extends Controller
 
 
             if (!$shop) {
+
                 throw ValidationException::withMessages([
                     'shop_id' => 'Invalid Shop Id'
                 ]);
@@ -52,10 +53,19 @@ class ThemeController extends Controller
     public function getListByPage(Request $request, $page):JsonResponse
     {
         $query = ThemeEdit::query()->where('shop_id', $request->header('shop_id'))->where('page',$page)->get();
+
         if ($query->isEmpty()) {
             return $this->sendApiResponse('', 'No data available');
         }
-        return $this->sendApiResponse($query);
+
+        $themeEditQuery = [];
+        foreach($query as $q){
+            $themes = Theme::where('name', $q->theme)->get();
+            $q['themes'] = $themes;
+            $themeEditQuery = $q;
+        }
+        
+        return $this->sendApiResponse( $themeEditQuery);
     }
 
     public function store(Request $request): JsonResponse

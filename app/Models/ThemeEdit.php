@@ -23,4 +23,9 @@ class ThemeEdit extends Model
         }
         return $this->save();
     }
+
+    public function theme()
+    {
+       return $this->hasMany(Theme::class)->where();
+    }
 }
