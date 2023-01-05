@@ -129,9 +129,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     });
 
-    Route::group(['prefix' => 'shops'], function () {
-        Route::post('/info', [ShopController::class, 'index']);
-    });
+    
 
     Route::group(['prefix' => 'courier'], function () {
 
@@ -143,6 +141,10 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
 
 });
+Route::group(['prefix' => 'v1/shops'], function () {
+        Route::post('/info', [ShopController::class, 'index']);
+    });
+
 
 Route::get('v1/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');
 
