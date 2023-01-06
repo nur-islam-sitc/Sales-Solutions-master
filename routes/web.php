@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\General\HomeController::class, 'index'])->name('home');
 
-Route::get('/register', [\App\Http\Controllers\Merchant\Auth\LoginController::class, 'index'])->name('merchant.register');
-Route::post('/register/store', [\App\Http\Controllers\Merchant\Auth\LoginController::class, 'register'])->name('merchant.register.store');
+Route::get('/signup', [\App\Http\Controllers\Merchant\Auth\LoginController::class, 'index'])->name('merchant.register');
+Route::post('/signup/store', [\App\Http\Controllers\Merchant\Auth\LoginController::class, 'register'])->name('merchant.register.store');
 Route::get('/thank_you', [\App\Http\Controllers\General\HomeController::class, 'thankYou'])->name('thank_you');
