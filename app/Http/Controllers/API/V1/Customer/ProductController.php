@@ -19,17 +19,17 @@ class ProductController extends Controller
         try {
 
             $allProduct = [];
-            
+
 
             $shopId = $request->header('shop_id');
-            $products   = Product::with('main_image')->where('shop_id',$shopId)->get();
-            foreach($products as $product){
-                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
-                $product['other_images']= $other_images;
+            $products   = Product::with('main_image')->where('shop_id', $shopId)->get();
+            foreach ($products as $product) {
+                $other_images = Media::where('parent_id', $product->id)->where('type', 'product_other_image')->get();
+                $product['other_images'] = $other_images;
                 $allProduct[] = $product;
             }
 
-            if(count($allProduct) < 1){
+            if (count($allProduct) < 1) {
                 return response()->json([
                     'success' => false,
                     'msg' => 'Product not found',
@@ -54,20 +54,20 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request,$slug)
+    public function show(Request $request, $slug)
     {
         try {
-            
+
             $shopId = $request->header('shop_id');
-            $product  = Product::with('main_image')->where('shop_id',$shopId)->where('slug', $slug)->first();
+            $product  = Product::with('main_image')->where('shop_id', $shopId)->where('slug', $slug)->first();
             if (!$product) {
                 return response()->json([
                     'success' => false,
                     'msg' =>  'Product not Found',
                 ], 404);
             }
-            $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
-            $product['other_images']= $other_images;
+            $other_images = Media::where('parent_id', $product->id)->where('type', 'product_other_image')->get();
+            $product['other_images'] = $other_images;
             return response()->json([
                 'success' => true,
                 'data' => $product,
@@ -81,22 +81,42 @@ class ProductController extends Controller
     }
 
 
-    public function search(Request $request, $name)
+    public function search(Request $request, $name = null)
     {
         try {
 
             $allProduct = [];
-            
-
             $shopId = $request->header('shop_id');
-            $products   = Product::with('main_image')->where('product_name', 'LIKE', '%'. $name. '%')->where('shop_id',$shopId)->get();
-            foreach($products as $product){
-                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
-                $product['other_images']= $other_images;
+
+            if ($name == null) {
+                $products   = Product::with('main_image')->where('shop_id', $shopId)->get();
+                foreach ($products as $product) {
+                    $other_images = Media::where('parent_id', $product->id)->where('type', 'product_other_image')->get();
+                    $product['other_images'] = $other_images;
+                    $allProduct[] = $product;
+                }
+
+                if (count($allProduct) < 1) {
+                    return response()->json([
+                        'success' => false,
+                        'msg' => 'Product not found',
+                    ], 400);
+                }
+                return response()->json([
+                    'success' => true,
+                    'data' => $allProduct,
+                ]);
+            }
+
+
+            $products   = Product::with('main_image')->where('product_name', 'LIKE', '%' . $name . '%')->where('shop_id', $shopId)->get();
+            foreach ($products as $product) {
+                $other_images = Media::where('parent_id', $product->id)->where('type', 'product_other_image')->get();
+                $product['other_images'] = $other_images;
                 $allProduct[] = $product;
             }
 
-            if(count($allProduct) < 1){
+            if (count($allProduct) < 1) {
                 return response()->json([
                     'success' => false,
                     'msg' => 'Product not found',
