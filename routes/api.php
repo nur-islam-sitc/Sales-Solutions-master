@@ -51,8 +51,15 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
     Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
 
+    Route::get('products/search/{name}', [CustomerProduct::class, 'search'])->name('products.search');
+
     //Orders
     Route::post('/order/store', [\App\Http\Controllers\API\V1\Customer\OrderController::class, 'store'])->name('order.store');
+
+    //top selling product
+    Route::get('top-selling-product', [TopSellingProduct::class, 'customer_index']);
+
+
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);

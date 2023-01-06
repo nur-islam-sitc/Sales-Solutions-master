@@ -79,4 +79,38 @@ class ProductController extends Controller
             ], 400);
         }
     }
+
+
+    public function search(Request $request, $name)
+    {
+        try {
+
+            $allProduct = [];
+            
+
+            $shopId = $request->header('shop_id');
+            $products   = Product::with('main_image')->where('product_name', 'LIKE', '%'. $name. '%')->where('shop_id',$shopId)->get();
+            foreach($products as $product){
+                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+                $product['other_images']= $other_images;
+                $allProduct[] = $product;
+            }
+
+            if(count($allProduct) < 1){
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'Product not found',
+                ], 400);
+            }
+            return response()->json([
+                'success' => true,
+                'data' => $allProduct,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' =>  $e->getMessage(),
+            ], 400);
+        }
+    }
 }
