@@ -239,7 +239,7 @@ class OrderController extends Controller
             $orderID = $request->header('order_id');
             $shopID = $request->header('shop_id');
 
-            $order = Order::with('order_details')->where('id', $orderID)->where('shop_id', $shopID)->first();
+            $order = Order::with('order_details', 'customer')->where('id', $orderID)->where('shop_id', $shopID)->first();
             if (!$order) {
                 return response()->json([
                     'success' => false,

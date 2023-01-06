@@ -71,11 +71,8 @@ class ThemeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'title' => 'required',
-            'content' => 'required',
             'type' => 'required',
             'page' => 'required',
-            'menu' => 'required',
             'theme' => 'nullable'
         ]);
         $data['shop_id'] = $request->header('shop_id');
