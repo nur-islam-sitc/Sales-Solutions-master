@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1\Client\TopSellingProduct;
 
 use App\Http\Controllers\Controller;
+use App\Models\Media;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\Product;
@@ -129,6 +130,10 @@ class TopSellingProduct extends Controller
 
             foreach ($sumArray as $key => $qty) {
                 $product = Product::with('main_image')->where('id', $key)->first();
+
+                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
+                $product['other_images']= $other_images;
+
                 if (!$product) {
                     return response()->json([
                         'success' => false,
@@ -136,14 +141,15 @@ class TopSellingProduct extends Controller
                     ], 404);
                 }
 
-                $sellingProduct[] = [
-                    'product_name' => $product->product_name,
-                    'product_image' => $product->main_image->name,
-                    'total_sell' => $qty,
-                    'total_sell_amount' => ($product->price * $qty),
-                    'available_stock' => $product->product_qty,
-                    'added_on' => $product->created_at,
-                ];
+                // $sellingProduct[] = [
+                //     'product' => $product,
+                //     'total_sell' => $qty,
+                //     'total_sell_amount' => ($product->price * $qty),
+                //     'available_stock' => $product->product_qty,
+                //     'added_on' => $product->created_at,
+                // ];
+
+                $sellingProduct[] = $product;
             }
 
             $topSellingProduct  = $sellingProduct;
