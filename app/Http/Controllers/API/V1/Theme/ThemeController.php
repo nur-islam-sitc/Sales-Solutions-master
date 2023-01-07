@@ -58,14 +58,12 @@ class ThemeController extends Controller
             return $this->sendApiResponse('', 'No data available');
         }
 
-        $themeEditQuery = [];
-        foreach($query as $q){
+        foreach($query as $key=>$q){
             $themes = Theme::where('name', $q->theme)->get();
-            $q['themes'] = $themes;
-            $themeEditQuery = $q;
+            $query[$key]['themes'] = $themes;
         }
         
-        return $this->sendApiResponse( $themeEditQuery);
+        return $this->sendApiResponse($query);
     }
 
     public function store(Request $request): JsonResponse
