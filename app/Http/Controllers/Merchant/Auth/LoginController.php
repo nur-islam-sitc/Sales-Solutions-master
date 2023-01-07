@@ -72,6 +72,31 @@ class LoginController extends MerchantBaseController
             $this->create_subdomain($request->input('domain') . '-dashboard', 'dashboard.funnelliner.com');
             $this->create_subdomain($request->input('domain') . '-web', 'web.funnelliner.com');
             $url = $request->input('domain') . '-dashboard.funnelliner.com';
+            
+            $user = '20102107';
+            $password = 'SES@321';
+            $sender_id = 'INFOSMS';
+            $msg = 'Dear '.$data['name'].' ,
+            Your registration successfully completed. Please pay your registration fee & active this account.
+            
+            Thank you.
+            
+            Funnelliner.Com';
+            $url2 = "https://mshastra.com/sendurl.aspx";
+            $data2 = [
+                "user" => $user,
+                "pwd" => $password,
+                "type" => "text",
+                "CountryCode" => "+880",
+                "mobileno" => $data['phone'],
+                "senderid" => $sender_id,
+                "msgtext" => $msg,
+            ];
+            $ch = curl_init($url2);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
+            $register = curl_exec($ch);
+            
             return Redirect::to('https://' . $url);
         } catch (\Exception $exception) {
             return $exception->getMessage();
