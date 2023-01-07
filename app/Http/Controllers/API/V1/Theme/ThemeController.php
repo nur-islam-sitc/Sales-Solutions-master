@@ -82,6 +82,8 @@ class ThemeController extends Controller
             $image = $request->file('logo')->storeAs($path, $file, 'local');
             $data['logo'] = $image;
         }
+        $data['title'] = $request->title;
+        $data['content'] = $request->content;
 
         $theme = ThemeEdit::query()->create($data);
 
