@@ -28,7 +28,7 @@ class CategoryController extends Controller
             ->where('shop_id', $request->header('shop_id'))
             ->get();
         if ($categories->isEmpty()) {
-            return $this->sendApiResponse('', 'No data available');
+            return $this->sendApiResponse('', 'No data available', 'NotAvailable');
         }
         return $this->sendApiResponse($categories);
     }
@@ -116,10 +116,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        dd($request->all());
         $category = Category::query()->with('category_image')->find($id);
         if (!$category) {
-           return $this->sendApiResponse('', 'No category found');
+            return $this->sendApiResponse('', 'No category found');
         }
         $data = $request->except('category_image');
         if ($request->filled('name')) {
@@ -133,7 +132,7 @@ class CategoryController extends Controller
 
             $imageName = time() . '.' . $request->file('category_image')->getClientOriginalExtension();
             $request->file('category_image')->move(public_path('images/category'), $imageName);
-            $media = Media::where('type', 'category')->where('parent_id', $category->id)->update([
+            $media = Media::query()->where('type', 'category')->where('parent_id', $category->id)->update([
                 'name' => '/images/category/' . $imageName,
             ]);
         }
@@ -147,34 +146,23 @@ class CategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
-        try {
-            $category = Category::with('category_image')->find($id);
-            if (!$category) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'category not Found',
-                ], 404);
-            }
-            if ($category->category_image) {
-                File::delete(public_path($category->category_image->name));
-                $category->category_image->delete();
-            }
+        $category = Category::with('category_image')->find($id);
 
-            $category->delete();
-            return response()->json([
-                'success' => true,
-                'msg' => 'category Deleted Successfully',
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        if (!$category) {
+            return $this->sendApiResponse('', 'Category not found', 'NotFound');
         }
+        if ($category->category_image !== null) {
+            File::delete(public_path($category->category_image->name));
+            $category->category_image->delete();
+        }
+
+        $category->delete();
+        return $this->sendApiResponse('', 'Category deleted successfully');
+
     }
 
 }
