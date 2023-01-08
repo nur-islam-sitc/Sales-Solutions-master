@@ -48,16 +48,6 @@
                         @enderror
                     </div>
 
-                    <div class="CustomerInput">
-                        <label
-                            class="@error('domain') validation-error-label @enderror">{{ __('Domain Name') }}</label>
-                        <input type="text" name="domain" class="@error('domain') validation-error @enderror"
-                               placeholder="Enter domain Name" value="{{ old('domain') }}">
-
-                        @error('domain')
-                        <span>{{ $message }}</span>
-                        @enderror
-                    </div>
 
                     <!-- E-mail -->
                     <div class="CustomerInput">

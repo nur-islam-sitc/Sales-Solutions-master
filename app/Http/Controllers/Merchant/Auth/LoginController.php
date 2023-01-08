@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Psy\Util\Str;
 
 class LoginController extends MerchantBaseController
 {
@@ -58,29 +59,30 @@ class LoginController extends MerchantBaseController
     public function register(MerchantRegister $request)
     {
 
-        $data = Arr::except($request->validated(), ['shop_name', 'domain']);
+        $data = Arr::except($request->validated(), ['shop_name']);
         $data['role'] = User::MERCHANT;
 
         try {
             $merchant = User::query()->create($data);
+            $domain = str_replace(' ','-', $request->input('shop'));
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
-                'domain' => $request->input('domain'),
+                'domain' => $domain,
                 'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
-            $this->create_subdomain($request->input('domain') . '-dashboard', 'dashboard.funnelliner.com');
-            $this->create_subdomain($request->input('domain') . '-web', 'web.funnelliner.com');
+            $this->create_subdomain($domain . '-dashboard', 'dashboard.funnelliner.com');
+            $this->create_subdomain($domain . '-web', 'web.funnelliner.com');
             $url = $request->input('domain') . '-dashboard.funnelliner.com';
-            
+
             $user = '20102107';
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
             $msg = 'Dear '.$data['name'].' ,
             Your registration successfully completed. Please pay your registration fee & active this account.
-            
+
             Thank you.
-            
+
             Funnelliner.Com';
             $url2 = "https://mshastra.com/sendurl.aspx";
             $data2 = [
@@ -96,7 +98,7 @@ class LoginController extends MerchantBaseController
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
             $register = curl_exec($ch);
-            
+
             return Redirect::to('https://' . $url);
         } catch (\Exception $exception) {
             return $exception->getMessage();
