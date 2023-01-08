@@ -18,51 +18,32 @@ class ThemeController extends Controller
 
     public function getThemesByType(Request $request): JsonResponse
     {
-        if ($request->hasHeader('shop_id') && $request->header('shop_id') !== null) {
-
-            $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
-
-
-            if (!$shop) {
-
-                throw ValidationException::withMessages([
-                    'shop_id' => 'Invalid Shop Id'
-                ]);
-            }
-
-            $imported_themes = ActiveTheme::query()->where('shop_id', $shop->shop_id)->pluck('theme_id');
-
-            $query = Theme::query()->with('media');
-            if ($request->filled('type')) {
-                $query->where('type', $request->input('type'));
-            }
-            if (!$imported_themes->isEmpty()) {
-                $query->whereNotIn('id', $imported_themes);
-            }
-            $themes = $query->get();
-            if ($themes->isEmpty()) {
-                return $this->sendApiResponse([], 'No Data found');
-            }
-
-            return $this->sendApiResponse($themes);
+        $query = Theme::query()->with('media');
+        if ($request->filled('type')) {
+            $query->where('type', $request->input('type'));
         }
 
-        return $this->sendApiResponse('', 'Please add shop_id for request');
+        $themes = $query->get();
+        if ($themes->isEmpty()) {
+            return $this->sendApiResponse([], 'No Data found');
+        }
+
+        return $this->sendApiResponse($themes);
     }
 
-    public function getListByPage(Request $request, $page):JsonResponse
+    public function getListByPage(Request $request, $page): JsonResponse
     {
-        $query = ThemeEdit::query()->where('shop_id', $request->header('shop_id'))->where('page',$page)->get();
+        $query = ThemeEdit::query()->where('shop_id', $request->header('shop_id'))->where('page', $page)->get();
 
         if ($query->isEmpty()) {
             return $this->sendApiResponse('', 'No data available');
         }
 
-        foreach($query as $key=>$q){
+        foreach ($query as $key => $q) {
             $themes = Theme::where('name', $q->theme)->get();
             $query[$key]['themes'] = $themes;
         }
-        
+
         return $this->sendApiResponse($query);
     }
 
@@ -80,8 +61,8 @@ class ThemeController extends Controller
             $image = $request->file('logo')->storeAs($path, $file, 'local');
             $data['logo'] = $image;
         }
-        $data['title'] = $request->title;
-        $data['content'] = $request->content;
+        $data['title'] = $request->input('title');
+        $data['content'] = $request->input('content');
 
         $theme = ThemeEdit::query()->create($data);
 
@@ -110,31 +91,32 @@ class ThemeController extends Controller
             'type' => ['required'],
             'theme_id' => ['required'],
         ]);
+        $theme = Theme::query()->where('id', $request->input('theme_id'))->first();
 
-        if ($request->hasHeader('shop_id') && $request->header('shop_id') !== null) {
+        if (!$theme) {
+            return $this->sendApiResponse('', 'Theme not available right now', 'themeNotFound', [], 401);
+        }
 
-            $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
-
-            if (!$shop) {
-                throw ValidationException::withMessages([
-                    'shop_id' => 'Invalid Shop Id'
-                ]);
+        if ($theme->type === 'multiple') {
+            $import = ActiveTheme::query()->where('shop_id', $request->header('shop_id'))->where('type', 'multiple')->first();
+            if (!$import) {
+                $import = new ActiveTheme();
             }
-
-            $theme = Theme::query()->where('id', $request->input('theme_id'))->first();
-
-            if (!$theme) {
-                return $this->sendApiResponse('', 'Theme not available right now', 'themeNotFound', '', 401);
-            }
-
-            $import = ActiveTheme::query()->create([
-                'shop_id' => $shop->shop_id,
+            $import->shop_id = $request->header('shop_id');
+            $import->theme_id = $theme->id;
+            $import->type = 'multiple';
+            $import->save();
+            $import->load(['theme', 'theme.media']);
+        } else {
+            $import = ActiveTheme::query()->updateOrCreate([
+                'shop_id' => $request->header('shop_id'),
                 'theme_id' => $theme->id,
                 'type' => $request->input('type')
             ]);
-
-            return $this->sendApiResponse('', 'Theme Imported Successfully');
+            $import->load(['theme', 'theme.media']);
         }
+
+        return $this->sendApiResponse($import, 'Theme Imported Successfully');
     }
 
 

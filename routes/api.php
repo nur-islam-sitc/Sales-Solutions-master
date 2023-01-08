@@ -56,7 +56,7 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     //Orders
     Route::post('/order/store', [\App\Http\Controllers\API\V1\Customer\OrderController::class, 'store'])->name('order.store');
 
-    //top selling product
+    //top-selling product
     Route::get('top-selling-product', [TopSellingProduct::class, 'customer_index']);
 
 
@@ -136,7 +136,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     });
 
-    
+
 
     Route::group(['prefix' => 'courier'], function () {
 
