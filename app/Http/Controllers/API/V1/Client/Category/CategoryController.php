@@ -6,13 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Models\Media;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
@@ -110,56 +108,39 @@ class CategoryController extends Controller
         //
     }
 
+
     /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param int $id
-     * @return Response
+     * @return JsonResponse
      */
-    public function update(CategoryRequest $request, $id)
+    public function update(Request $request, int $id): JsonResponse
     {
-        try {
-            DB::beginTransaction();
-            $category = Category::with('category_image')->find($id);
-            if (!$category) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Category not Found',
-                ], 404);
-            }
-
-            $category->name = $request->name;
-            $category->slug = Str::slug($request->name);
-            $category->description = $request->description;
-            $category->parent_id = $request->parent_id;
-            $category->status = $request->status;
-            $category->save();
-
-            if ($request->has('category_image')) {
-                $image_path = $category->category_image->name;
-                File::delete(public_path($image_path));
-
-                $imageName = time() . '.' . $request->category_image->extension();
-                $request->category_image->move(public_path('images'), $imageName);
-                $media = Media::where('type', 'category')->where('parent_id', $category->id)->update([
-                    'name' => '/images/' . $imageName
-                ]);
-            }
-            $updatedCategory = Category::with('category_image')->where('id', $id)->first();
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'msg' => 'category updated successfully',
-                'data' => $updatedCategory,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        dd($request->all());
+        $category = Category::query()->with('category_image')->find($id);
+        if (!$category) {
+           return $this->sendApiResponse('', 'No category found');
         }
+        $data = $request->except('category_image');
+        if ($request->filled('name')) {
+            $data['slug'] = Str::slug($request->input('name'));
+        }
+        $category->update($data);
+
+        if ($request->has('category_image')) {
+            $image_path = $category->category_image->name;
+            File::delete(public_path($image_path));
+
+            $imageName = time() . '.' . $request->file('category_image')->getClientOriginalExtension();
+            $request->file('category_image')->move(public_path('images/category'), $imageName);
+            $media = Media::where('type', 'category')->where('parent_id', $category->id)->update([
+                'name' => '/images/category/' . $imageName,
+            ]);
+        }
+        $category->load('category_image');
+
+        return $this->sendApiResponse($category, 'category updated successfully');
+
     }
 
     /**
@@ -196,24 +177,4 @@ class CategoryController extends Controller
         }
     }
 
-    public function getCategoryTreeForParentId($shopID, $parent_id = 0)
-    {
-        $categories = array();
-
-        $result = Category::where('parent_id', $parent_id)->where('shop_id', $shopID)->get();
-        foreach ($result as $mainCategory) {
-            $category = array();
-            $category['id'] = $mainCategory->id;
-            $category['name'] = $mainCategory->name;
-            $category['slug'] = $mainCategory->slug;
-            $category['image'] = $mainCategory->category_image;
-            $category['description'] = $mainCategory->description;
-            $category['shop_id'] = $mainCategory->shop_id;
-            $category['parent_id'] = $mainCategory->parent_id;
-            $category['status'] = $mainCategory->status;
-            $category['sub_categories'] = $this->getCategoryTreeForParentId($category['shop_id'], $category['id']);
-            $categories[] = $category;
-        }
-        return $categories;
-    }
 }
