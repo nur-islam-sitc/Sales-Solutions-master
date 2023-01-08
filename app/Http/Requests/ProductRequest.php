@@ -31,6 +31,7 @@ class ProductRequest extends FormRequest
             return [
                 'category_id' => 'required|integer',
                 'product_name' => 'required|string',
+                'product_code' => 'required|string',
                 'price' => 'required|integer',
                 'discount' => 'required|integer',
                 'short_description' => 'nullable|string',
@@ -76,7 +77,7 @@ class ProductRequest extends FormRequest
             ];
         }
         return [];
-        
+
     }
 
     public function failedValidation(Validator $validator)
