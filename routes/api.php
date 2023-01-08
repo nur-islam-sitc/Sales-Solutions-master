@@ -18,11 +18,8 @@ use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
 use App\Http\Controllers\API\V1\Customer\AuthController;
 use App\Http\Controllers\API\V1\Customer\CategoryController as CustomerCategory;
 use App\Http\Controllers\API\V1\Customer\ProductController as CustomerProduct;
-use App\Http\Controllers\API\V1\Theme\Landing\LandingPageTemplateController;
-use App\Http\Controllers\API\V1\Theme\Multiple\MultiplePageTemplateController;
 use App\Http\Controllers\API\V1\Theme\ThemeController;
 use App\Http\Controllers\Merchant\Auth\LoginController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,13 +32,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 
 
 //client api
@@ -58,7 +48,6 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
 
     //top-selling product
     Route::get('top-selling-product', [TopSellingProduct::class, 'customer_index']);
-
 
 
     Route::post('/register', [AuthController::class, 'register']);
@@ -97,15 +86,17 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     Route::get('/customers/{id}', [MerchantCustomerController::class, 'getCustomerByMerchant']);
 
+    Route::resource('categories', ClientCategory::class);
+    Route::resource('products', ClientProduct::class);
+    Route::resource('orders', ClientOrder::class);
+    Route::get('top-selling-product', [TopSellingProduct::class, 'index']);
+
     Route::get('sales-target', [SalesTargetController::class, 'sales_target'])->name('sales.target');
     Route::post('sales-target/update', [SalesTargetController::class, 'sales_target_update'])->name('sales.target.update');
     Route::post('orders/status/update', [ClientOrder::class, 'order_status_update'])->name('orders.status.update');
+
     Route::resource('sliders', ClientSlider::class);
-    Route::resource('orders', ClientOrder::class);
-    Route::resource('products', ClientProduct::class);
     Route::resource('pages', PageController::class);
-    Route::resource('categories', ClientCategory::class);
-    Route::get('top-selling-product', [TopSellingProduct::class, 'index']);
 
     Route::prefix('stocks')->name('stocks.')->group(function () {
 
@@ -119,9 +110,9 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::get('stock-in/show/{id}', [StockInController::class, 'show'])->name('stock.in.show');
         Route::post('stock-in/update', [StockInController::class, 'update'])->name('stock.in.update');
 
-         //Product return
-         Route::get('product-return/list', [ProductReturnController::class, 'index'])->name('product.return.list');
-         Route::post('product-return/update', [ProductReturnController::class, 'update'])->name('product.return.update');
+        //Product return
+        Route::get('product-return/list', [ProductReturnController::class, 'index'])->name('product.return.list');
+        Route::post('product-return/update', [ProductReturnController::class, 'update'])->name('product.return.update');
 
     });
 
@@ -137,7 +128,6 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     });
 
 
-
     Route::group(['prefix' => 'courier'], function () {
 
         Route::post('/provider', [CourierController::class, 'store']);
@@ -149,8 +139,8 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
 });
 Route::group(['prefix' => 'v1/shops'], function () {
-        Route::post('/info', [ShopController::class, 'index']);
-    });
+    Route::post('/info', [ShopController::class, 'index']);
+});
 
 
 Route::get('v1/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');

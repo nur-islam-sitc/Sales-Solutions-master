@@ -7,49 +7,38 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Models\Media;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Str;
-use File;
-use DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        try {
-
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Merchant not Found',
-                ], 404);
-            }
-            
-            $categories = $this->getCategoryTreeForParentId(0,$merchant->shop->shop_id);
-
-            
-            return response()->json([
-                'success' => true,
-                'data' => $categories,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>  $e->getMessage(),
-            ], 400);
+        $categories = Category::query()->with('subcategory', 'category_image')
+            ->where('parent_id', 0)
+            ->where('shop_id', $request->header('shop_id'))
+            ->get();
+        if ($categories->isEmpty()) {
+            return $this->sendApiResponse('', 'No data available');
         }
+        return $this->sendApiResponse($categories);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -59,95 +48,62 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CategoryRequest $request
+     * @return JsonResponse
      */
-    public function store(CategoryRequest $request)
+    public function store(CategoryRequest $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
-            $category = new Category();
-            $category->name = $request->name;
-            $category->slug = Str::slug($request->name);
-            $category->description = $request->description;
-            $category->shop_id = auth()->user()->shop->shop_id;
-            $category->user_id = auth()->user()->id;
-            $category->parent_id = $request->parent_id;
-            $category->status = $request->status;
-            $category->save();
+        $query = Category::query()->where('shop_id', $request->header('shop_id'))->where('name', $request->input('name'))->first();
+        if ($query) {
+            throw validationException::withMessages(['category' => 'This category already exist']);
+        }
+        $data = $request->except('category_image');
+        $data['slug'] = Str::slug($request->name);
+        $data['shop_id'] = $request->header('shop_id');
+        $data['parent_id'] = $request->input('parent_id') ?: 0;
+        $data['user_id'] = auth()->user()->id;
+        $category = Category::query()->create($data);
 
-            if($request->hasFile('category_image')){
-                 //store category image
-            $imageName = time() . '.' . $request->category_image->extension();
-            $request->category_image->move(public_path('images'), $imageName);
+        if ($request->hasFile('category_image')) {
+            //store category image
+            $imageName = time() . '.' . $request->file('category_image')->getClientOriginalExtension();
+            $request->file('category_image')->move(public_path('images/category'), $imageName);
             $media = new Media();
-            $media->name = '/images/' . $imageName;
+            $media->name = '/images/category/' . $imageName;
             $media->parent_id = $category->id;
             $media->type = 'category';
             $media->save();
-           
-            $category['image'] = $media->name;
-            }
-            DB::commit();
-           
-
-            return response()->json([
-                'success' => true,
-                'msg' => 'Category created Successfully',
-                'data' =>   $category,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' =>   $e->getMessage(),
-            ], 400);
         }
+        $category->load('category_image');
+        return $this->sendApiResponse($category, 'Category created successfully');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $slug
+     * @return JsonResponse
      */
-    public function show($slug)
+    public function show(Request $request, $slug): JsonResponse
     {
-        try {
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Merchant not Found',
-                ], 404);
-            }
-            $category = Category::with('category_image')->where('slug', $slug)->where('shop_id',$merchant->shop->shop_id)->first();
-            if (!$category) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Category not Found',
-                ], 404);
-            }
 
-            $categories = $this->getCategoryTreeForParentId($category->id,$merchant->shop->shop_id);
-
-            return response()->json([
-                'success' => true,
-                'data' =>   $categories,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>   $e->getMessage(),
-            ], 400);
+        $category = Category::with('category_image', 'subcategory')
+            ->where('slug', $slug)
+            ->where('shop_id', $request->header('shop_id'))
+            ->first();
+        if (!$category) {
+            return $this->sendApiResponse('', 'No category found');
         }
+        return $this->sendApiResponse($category);
+
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function edit($id)
     {
@@ -157,9 +113,9 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return Response
      */
     public function update(CategoryRequest $request, $id)
     {
@@ -169,7 +125,7 @@ class CategoryController extends Controller
             if (!$category) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Category not Found',
+                    'msg' => 'Category not Found',
                 ], 404);
             }
 
@@ -179,7 +135,7 @@ class CategoryController extends Controller
             $category->parent_id = $request->parent_id;
             $category->status = $request->status;
             $category->save();
-            
+
             if ($request->has('category_image')) {
                 $image_path = $category->category_image->name;
                 File::delete(public_path($image_path));
@@ -190,18 +146,18 @@ class CategoryController extends Controller
                     'name' => '/images/' . $imageName
                 ]);
             }
-            $updatedCategory = Category::with('category_image')->where('id',$id)->first();
+            $updatedCategory = Category::with('category_image')->where('id', $id)->first();
             DB::commit();
             return response()->json([
                 'success' => true,
                 'msg' => 'category updated successfully',
-                'data' =>   $updatedCategory,
+                'data' => $updatedCategory,
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'msg' =>   $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
@@ -209,8 +165,8 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function destroy($id)
     {
@@ -222,11 +178,11 @@ class CategoryController extends Controller
                     'msg' => 'category not Found',
                 ], 404);
             }
-            if($category->category_image){
+            if ($category->category_image) {
                 File::delete(public_path($category->category_image->name));
                 $category->category_image->delete();
             }
-           
+
             $category->delete();
             return response()->json([
                 'success' => true,
@@ -235,16 +191,16 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'msg' =>   $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
 
-    public function getCategoryTreeForParentId($parent_id=0,$shopID)
+    public function getCategoryTreeForParentId($shopID, $parent_id = 0)
     {
         $categories = array();
 
-        $result = Category::where('parent_id', $parent_id)->where('shop_id',$shopID)->get();
+        $result = Category::where('parent_id', $parent_id)->where('shop_id', $shopID)->get();
         foreach ($result as $mainCategory) {
             $category = array();
             $category['id'] = $mainCategory->id;
@@ -255,7 +211,7 @@ class CategoryController extends Controller
             $category['shop_id'] = $mainCategory->shop_id;
             $category['parent_id'] = $mainCategory->parent_id;
             $category['status'] = $mainCategory->status;
-            $category['sub_categories'] = $this->getCategoryTreeForParentId($category['id'],$category['shop_id']);
+            $category['sub_categories'] = $this->getCategoryTreeForParentId($category['shop_id'], $category['id']);
             $categories[] = $category;
         }
         return $categories;

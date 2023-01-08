@@ -122,6 +122,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'category_user');
+    }
+
     public function support_ticket(): HasMany
     {
         return $this->hasMany(SupportTicket::class);

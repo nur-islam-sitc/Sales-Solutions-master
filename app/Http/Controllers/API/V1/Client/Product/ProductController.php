@@ -21,17 +21,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        try {
-
             $allProduct = [];
             $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
             if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Merchant not Found',
-                ], 404);
+                return $this->sendApiResponse('', 'Merchant not Found', 'NotFound');
             }
-
 
             $products   = Product::with('main_image')->where('shop_id',$merchant->shop->shop_id)->get();
             foreach($products as $product){
@@ -43,12 +37,6 @@ class ProductController extends Controller
                 'success' => true,
                 'data' => $allProduct,
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>  $e->getMessage(),
-            ], 400);
-        }
     }
 
     /**
@@ -70,7 +58,7 @@ class ProductController extends Controller
     {
         //return $request->all();
         try {
-            
+
             DB::beginTransaction();
             $product  = new Product();
             $product->category_id  = $request->category_id;
@@ -220,7 +208,7 @@ class ProductController extends Controller
 
 
             }
-            
+
             $updatedProduct = Product::with(['main_image'])->where('id', $id)->first();
             DB::commit();
             return response()->json([
@@ -259,16 +247,16 @@ class ProductController extends Controller
             }
 
             $other_images = Media::where('parent_id', $product->id)->where('type','product_other_image')->get();
-            
+
             if(count($other_images) > 0){
                 foreach($other_images as $image){
                     File::delete(public_path($image->name));
                     $image->delete();
                 }
-                
+
             }
-            
-            
+
+
             $product->delete();
             return response()->json([
                 'success' => true,

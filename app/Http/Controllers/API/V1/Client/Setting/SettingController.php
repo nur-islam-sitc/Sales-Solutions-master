@@ -34,7 +34,6 @@ class SettingController extends MerchantBaseController
                 ], 404);
             }
 
-
             DB::commit();
             return response()->json([
                 'success' => true,
