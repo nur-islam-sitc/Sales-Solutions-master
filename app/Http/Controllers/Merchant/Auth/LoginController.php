@@ -41,7 +41,7 @@ class LoginController extends MerchantBaseController
     private function create_subdomain($domain, $dir): void
     {
 
-        $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
+        $cPanel = new cPanel("funne", 'WZLpi[ahyuXf', "srv1");
         try {
 
             $parameters = [
