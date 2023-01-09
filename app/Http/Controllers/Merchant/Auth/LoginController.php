@@ -75,7 +75,9 @@ class LoginController extends MerchantBaseController
             $this->create_subdomain($domain . '-dashboard', 'dashboard.funnelliner.com');
             $this->create_subdomain($domain . '-web', 'web.funnelliner.com');
             $url = $domain . '-dashboard.funnelliner.com';
-
+            
+            $shop = Shop::query()->where('name', $request->input('shop_name'))->first();
+            
             $user = '20102107';
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
