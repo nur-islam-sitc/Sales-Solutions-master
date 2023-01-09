@@ -79,7 +79,7 @@ class LoginController extends MerchantBaseController
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
             $msg = 'Dear '.$data['name'].' ,
-Your registration successfully completed. Please pay your registration fee & active this account.
+Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For Bikash Payment Reference ID will be '.$shop->shop_id.' . Please pay your registration fee & active this account.
 Thank you.
 
 Funnelliner.Com';
