@@ -236,7 +236,7 @@
                 <div class="Header">
 
                     <h2>How To Set Up Your Online Shop</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget proin aliquet eget massa quis mi netus mi. Morbi sed id amet faucibus dolor, auctor. Pulvinar vitae risus leo.</p>
+                    <p>You must be thinking of setting up the store nicely. If your answer is yes then follow these five steps.</p>
                 </div>
 
                 <div class="img">
@@ -396,7 +396,7 @@
 
                 <div class="Header text-center">
                     <h2>Business Sectors Who Can Use Our Service</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget proin aliquet eget massa quis mi netus mi. Morbi sed id amet faucibus dolor, auctor. Pulvinar vitae risus leo.</p>
+                    <p>Funnelliner is one such solution for businesses. Where you can build your smart store for all types of business. Build all e-commerce websites easily and smartly. Where you can offer your services successfully. The right platform can make the right e-commerce website.</p>
                 </div>
 
             </div>
@@ -701,7 +701,7 @@
 
                 <div class="Header text-center">
                     <h2>Choose Your Shop Theme</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget proin aliquet eget massa quis mi netus mi. Morbi sed id amet faucibus dolor, auctor. Pulvinar vitae risus leo.</p>
+                    <p>All the themes you need are here, choose, select, customise and build your favourite website in no time.</p>
                 </div>
 
             </div>
@@ -871,7 +871,7 @@
 
                 <div class="Header text-center">
                     <h2>Choose Your One Page Funnel Template</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget proin aliquet eget massa quis mi netus mi. Morbi sed id amet faucibus dolor, auctor. Pulvinar vitae risus leo.</p>
+                    <p>The One Page Panel template is the flagship champion that combines the sales page and order form into a single page. May be a convenient solution for you.</p>
                 </div>
 
             </div>
@@ -1191,7 +1191,7 @@
 
                 <div class="Header text-center">
                     <h2>Choose Your Subscription Package</h2>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quo cumque, magni aliquam dolores necessitatibus asperiores numquam dignissimos explicabo distinctio pariatur!</p>
+                    <p>A convenient subscription package for you with all the benefits of professional templates plus customer response order maintenance with store layout in mind.!</p>
                 </div>
 
             </div>
@@ -1326,7 +1326,7 @@
 
                 <div class="Header text-center">
                     <h2>Frequently Asked Questions</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget proin aliquet eget massa quis mi netus mi. Morbi sed id amet faucibus dolor, auctor. Pulvinar vitae risus leo.</p>
+                    <p>If You spend a lot of your time answering emails or social media queries, an FAQ can be a real timesave.</p>
                 </div>
 
             </div>
@@ -1348,14 +1348,14 @@
 
                                 <h2 class="accordion-header" id="headingOne">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Where can I watch?
+                                       What is a Funnelliner and how does it work?
                                     </button>
                                 </h2>
 
                                 <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 
                                     <div class="accordion-body">
-                                        <p>Nibh quisque suscipit fermentum netus nulla cras porttitor euismod nulla. Orci, dictumst nec aliquet id ullamcorper venenatis. </p>
+                                        <p>Funnel liner is an easy-to-use platform to run, manage and grow your business online from desktop and mobile. You can create your online store, add products, manage inventory, accept online payments, and do much more. It’s the simplest and fastest way to take your business to the next level. </p>
                                     </div>
 
                                 </div>
@@ -1366,7 +1366,7 @@
 
                                 <h2 class="accordion-header" id="headingTwo">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Accordion Item #2
+                                       Do I need to be technically savvy to use Funnelliner?
                                     </button>
                                 </h2>
 
@@ -1374,7 +1374,7 @@
 
                                     <div class="accordion-body">
 
-                                        <p>Nibh quisque suscipit fermentum netus nulla cras porttitor euismod nulla. Orci, dictumst nec aliquet id ullamcorper venenatis. </p>
+                                        <p>No, you don’t need to be technically skilled to run an online business on Funnelliner. Funnelliner makes it easy for you to launch an online business and grow it using a suite of marketing tools and plugins.</p>
 
                                     </div>
 
@@ -1383,12 +1383,12 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingThree">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Accordion Item #3
+                                       Can I use my own domain with Funnelliner?
                                     </button>
                                 </h2>
                                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                        <p>Nibh quisque suscipit fermentum netus nulla cras porttitor euismod nulla. Orci, dictumst nec aliquet id ullamcorper venenatis. </p>
+                                        <p>Yes, you can connect your domain name with Funnelliner. You can also purchase premium domain names by paying additional fees.</p>
                                     </div>
                                 </div>
                             </div>
