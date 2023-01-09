@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Psy\Util\Str;
+use Illuminate\Support\Str;
 
 class LoginController extends MerchantBaseController
 {
@@ -64,7 +64,7 @@ class LoginController extends MerchantBaseController
 
         try {
             $merchant = User::query()->create($data);
-            $domain = str_replace(' ','-', $request->input('shop'));
+            $domain = Str::lower(Str::replace(' ','-',  $request->input('shop_name')));
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
                 'domain' => $domain,
@@ -73,7 +73,7 @@ class LoginController extends MerchantBaseController
             $merchant->merchantinfo()->create();
             $this->create_subdomain($domain . '-dashboard', 'dashboard.funnelliner.com');
             $this->create_subdomain($domain . '-web', 'web.funnelliner.com');
-            $url = $request->input('domain') . '-dashboard.funnelliner.com';
+            $url = $domain . '-dashboard.funnelliner.com';
 
             $user = '20102107';
             $password = 'SES@321';
@@ -98,7 +98,7 @@ Funnelliner.Com';
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
             $register = curl_exec($ch);
 
-            return Redirect::to('https://' . $url);
+            return view('success');
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
