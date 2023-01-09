@@ -16,8 +16,8 @@ jobs:
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: 165.232.174.88
-          username: admin_theme
-          password: l21oowd0IElHh9m!
+          server: ftp.funnelliner.com
+          username: theme@funnelliner.com
+          password: s]EO!&}p0&hN
           protocol: ftps
           port: 21 # todo replace with your web hosts ftps port
