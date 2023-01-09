@@ -7,6 +7,7 @@ use App\Http\Controllers\MerchantBaseController;
 use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
+use App\Models\Shop;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -79,7 +80,7 @@ class LoginController extends MerchantBaseController
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
             $msg = 'Dear '.$data['name'].' ,
-Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For Bikash Payment Reference ID will be '.$shop->shop_id.' . Please pay your registration fee & active this account.
+Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For Bikash Payment Reference ID will be '.$shop->shop_id.' .Please pay your registration fee & active this account.
 Thank you.
 
 Funnelliner.Com';
