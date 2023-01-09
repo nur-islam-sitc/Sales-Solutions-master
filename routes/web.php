@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-if(Carbon::now()->setTimezone('Asia/Dhaka') <= Carbon::create(env('OFFLINE_YEAR'),env('OFFLINE_MONTH'),env('OFFLINE_DAY'),env('OFFLINE_HOURS'),env('OFFLINE_MINUTES'),env('OFFLINE_SECONDS'))->setTimezone('Asia/Dhaka')) {
+if(Carbon::now()->setTimezone('Asia/Dhaka')->format('Y-m-d g:i:s') < Carbon::create(2023, 01, 10, 12, 40, 10)->format('Y-m-d g:i:s')) {
     Route::any('{query}', function () {
         return view('comingsoon::comingsoon');
     })->where('query', '.*');
