@@ -79,11 +79,10 @@ class LoginController extends MerchantBaseController
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
             $msg = 'Dear '.$data['name'].' ,
-            Your registration successfully completed. Please pay your registration fee & active this account.
+Your registration successfully completed. Please pay your registration fee & active this account.
+Thank you.
 
-            Thank you.
-
-            Funnelliner.Com';
+Funnelliner.Com';
             $url2 = "https://mshastra.com/sendurl.aspx";
             $data2 = [
                 "user" => $user,
