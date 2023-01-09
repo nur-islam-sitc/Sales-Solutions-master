@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41e218112cbafab3b7a42b9f4b2a2bd5",
+    "content-hash": "7a18cb7b24a432769fac3d6a24401783",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5258,6 +5258,59 @@
             "time": "2022-09-12T13:28:28+00:00"
         },
         {
+            "name": "tumainimosha/laravel-coming-soon",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tumainimosha/laravel-coming-soon.git",
+                "reference": "9dd4890c5837f02404be3102773962d2e037d61f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tumainimosha/laravel-coming-soon/zipball/9dd4890c5837f02404be3102773962d2e037d61f",
+                "reference": "9dd4890c5837f02404be3102773962d2e037d61f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.13",
+                "orchestra/testbench": "~3.7.0",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "snw\\ComingSoon\\ComingSoonServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "snw\\ComingSoon\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tumaini Mosha",
+                    "email": "princeton.mosha@gmail.com"
+                }
+            ],
+            "description": "Simple Comming Soon page",
+            "support": {
+                "issues": "https://github.com/tumainimosha/laravel-coming-soon/issues",
+                "source": "https://github.com/tumainimosha/laravel-coming-soon/tree/1.4.1"
+            },
+            "abandoned": true,
+            "time": "2022-05-21T13:40:12+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v5.5.0",
             "source": {
@@ -7764,5 +7817,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }
