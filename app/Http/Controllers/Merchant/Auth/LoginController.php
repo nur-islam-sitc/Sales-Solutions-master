@@ -78,9 +78,9 @@ class LoginController extends MerchantBaseController
             
             $shop = Shop::query()->where('name', $request->input('shop_name'))->first();
             
-            $user = '20102107';
-            $password = 'SES@321';
-            $sender_id = 'INFOSMS';
+            $user = 'FunnelLine';
+            $password = 'upm664se';
+            $sender_id = 'FunnelLiner';
             $msg = 'Dear '.$data['name'].' ,
 Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For bKash Payment Reference ID will be '.$shop->shop_id.' .Please pay your registration fee & active this account.
 Thank you.
