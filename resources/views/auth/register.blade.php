@@ -65,7 +65,7 @@
                         <label
                             class="@error('phone') validation-error-label @enderror">{{ __('Phone Number') }}</label>
                         <input type="text" name="phone" class="@error('phone') validation-error @enderror"
-                               placeholder="Enter phone number" value="{{ old('phone') }}">
+                               placeholder="Enter phone number" value="{{ old('phone') }}" pattern="^(?:01[3-9]\d{8}|02[1-9]\d{7}|0[3-9]\d{8})$">
 
                         @error('phone')
                         <span>{{ $message }}</span>
