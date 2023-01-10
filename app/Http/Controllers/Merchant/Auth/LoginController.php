@@ -83,6 +83,7 @@ class LoginController extends MerchantBaseController
             $sender_id = 'FunnelLiner';
             $msg = 'Dear '.$data['name'].' ,
 Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For bKash Payment Reference ID will be '.$shop->shop_id.' .Please pay your registration fee & active this account.
+Your Payment Link: https://cutt.ly/payfunnelliner
 Thank you.
 
 Funnelliner.Com';
