@@ -8,7 +8,7 @@ jobs:
     name: 🚀 Deploy website every commit
     runs-on: ubuntu-latest
     steps:
-      - name: 🚚 Get latest code	
+      - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
       - name: Install Packages
@@ -17,7 +17,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
           server: ftp.funnelliner.com
-          username: dev@funnelliner.com
+          username: dev@dev.funnelliner.com
           password: &IACUiD-rW~Q
           protocol: ftps
           port: 21 # todo replace with your web hosts ftps port
