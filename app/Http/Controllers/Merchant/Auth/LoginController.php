@@ -7,6 +7,7 @@ use App\Http\Controllers\MerchantBaseController;
 use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
+use App\Models\Shop;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -40,7 +41,7 @@ class LoginController extends MerchantBaseController
     private function create_subdomain($domain, $dir): void
     {
 
-        $cPanel = new cPanel("funne", 'n_HWMP^[~TM7', "srv1");
+        $cPanel = new cPanel("funne", 'WZLpi[ahyuXf', "srv1");
         try {
 
             $parameters = [
@@ -74,12 +75,15 @@ class LoginController extends MerchantBaseController
             $this->create_subdomain($domain . '-dashboard', 'dashboard.funnelliner.com');
             $this->create_subdomain($domain . '-web', 'web.funnelliner.com');
             $url = $domain . '-dashboard.funnelliner.com';
-
-            $user = '20102107';
-            $password = 'SES@321';
-            $sender_id = 'INFOSMS';
+            
+            $shop = Shop::query()->where('name', $request->input('shop_name'))->first();
+            
+            $user = 'FunnelLine';
+            $password = 'upm664se';
+            $sender_id = 'FunnelLiner';
             $msg = 'Dear '.$data['name'].' ,
-Your registration successfully completed. Please pay your registration fee & active this account.
+Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For bKash Payment Reference ID will be '.$shop->shop_id.' .Please pay your registration fee & active this account.
+Your Payment Link: https://cutt.ly/payfunnelliner
 Thank you.
 
 Funnelliner.Com';

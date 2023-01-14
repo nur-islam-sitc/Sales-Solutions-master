@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Solution</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('landing/images/favicon.png') }}">
+    
+    <title>Funnel Liner - Automated Sales Funnel</title>
 
 
     <!-- FONT LINK -->
@@ -84,7 +86,7 @@
 
                     <div class="Login">
 
-                        <a href="">Log In</a>
+                        <a href="https://dashboard.funnelliner.com/">Log In</a>
                         <a href="{{ route('merchant.register') }}">Sign Up</a>
 
                     </div>
@@ -117,7 +119,7 @@
 
                     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
 
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"><i class="uil uil-multiply"></i></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         <div class="offcanvas-body">
 
                             <div class="Menubar">
@@ -133,8 +135,8 @@
                                 </ul>
 
                                 <div class="Login">
-                                    <a href="">Log In</a>
-                                    <a href="">Sign Up</a>
+                                    <a href="https://dashboard.funnelliner.com/">Log In</a>
+                                    <a href="{{ route('merchant.register') }}">Sign Up</a>
                                 </div>
 
                             </div>
@@ -194,7 +196,7 @@
     </div>
 
     <div class="BannerBg">
-        <img src="{{ asset('landing/images/banner_bg.svg') }}" alt="">
+        <img src="{{ asset('landing/images/banner_bg.png') }}" alt="">
 
         <div class="overlay">
 
@@ -263,7 +265,7 @@
         <div class="col-lg-6" data-aos="fade-up" data-aos-duration="1000">
 
             <div class="BestFeaturesImg">
-                <img src="{{ asset('landing/images/best_feature.svg')}}" alt="">
+                <img src="{{ asset('landing/images/best_feature.png')}}" alt="">
             </div>
 
         </div>
@@ -313,8 +315,20 @@
 
                     <h2>Manage Your Shop On The Go With <span>Mobile Friendly Application</span></h2>
 
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget proin aliquet eget massa quis mi netus mi. Morbi sed id amet faucibus dolor, auctor. Pulvinar vitae risus leo. Aliquet nunc sodales commodo nec. Dictum ornare ut ullamcorper eleifend. Non sed suspendisse ullamcorper ultrices elementum.</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis praesentium earum delectus vero doloribus soluta reprehenderit, eos tempore, sapiente ipsam pariatur corporis laboriosam eveniet possimus. Consectetur beatae libero eaque suscipit.</p>
+                    <p>If the store can be maintained beautifully on mobile. Then the store can be easily maintained from anywhere. Funnelliner's mobile friendly app works to bring your store completely into your hands. Your one touch solution.
+
+Four main reasons to be mobile friendly
+
+Smart dashboard: As beautiful as it looks, all the important information can be easily found in the Funnelliner dashboard.
+
+Fast browsing: Browsing with maximum speed will make your shop supervision faster.
+
+
+Easy website: You don't have to take any stress to manage. You can manage your website without stress.
+
+All Device Compatible: You can easily use the internet using devices in a beautiful and smooth way.
+</p>
+                    <!--<p>t.</p>-->
 
                 </div>
 
@@ -960,7 +974,7 @@
 
                             <h3>Landing Page 4</h3>
 
-                            <a href="">View Demo</a>
+                            <a href="https://theme.funnelliner.com/landing-eight">View Demo</a>
 
                         </div>
 
@@ -981,7 +995,7 @@
 
                             <h3>Landing Page 5</h3>
 
-                            <a href="">View Demo</a>
+                            <a href="https://theme.funnelliner.com/landing-six">View Demo</a>
 
                         </div>
 
@@ -1030,154 +1044,154 @@
 <!-- ---------------------------------------------------------------------------------------------------------------------------------------------------
     ask question  PART
 ---------------------------------------------------------------------------------------------------------------------------------------------------  -->
-<section class="CustomerReview section_gaps" data-aos="fade-up" data-aos-duration="1000">
+<!--<section class="CustomerReview section_gaps" data-aos="fade-up" data-aos-duration="1000">-->
 
-    <div class="Customeroverlay">
-        <img src="{{ asset('landing/images/customer_overlay.png') }}" alt="">
-    </div>
+<!--    <div class="Customeroverlay">-->
+<!--        <img src="{{ asset('landing/images/customer_overlay.png') }}" alt="">-->
+<!--    </div>-->
 
-    <div class="CustomeroverlayRight">
-        <img src="{{ asset('landing/images/customer_overlay.png') }}" alt="">
-    </div>
+<!--    <div class="CustomeroverlayRight">-->
+<!--        <img src="{{ asset('landing/images/customer_overlay.png') }}" alt="">-->
+<!--    </div>-->
 
-    <div class="container">
+<!--    <div class="container">-->
 
-        <div class="row">
+<!--        <div class="row">-->
 
-            <div class="col-lg-12">
+<!--            <div class="col-lg-12">-->
 
-                <div class="swiper CustomerReviewSlider">
+<!--                <div class="swiper CustomerReviewSlider">-->
 
-                    <div class="swiper-wrapper">
+<!--                    <div class="swiper-wrapper">-->
 
-                        <!-- item -->
-                        <div class="swiper-slide">
+                        
+<!--                        <div class="swiper-slide">-->
 
-                            <div class="CustomerItem">
+<!--                            <div class="CustomerItem">-->
 
-                                <div class="Quate">
-                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">
-                                </div>
+<!--                                <div class="Quate">-->
+<!--                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <div class="img">
-                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">
-                                </div>
+<!--                                <div class="img">-->
+<!--                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <h3>SaleSolution was best solution for my clothing business !</h3>
+<!--                                <h3>SaleSolution was best solution for my clothing business !</h3>-->
 
-                                <h4>Yeasmin Chowdhury</h4>
+<!--                                <h4>Yeasmin Chowdhury</h4>-->
 
-                                <h5>Founder & CEO, Myshop</h5>
+<!--                                <h5>Founder & CEO, Myshop</h5>-->
 
-                            </div>
+<!--                            </div>-->
 
-                        </div>
+<!--                        </div>-->
 
-                        <!-- item -->
-                        <div class="swiper-slide">
+                        
+<!--                        <div class="swiper-slide">-->
 
-                            <div class="CustomerItem">
+<!--                            <div class="CustomerItem">-->
 
-                                <div class="Quate">
-                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">
-                                </div>
+<!--                                <div class="Quate">-->
+<!--                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <div class="img">
-                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">
-                                </div>
+<!--                                <div class="img">-->
+<!--                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <h3>SaleSolution was best solution for my clothing business !</h3>
+<!--                                <h3>SaleSolution was best solution for my clothing business !</h3>-->
 
-                                <h4>Yeasmin Chowdhury</h4>
+<!--                                <h4>Yeasmin Chowdhury</h4>-->
 
-                                <h5>Founder & CEO, Myshop</h5>
+<!--                                <h5>Founder & CEO, Myshop</h5>-->
 
-                            </div>
+<!--                            </div>-->
 
-                        </div>
+<!--                        </div>-->
 
-                        <!-- item -->
-                        <div class="swiper-slide">
+                        
+<!--                        <div class="swiper-slide">-->
 
-                            <div class="CustomerItem">
+<!--                            <div class="CustomerItem">-->
 
-                                <div class="Quate">
-                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">
-                                </div>
+<!--                                <div class="Quate">-->
+<!--                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <div class="img">
-                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">
-                                </div>
+<!--                                <div class="img">-->
+<!--                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <h3>SaleSolution was best solution for my clothing business !</h3>
+<!--                                <h3>SaleSolution was best solution for my clothing business !</h3>-->
 
-                                <h4>Yeasmin Chowdhury</h4>
+<!--                                <h4>Yeasmin Chowdhury</h4>-->
 
-                                <h5>Founder & CEO, Myshop</h5>
+<!--                                <h5>Founder & CEO, Myshop</h5>-->
 
-                            </div>
+<!--                            </div>-->
 
-                        </div>
-
-                        <!-- item -->
-                        <div class="swiper-slide">
-
-                            <div class="CustomerItem">
-
-                                <div class="Quate">
-                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">
-                                </div>
-
-                                <div class="img">
-                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">
-                                </div>
-
-                                <h3>SaleSolution was best solution for my clothing business !</h3>
-
-                                <h4>Yeasmin Chowdhury</h4>
-
-                                <h5>Founder & CEO, Myshop</h5>
-
-                            </div>
-
-                        </div>
+<!--                        </div>-->
 
                         <!-- item -->
-                        <div class="swiper-slide">
+<!--                        <div class="swiper-slide">-->
 
-                            <div class="CustomerItem">
+<!--                            <div class="CustomerItem">-->
 
-                                <div class="Quate">
-                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">
-                                </div>
+<!--                                <div class="Quate">-->
+<!--                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <div class="img">
-                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">
-                                </div>
+<!--                                <div class="img">-->
+<!--                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">-->
+<!--                                </div>-->
 
-                                <h3>SaleSolution was best solution for my clothing business !</h3>
+<!--                                <h3>SaleSolution was best solution for my clothing business !</h3>-->
 
-                                <h4>Yeasmin Chowdhury</h4>
+<!--                                <h4>Yeasmin Chowdhury</h4>-->
 
-                                <h5>Founder & CEO, Myshop</h5>
+<!--                                <h5>Founder & CEO, Myshop</h5>-->
 
-                            </div>
+<!--                            </div>-->
 
-                        </div>
+<!--                        </div>-->
 
-                    </div>
+                        <!-- item -->
+<!--                        <div class="swiper-slide">-->
 
-                    <div class="swiper-pagination"></div>
+<!--                            <div class="CustomerItem">-->
 
-                </div>
+<!--                                <div class="Quate">-->
+<!--                                    <img src="{{ asset('landing/images/quote.png') }}" alt="">-->
+<!--                                </div>-->
 
-            </div>
+<!--                                <div class="img">-->
+<!--                                    <img src="{{ asset('landing/images/profile.png') }}" alt="">-->
+<!--                                </div>-->
 
-        </div>
+<!--                                <h3>SaleSolution was best solution for my clothing business !</h3>-->
 
-    </div>
+<!--                                <h4>Yeasmin Chowdhury</h4>-->
 
-</section>
+<!--                                <h5>Founder & CEO, Myshop</h5>-->
+
+<!--                            </div>-->
+
+<!--                        </div>-->
+
+<!--                    </div>-->
+
+<!--                    <div class="swiper-pagination"></div>-->
+
+<!--                </div>-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</section>-->
 <!-- ---------------------------------------------------------------------------------------------------------------------------------------------------
     ChossePackageConent PART
 ---------------------------------------------------------------------------------------------------------------------------------------------------  -->
@@ -1191,7 +1205,7 @@
 
                 <div class="Header text-center">
                     <h2>Choose Your Subscription Package</h2>
-                    <p>A convenient subscription package for you with all the benefits of professional templates plus customer response order maintenance with store layout in mind.!</p>
+                    <p>A convenient subscription package for you with all the benefits of professional templates plus customer response order maintenance with store layout in mind.</p>
                 </div>
 
             </div>
@@ -1204,7 +1218,7 @@
             <div class="row">
 
                 <!-- item -->
-                <div class="col-lg-4">
+                <div class="col-lg-4 m-auto">
 
                     <div class="ChossePackageItem">
 
@@ -1213,7 +1227,7 @@
                         </div>
 
                         <h4>Basic</h4>
-                        <h3>BDT 2500</h3>
+                        <h3>BDT 5000</h3>
                         <h5>Every Month</h5>
 
                         <ul>
@@ -1231,79 +1245,79 @@
 
                         </ul>
 
-                        <a href="">Subscribe</a>
+                        <a href="https://funnelliner.com/register">Subscribe</a>
 
                     </div>
 
                 </div>
 
                 <!-- item -->
-                <div class="col-lg-4">
+                <!--<div class="col-lg-4">-->
 
-                    <div class="ChossePackageItem">
+                <!--    <div class="ChossePackageItem">-->
 
-                        <div class="PackageImg">
-                            <img src="{{ asset('landing/images/package_img.svg') }}" alt="">
-                        </div>
+                <!--        <div class="PackageImg">-->
+                <!--            <img src="{{ asset('landing/images/package_img.svg') }}" alt="">-->
+                <!--        </div>-->
 
-                        <h4>Basic</h4>
-                        <h3>BDT 2500</h3>
-                        <h5>Every Month</h5>
+                <!--        <h4>Basic</h4>-->
+                <!--        <h3>BDT 2500</h3>-->
+                <!--        <h5>Every Month</h5>-->
 
-                        <ul>
+                <!--        <ul>-->
 
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 1 online store</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Unlimited products</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 501-800 Order Monthly</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Payment gateway integration</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Marketing tools</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Free SSL certificate</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Discount codes</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Themes</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Plugins</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 24/7 support</li>
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 1 online store</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Unlimited products</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 501-800 Order Monthly</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Payment gateway integration</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Marketing tools</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Free SSL certificate</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Discount codes</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Themes</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Plugins</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 24/7 support</li>-->
 
-                        </ul>
+                <!--        </ul>-->
 
-                        <a href="">Subscribe</a>
+                <!--        <a href="">Subscribe</a>-->
 
-                    </div>
+                <!--    </div>-->
 
-                </div>
+                <!--</div>-->
 
                 <!-- item -->
-                <div class="col-lg-4">
+                <!--<div class="col-lg-4">-->
 
-                    <div class="ChossePackageItem">
+                <!--    <div class="ChossePackageItem">-->
 
-                        <div class="PackageImg">
-                            <img src="{{ asset('landing/images/package_img.svg') }}" alt="">
-                        </div>
+                <!--        <div class="PackageImg">-->
+                <!--            <img src="{{ asset('landing/images/package_img.svg') }}" alt="">-->
+                <!--        </div>-->
 
-                        <h4>Basic</h4>
-                        <h3>BDT 2500</h3>
-                        <h5>Every Month</h5>
+                <!--        <h4>Basic</h4>-->
+                <!--        <h3>BDT 2500</h3>-->
+                <!--        <h5>Every Month</h5>-->
 
-                        <ul>
+                <!--        <ul>-->
 
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 1 online store</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Unlimited products</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 501-800 Order Monthly</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Payment gateway integration</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Marketing tools</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Free SSL certificate</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Discount codes</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Themes</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Plugins</li>
-                            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 24/7 support</li>
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 1 online store</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Unlimited products</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 501-800 Order Monthly</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Payment gateway integration</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Marketing tools</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Free SSL certificate</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Discount codes</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Themes</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> Plugins</li>-->
+                <!--            <li> <img src="{{ asset('landing/images/sign.svg') }}" alt=""> 24/7 support</li>-->
 
-                        </ul>
+                <!--        </ul>-->
 
-                        <a href="">Subscribe</a>
+                <!--        <a href="">Subscribe</a>-->
 
-                    </div>
+                <!--    </div>-->
 
-                </div>
+                <!--</div>-->
 
             </div>
 
@@ -1326,7 +1340,7 @@
 
                 <div class="Header text-center">
                     <h2>Frequently Asked Questions</h2>
-                    <p>If You spend a lot of your time answering emails or social media queries, an FAQ can be a real timesave.</p>
+                    <p>If You spend a lot of your time answering emails or social media queries, an FAQ can be a real time save.</p>
                 </div>
 
             </div>
@@ -1380,6 +1394,78 @@
 
                                 </div>
                             </div>
+                                <div class="accordion-item">
+
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefore" aria-expanded="false" aria-controls="collapsefore">
+                                       Can I accept online payments?
+                                    </button>
+                                </h2>
+
+                                <div id="collapsefore" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+
+                                    <div class="accordion-body">
+
+                                        <p>Yes, you can accept online payments from your customers. Funnelliner also allows you to integrate with Bkash, Nagad and Sslcommerz to accept online payments..</p>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                                <div class="accordion-item">
+
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefive" aria-expanded="false" aria-controls="collapsefive">
+                                       Can I customise my online store?
+                                    </button>
+                                </h2>
+
+                                <div id="collapsefive" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+
+                                    <div class="accordion-body">
+
+                                        <p>Yes, you can customise your online store. You can choose from a range of themes that match your brand and make your store stand out.</p>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                                <div class="accordion-item">
+
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                       Can I pay my fee every Month-end?
+                                    </button>
+                                </h2>
+
+                                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+
+                                    <div class="accordion-body">
+
+                                        <p>Yes, you can pay a fee at the end of the month..</p>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                                <div class="accordion-item">
+
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSiven" aria-expanded="false" aria-controls="collapseSiven">
+                                       What about 3rd party payment gateway?
+                                    </button>
+                                </h2>
+
+                                <div id="collapseSiven" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+
+                                    <div class="accordion-body">
+
+                                        <p>If you want to use a third party payment gateway then you have to purchase a 3rd party payment gateway from a corresponding authority like Sslcommerz , bKash, Nagad and we will integrate in your system.</p>
+
+                                    </div>
+
+                                </div>
+                            </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingThree">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -1427,16 +1513,16 @@
                 <div class="Header text-center">
 
                     <h2>Join Us On Social Media</h2>
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis rerum error, esse unde quo maiores repellat ipsum blanditiis non architecto.</p>
+                    <p>Join our funnel liner community for e-commerce and marketing tips and tricks where we help solo business owners like you save time and grow with better content strategies.</p>
 
                 </div>
 
                 <div class="SocialIcon d_flex">
 
-                    <a href="" class="fb"><i class="uil uil-facebook-f"></i></a>
-                    <a href="" class="ins"><i class="uil uil-instagram"></i></a>
-                    <a href="" class="youtube"><i class="uil uil-youtube"></i></a>
-                    <a href="" class="whats"><i class="uil uil-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/funnelliner" class="fb"><i class="uil uil-facebook-f"></i></a>
+                    <a href="https://www.facebook.com/funnelliner" class="ins"><i class="uil uil-instagram"></i></a>
+                    <a href="https://www.facebook.com/funnelliner" class="youtube"><i class="uil uil-youtube"></i></a>
+                    <a href="https://api.whatsapp.com/send/?phone=8801799733234&text&type=phone_number&app_absent=0" class="whats"><i class="uil uil-whatsapp"></i></a>
 
                 </div>
 
@@ -1448,53 +1534,53 @@
 
 </section>
 
-<section class="OurPlugin section_gaps">
+<!--<section class="OurPlugin section_gaps">-->
 
-    <div class="container">
+<!--    <div class="container">-->
 
-        <div class="row">
+<!--        <div class="row">-->
 
-            <div class="col-lg-3 col-sm-6">
+<!--            <div class="col-lg-3 col-sm-6">-->
 
-                <div class="OurPluginItem">
-                    <h3>2000+</h3>
-                    <h4>Clients Onboarded</h4>
-                </div>
+<!--                <div class="OurPluginItem">-->
+<!--                    <h3>2000+</h3>-->
+<!--                    <h4>Clients Onboarded</h4>-->
+<!--                </div>-->
 
-            </div>
+<!--            </div>-->
 
-            <div class="col-lg-3 col-sm-6">
+<!--            <div class="col-lg-3 col-sm-6">-->
 
-                <div class="OurPluginItem">
-                    <h3>50+</h3>
-                    <h4>Shop Themes</h4>
-                </div>
+<!--                <div class="OurPluginItem">-->
+<!--                    <h3>50+</h3>-->
+<!--                    <h4>Shop Themes</h4>-->
+<!--                </div>-->
 
-            </div>
+<!--            </div>-->
 
-            <div class="col-lg-3 col-sm-6">
+<!--            <div class="col-lg-3 col-sm-6">-->
 
-                <div class="OurPluginItem">
-                    <h3>100+</h3>
-                    <h4>Shop Crearted</h4>
-                </div>
+<!--                <div class="OurPluginItem">-->
+<!--                    <h3>100+</h3>-->
+<!--                    <h4>Shop Crearted</h4>-->
+<!--                </div>-->
 
-            </div>
+<!--            </div>-->
 
-            <div class="col-lg-3 col-sm-6">
+<!--            <div class="col-lg-3 col-sm-6">-->
 
-                <div class="OurPluginItem">
-                    <h3>590+</h3>
-                    <h4>Plugin Added</h4>
-                </div>
+<!--                <div class="OurPluginItem">-->
+<!--                    <h3>590+</h3>-->
+<!--                    <h4>Plugin Added</h4>-->
+<!--                </div>-->
 
-            </div>
+<!--            </div>-->
 
-        </div>
+<!--        </div>-->
 
-    </div>
+<!--    </div>-->
 
-</section>
+<!--</section>-->
 
 
 <footer class="Footer section_gaps">
@@ -1511,18 +1597,18 @@
 
                         <div class="Address">
                             <h4>Address</h4>
-                            <p>52 Bedok Reservoir Cres Singapore 479226</p>
+                            <p> SAR Bhaban, Level-5 , Ka-78, Progoti Sarani, Kuril, Vatara, Dhaka-1229, Bangladesh</p>
                         </div>
 
                         <div class="Address">
                             <h4>Contact No.</h4>
-                            <a href="tel:0123456789">+880 123 456 789</a>
-                            <a href="tel:0123456789">+880 123 456 789</a>
+                            <a href="tel:0123456789">+8801799733234</a>
+                            <!--<a href="tel:0123456789">+880 123 456 789</a>-->
                         </div>
 
                         <div class="Address">
                             <h4>E-mail Address</h4>
-                            <a href="mailto:support@salesolution.com">support@salesolution.com</a>
+                            <a href="mailto:support@funnelliner.com">support@funnelliner.com</a>
                         </div>
 
                         <div class="Logo">
@@ -1563,7 +1649,7 @@
 
                 <div class="FormPart">
 
-                    <form action="" method="post">
+                    <!--<form action="#" method="post">-->
 
                         <div class="CustomeInput">
                             <input type="text" name="" placeholder="Full Name">
@@ -1585,7 +1671,7 @@
                             <button type="submit">Submit</button>
                         </div>
 
-                    </form>
+                    <!--</form>-->
 
                 </div>
 
