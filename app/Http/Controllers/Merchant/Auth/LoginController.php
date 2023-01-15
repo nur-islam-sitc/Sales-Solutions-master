@@ -66,7 +66,7 @@ class LoginController extends MerchantBaseController
         $domain = Str::lower(Str::replace(' ','-',  $request->input('shop_name')));
         $shop = Shop::query()->where('domain', $domain)->first();
         if($shop) {
-            $new_domain = $domain.Str::random('4');
+            $new_domain = $domain.mt_rand(11, 99);
         } else {
             $new_domain = $domain;
         }
