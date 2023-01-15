@@ -17,9 +17,9 @@ class AuthController extends Controller
             'credentials' => 'required',
         ]);
 
-        if ($request->hasHeader('shop_id') && $request->header('shop_id') !== null) {
+        if ($request->hasHeader('shop_id') && $request->header('shop-id') !== null) {
 
-            $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
+            $shop = Shop::query()->where('shop_id', $request->header('shop-id'))->first();
 
             if (!$shop) {
                 throw ValidationException::withMessages([
@@ -86,8 +86,8 @@ class AuthController extends Controller
             'credentials' => 'required',
         ]);
 
-        if ($request->hasHeader('shop_id') && $request->header('shop_id') !== null) {
-            $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
+        if ($request->hasHeader('shop_id') && $request->header('shop-id') !== null) {
+            $shop = Shop::query()->where('shop_id', $request->header('shop-id'))->first();
 
             if (!$shop) {
                 throw ValidationException::withMessages([

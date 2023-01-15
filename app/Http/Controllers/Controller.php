@@ -17,8 +17,8 @@ class Controller extends BaseController
 
     public function __construct(Request $request)
     {
-         if ($request->header('shop_id') && $request->header('shop_id') !== null) {
-             $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
+         if ($request->header('shop-id') && $request->header('shop-id') !== null) {
+             $shop = Shop::query()->where('shop_id', $request->header('shop-id'))->first();
 
              if(!$shop) {
                  abort(404, 'Invalid shop id');
