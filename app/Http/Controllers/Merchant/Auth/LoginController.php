@@ -80,8 +80,8 @@ class LoginController extends MerchantBaseController
                 'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
-            $this->create_subdomain($domain . '-dashboard', 'dashboard.funnelliner.com');
-            $this->create_subdomain($domain . '-web', 'web.funnelliner.com');
+            $this->create_subdomain($new_domain . '-dashboard', 'dashboard.funnelliner.com');
+            $this->create_subdomain($new_domain . '-web', 'web.funnelliner.com');
             $url = $domain . '-dashboard.funnelliner.com';
 
             $shop = Shop::query()->where('name', $request->input('shop_name'))->first();
