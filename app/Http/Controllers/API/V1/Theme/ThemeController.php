@@ -125,22 +125,20 @@ class ThemeController extends Controller
         $request->validate([
             'type' => ['required']
         ]);
-        if ($request->hasHeader('shop_id') && $request->header('shop_id') !== null) {
 
-            $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
+        $shop = Shop::query()->where('shop_id', $request->header('shop_id'))->first();
 
-            if (!$shop) {
-                throw ValidationException::withMessages([
-                    'shop_id' => 'Invalid Shop Id'
-                ]);
-            }
-            $active_themes = ActiveTheme::query()->where('shop_id', $shop->shop_id)->pluck('theme_id');
-            $theme = Theme::query()->with('media')->where('type', $request->input('type'))->whereIn('id', $active_themes)->get();
-
-            if ($theme->isEmpty()) {
-                return $this->sendApiResponse('', 'No theme has been imported', 'themeNotFound', '', 401);
-            }
-            return $this->sendApiResponse($theme);
+        if (!$shop) {
+            throw ValidationException::withMessages([
+                'shop_id' => 'Invalid Shop Id'
+            ]);
         }
+        $active_themes = ActiveTheme::query()->where('shop_id', $shop->shop_id)->pluck('theme_id');
+        $theme = Theme::query()->with('media')->where('type', $request->input('type'))->whereIn('id', $active_themes)->get();
+
+        if ($theme->isEmpty()) {
+            return $this->sendApiResponse('', 'No theme has been imported', 'themeNotFound', []);
+        }
+        return $this->sendApiResponse($theme);
     }
 }
