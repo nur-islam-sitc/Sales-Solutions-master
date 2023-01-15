@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Media;
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use File;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
@@ -24,10 +24,10 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $products = Product::query()->with('main_image', 'other_images')
-            ->where('shop_id', $request->header('shop_id'))
+            ->where('shop_id', $request->header('shop-id'))
             ->get();
 
-        if($products->isEmpty()) {
+        if ($products->isEmpty()) {
             return $this->sendApiResponse('', 'No Data available');
         }
         return $this->sendApiResponse($products);
@@ -36,7 +36,7 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -50,92 +50,78 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-            $product = new Product();
-            $product->category_id = $request->category_id;
-            $product->user_id = auth()->user()->id;
-            $product->shop_id = auth()->user()->shop->shop_id;
-            $product->product_name = $request->product_name;
-            $product->slug = Str::slug($request->product_name);
-            $product->price = $request->price;
-            $product->product_code = $request->product_code;
-            $product->product_qty = $request->product_qty;
-            $product->discount = $request->discount;
-            $product->short_description = $request->short_description;
-            $product->save();
+        $product = new Product();
+        $product->category_id = $request->category_id;
+        $product->user_id = auth()->user()->id;
+        $product->shop_id = auth()->user()->shop->shop_id;
+        $product->product_name = $request->product_name;
+        $product->slug = Str::slug($request->product_name);
+        $product->price = $request->price;
+        $product->product_code = $request->product_code;
+        $product->product_qty = $request->product_qty;
+        $product->discount = $request->discount;
+        $product->short_description = $request->short_description;
+        $product->save();
 
-            //store product main image
-            $mainImageName = time() . '_main_image.' . $request->main_image->extension();
-            $request->main_image->move(public_path('images'), $mainImageName);
-            $media = new Media();
-            $media->name = '/images/' . $mainImageName;
-            $media->parent_id = $product->id;
-            $media->type = 'product_main_image';
-            $media->save();
+        //store product main image
+        $mainImageName = time() . '_main_image.' . $request->main_image->extension();
+        $request->main_image->move(public_path('images'), $mainImageName);
+        $media = new Media();
+        $media->name = '/images/' . $mainImageName;
+        $media->parent_id = $product->id;
+        $media->type = 'product_main_image';
+        $media->save();
 
-            $product['main_image'] = $media->name;
+        $product['main_image'] = $media->name;
 
 
-            if ($request->hasFile('other_image')) {
+        if ($request->hasFile('other_image')) {
 
-                foreach ($request->other_image as $key => $image) {
-                    //store product other image
-                    $otherImageName = time() . rand(1000, 9999) . '_other_image.' . $image->extension();
-                    $image->move(public_path('images'), $otherImageName);
-                    $mediaOther = new Media();
-                    $mediaOther->name = '/images/' . $otherImageName;
-                    $mediaOther->parent_id = $product->id;
-                    $mediaOther->type = 'product_other_image';
-                    $mediaOther->save();
-                    $product['other_image_' . $key] = $mediaOther->name;
-                }
+            foreach ($request->other_image as $key => $image) {
+                //store product other image
+                $otherImageName = time() . rand(1000, 9999) . '_other_image.' . $image->extension();
+                $image->move(public_path('images'), $otherImageName);
+                $mediaOther = new Media();
+                $mediaOther->name = '/images/' . $otherImageName;
+                $mediaOther->parent_id = $product->id;
+                $mediaOther->type = 'product_other_image';
+                $mediaOther->save();
+                $product['other_image_' . $key] = $mediaOther->name;
             }
+        }
 
-           return $this->sendApiResponse($product, 'Product created successfully');
+        return $this->sendApiResponse($product, 'Product created successfully');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $slug
+     * @return JsonResponse
      */
-    public function show($slug)
+    public function show(Request $request, $slug): JsonResponse
     {
-        try {
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Merchant not Found',
-                ], 404);
-            }
-
-            $product = Product::with('main_image')->where('shop_id', $merchant->shop->shop_id)->where('slug', $slug)->first();
-            $other_images = Media::where('parent_id', $product->id)->where('type', 'product_other_image')->get();
-            $product['other_images'] = $other_images;
-            if (!$product) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Product not Found',
-                ], 404);
-            }
-            return response()->json([
-                'success' => true,
-                'data' => $product,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        $product = Product::query()->with('main_image')
+            ->where('shop_id', $request->header('shop-id'))
+            ->where('slug', $slug)
+            ->first();
+        $other_images = Media::query()->where('parent_id', $product->id)
+            ->where('type', 'product_other_image')
+            ->get();
+        $product['other_images'] = $other_images;
+        if (!$product) {
+            return $this->sendApiResponse('', 'No Data available', 'NotFound');
         }
+        return $this->sendApiResponse($product);
+
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -144,9 +130,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param ProductRequest $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function update(ProductRequest $request, $id)
     {
@@ -155,10 +141,7 @@ class ProductController extends Controller
             DB::beginTransaction();
             $product = Product::with('main_image')->find($id);
             if (!$product) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Product not Found',
-                ], 404);
+                return $this->sendApiResponse('', 'Product Not Found', 'NotFound');
             }
             $product->category_id = $request->category_id;
             $product->product_name = $request->product_name;
@@ -205,7 +188,7 @@ class ProductController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
