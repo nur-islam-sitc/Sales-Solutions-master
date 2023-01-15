@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,22 +63,29 @@ class LoginController extends MerchantBaseController
 
         $data = Arr::except($request->validated(), ['shop_name']);
         $data['role'] = User::MERCHANT;
+        $domain = Str::lower(Str::replace(' ','-',  $request->input('shop_name')));
+        $shop = Shop::query()->where('domain', $domain)->first();
+        if($shop) {
+            $new_domain = $domain.Str::random('4');
+        } else {
+            $new_domain = $domain;
+        }
 
         try {
             $merchant = User::query()->create($data);
-            $domain = Str::lower(Str::replace(' ','-',  $request->input('shop_name')));
+
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
-                'domain' => $domain,
+                'domain' => $new_domain,
                 'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
             $this->create_subdomain($domain . '-dashboard', 'dashboard.funnelliner.com');
             $this->create_subdomain($domain . '-web', 'web.funnelliner.com');
             $url = $domain . '-dashboard.funnelliner.com';
-            
+
             $shop = Shop::query()->where('name', $request->input('shop_name'))->first();
-            
+
             $user = 'FunnelLine';
             $password = 'upm664se';
             $sender_id = 'FunnelLiner';
@@ -101,8 +109,7 @@ Funnelliner.Com';
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
             $register = curl_exec($ch);
-
-            return view('success');
+            return redirect()->away('https://dashboard.funnelliner.com');
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
