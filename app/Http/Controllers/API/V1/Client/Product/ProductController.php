@@ -167,20 +167,14 @@ class ProductController extends Controller
 
 
             }
-
             $updatedProduct = Product::with(['main_image'])->where('id', $id)->first();
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'msg' => 'product updated successfully',
-                'data' => $updatedProduct,
-            ]);
+            return $this->sendApiResponse($updatedProduct, 'Product Updated successfully');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+            return $this->sendApiResponse('', $e->getMessage(), 'Exception');
+
         }
     }
 
@@ -188,44 +182,30 @@ class ProductController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
-        try {
-            $product = Product::with(['main_image'])->find($id);
-            if (!$product) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Product not Found',
-                ], 404);
-            }
-            if ($product->main_image) {
-                File::delete(public_path($product->main_image->name));
-                $product->main_image->delete();
-            }
-
-            $other_images = Media::where('parent_id', $product->id)->where('type', 'product_other_image')->get();
-
-            if (count($other_images) > 0) {
-                foreach ($other_images as $image) {
-                    File::delete(public_path($image->name));
-                    $image->delete();
-                }
-
-            }
-
-
-            $product->delete();
-            return response()->json([
-                'success' => true,
-                'msg' => 'product remove successfully',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        $product = Product::with(['main_image'])->find($id);
+        if (!$product) {
+            return $this->sendApiResponse('', 'Product Not Found', 'NotFound');
         }
+        if ($product->main_image) {
+            File::delete(public_path($product->main_image->name));
+            $product->main_image->delete();
+        }
+
+        $other_images = Media::query()->where('parent_id', $product->id)->where('type', 'product_other_image')->get();
+
+        if (count($other_images) > 0) {
+            foreach ($other_images as $image) {
+                File::delete(public_path($image->name));
+                $image->delete();
+            }
+
+        }
+        $product->delete();
+        return $this->sendApiResponse('', 'Product Removed Successfully');
+
     }
 }
