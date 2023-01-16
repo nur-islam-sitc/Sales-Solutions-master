@@ -97,14 +97,14 @@ class ProductController extends Controller
      * Display the specified resource.
      *
      * @param Request $request
-     * @param $slug
+     * @param int $id
      * @return JsonResponse
      */
-    public function show(Request $request, $slug): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
         $product = Product::query()->with('main_image')
             ->where('shop_id', $request->header('shop-id'))
-            ->where('slug', $slug)
+            ->where('id', $id)
             ->first();
         $other_images = Media::query()->where('parent_id', $product->id)
             ->where('type', 'product_other_image')
