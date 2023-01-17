@@ -16,8 +16,8 @@ jobs:
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: ftp.funnelliner.com
-          username: dev@dev.funnelliner.com
-          password: $NDH1p?KZ@nx
-          protocol: ftps
-          port: 21 # todo replace with your web hosts ftps port
+          server: 143.198.195.149
+          username: funnel_liner
+          password: Aq$kePH9zZ
+          protocol: sftp
+          port: 22 # todo replace with your web hosts ftps port
