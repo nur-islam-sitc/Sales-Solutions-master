@@ -39,7 +39,7 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::get('categories', [CustomerCategory::class, 'index'])->name('categories.index');
     Route::get('categories/{category}', [CustomerCategory::class, 'show'])->name('categories.show');
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
-    Route::get('products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
+    Route::get('products/{id}', [CustomerProduct::class, 'show'])->name('products.show');
 
     Route::post('products/search', [CustomerProduct::class, 'search'])->name('products.search');
 
