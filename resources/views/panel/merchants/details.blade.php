@@ -34,7 +34,7 @@
                         <p>Contact No. : <span>{{ $merchant->phone }}</span></p>
 
                         <!-- Email Address: -->
-                        <a href="javascript:;">Login</a>
+                        <a href="javascript:void(0)">Login</a>
 
                     </div>
 
@@ -110,7 +110,7 @@
 
                         <!-- Middle Part -->
                         <div class="middle_part">
-                            <h2>$11,500</h2>
+                            <h2>$0</h2>
                         </div>
 
                         <!-- last_part -->
@@ -128,7 +128,7 @@
                                               fill="#5DCA08"/>
                                     </svg>
 
-                                    30%
+                                    0%
                                 </span>
                                 </li>
                             </ul>
@@ -335,7 +335,7 @@
 
                         <!-- Middle Part -->
                         <div class="middle_part">
-                            <h2>$11,500</h2>
+                            <h2>$0</h2>
                         </div>
 
                         <!-- last_part -->
@@ -353,7 +353,7 @@
                                               fill="#5DCA08"/>
                                     </svg>
 
-                                    30%
+                                    0%
                                 </span>
                                 </li>
                             </ul>
@@ -441,7 +441,7 @@
 
                         <!-- Middle Part -->
                         <div class="middle_part">
-                            <h2>$11,500</h2>
+                            <h2>$0</h2>
                         </div>
 
                         <!-- last_part -->
@@ -459,7 +459,7 @@
                                               fill="#5DCA08"/>
                                     </svg>
 
-                                    30%
+                                    0%
                                 </span>
                                 </li>
                             </ul>
@@ -511,9 +511,7 @@
                             </h3>
 
                             <div class="dropdown_part">
-
                                 <a href="">Top Up</a>
-
                             </div>
 
                         </div>
@@ -538,7 +536,7 @@
                                               fill="#5DCA08"/>
                                     </svg>
 
-                                    30%
+                                    0%
                                 </span>
                                 </li>
                             </ul>
@@ -587,7 +585,7 @@
             <div class="row">
 
                 <!-- header -->
-                <div class="col-lg-12">
+                <div class="col-lg-12 d-none">
 
                     <div class="header_part d_flex">
 
@@ -610,7 +608,7 @@
 
                 </div>
 
-                <div class="col-lg-12">
+                <div class="col-lg-12 d-none">
 
                     <div class="table_part mt-3">
 

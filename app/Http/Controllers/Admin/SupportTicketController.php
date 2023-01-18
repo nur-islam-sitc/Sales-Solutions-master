@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminBaseController;
 use App\Models\Attachment;
 use App\Models\SupportTicket;
 use App\Models\User;
+use App\Traits\sendApiResponse;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -14,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 class SupportTicketController extends AdminBaseController
 {
+    use sendApiResponse;
     /**
      * @return Application|Factory|View
      */
@@ -70,8 +72,19 @@ class SupportTicketController extends AdminBaseController
         $data = [
             'tickets' => $tickets,
             'counts' => $counts
-
         ];
-        return response()->json($data);
+        return $this->sendApiResponse($data);
+    }
+
+    public function show($uuid)
+    {
+        return view('panel.support_ticket.details', compact('uuid'));
+    }
+
+    public function getTicketDetails($uuid): JsonResponse
+    {
+        $support_ticket = SupportTicket::query()->with('comments', 'comments.user', 'staff', 'merchant')->where('uuid', $uuid)->first();
+
+        return $this->sendApiResponse($support_ticket);
     }
 }

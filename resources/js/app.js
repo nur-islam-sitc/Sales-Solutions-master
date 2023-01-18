@@ -1,3 +1,5 @@
+import SupportTicketDetails from "./components/SupportTicketDetails";
+
 window.axios = require('axios');
 import   { createApp } from 'vue'
 
@@ -32,6 +34,7 @@ const app = createApp({})
 app.component('merchants', Merchants)
 app.component('support-ticket', SupportTicket)
 app.component('support-ticket-list', SupportTicketList)
+app.component('support-ticket-details', SupportTicketDetails)
 app.component('themes', Themes)
 app.component('modal', Modal)
 app.mount('#app')

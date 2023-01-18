@@ -1,3 +1,4 @@
+<!--suppress XmlInvalidId, XmlDuplicatedId, CssInvalidPseudoSelector, CssUnusedSymbol -->
 <template>
     <div>
         <section id="ClientList" class="openTicket">
@@ -124,7 +125,7 @@
 
                     <!-- Table Part  -->
 
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" v-if="themes.length > 0">
                         <div class="row">
                             <div class="col-lg-3" v-for="theme in themes" :key="theme.id">
                                 <div class="bg-white border rounded-2 p-4">
@@ -138,11 +139,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-12" v-else>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="bg-white border rounded-2 p-2 text-center">
+                                    No Data found
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </section>
 
-        <form class="mt-4" @submit.prevent="handleSubmit"  enctype="multipart/form-data">
+        <form class="mt-4" @submit.prevent="handleSubmit" enctype="multipart/form-data">
             <Modal :show="showModal" @close="showModal = false">
                 <template #header>
                     <h6>Add New Template</h6>
@@ -151,24 +163,36 @@
                 <template #default>
 
                     <div class="form-group mb-2 mt-4">
-                        <label for="merchants" :class="['mb-0', !!errors.type && 'validation-error-label']">Template Type *</label>
+                        <label for="merchants" :class="['mb-0', !!errors.type && 'validation-error-label']">Template
+                            Type *</label>
+
                         <select :class="[ 'form-control', !!errors.type && 'validation-error' ]" v-model="form.type">
                             <option disabled value="">Please select Template type</option>
                             <option :value="item.value" v-for="item in types" :key="item.id">{{ item.name }}</option>
                         </select>
+
                         <span class="validation-error-message" v-if="!!errors.type">{{ errors.type }}</span>
 
                     </div>
 
                     <div class="form-group mb-2">
-                        <label for="subject" :class="['mb-0', !!errors.name && 'validation-error-label']">Title *</label>
-                        <input type="text" v-model="form.name" name="subject" :class="[ 'form-control', !!errors.name && 'validation-error' ]" @blur="validate('name')" @keypress="validate('name')"/>
+                        <label for="subject" :class="['mb-0', !!errors.name && 'validation-error-label']">Title
+                            *</label>
+
+                        <input type="text" v-model="form.name" name="subject"
+                               :class="[ 'form-control', !!errors.name && 'validation-error' ]"
+                               @blur="validate('name')"
+                               @keypress="validate('name')"/>
+
                         <span class="validation-error-message" v-if="!!errors.name">{{ errors.name }}</span>
                     </div>
 
                     <div class="form-group mb-2">
-                        <label for="" :class="['mb-0', !!errors.image && 'validation-error-label']">Preview Image *</label>
-                        <input type="file" name="attachment" :class="[ 'file-control', !!errors.image && 'validation-error' ]" @change="fileUpload"/>
+                        <label for="" :class="['mb-0', !!errors.image && 'validation-error-label']">Preview Image
+                            *</label>
+                        <input type="file" name="attachment"
+                               :class="[ 'file-control', !!errors.image && 'validation-error' ]"
+                               @change="fileUpload"/>
                         <span class="validation-error-message" v-if="!!errors.image">{{ errors.image }}</span>
                     </div>
 
@@ -184,8 +208,8 @@ import * as yup from 'yup';
 
 const themeSchema = yup.object().shape({
     name: yup.string().required(),
-    image: yup.mixed().test("type", 'Supported file types Image only', function(value) {
-        if(value !== null) {
+    image: yup.mixed().test("type", 'Supported file types Image only', function (value) {
+        if (value !== null) {
             return value && (value.type === 'image/jpg' || value.type === 'image/jpeg' || value.type === 'image/png');
         } else {
             return false;
@@ -211,9 +235,9 @@ export default {
                 name: "",
                 image: "",
             },
-            types : [
-                {name:'Landing', value: 'landing' },
-                {name:'Multipage' , value: 'multiple'}
+            types: [
+                {name: 'Landing', value: 'landing'},
+                {name: 'Multipage', value: 'multiple'}
             ],
             themes: []
         }
@@ -231,7 +255,7 @@ export default {
         },
         handleSubmit() {
             themeSchema
-                .validate(this.form, { abortEarly: false })
+                .validate(this.form, {abortEarly: false})
                 .then(() => {
                     this.errors = {};
 
@@ -240,7 +264,7 @@ export default {
                     formData.append('name', this.form.name)
                     formData.append('image', this.form.image)
 
-                    axios.post('/panel/themes/store', formData,{
+                    axios.post('/panel/themes/store', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
@@ -268,6 +292,7 @@ export default {
         fetchThemes() {
             axios.get('/panel/themes/list').then((res) => {
                 this.themes = res.data.data
+
             })
         }
     },
@@ -282,18 +307,22 @@ export default {
     width: 100%;
     align-items: center;
 }
+
 .template-image img {
     width: 100%;
     height: auto;
 
 }
+
 .template-info {
     display: flex;
-   justify-content: center;
+    justify-content: center;
 }
+
 .template-info button {
     width: 100%;
 }
+
 .cursor {
     cursor: pointer !important;
 }

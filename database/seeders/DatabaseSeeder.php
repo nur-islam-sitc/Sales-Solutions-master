@@ -9,6 +9,7 @@ use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,11 +25,12 @@ class DatabaseSeeder extends Seeder
         User::factory()->create();
         $this->faker = Faker::create();
 
-        User::factory(10)->merchant()->create()->each(function (User $user) {
+        $name = $this->faker->name();
+        User::factory(10)->merchant()->create()->each(function (User $user) use ($name) {
             Shop::query()->create([
                 'user_id' => $user->id,
-                'name' => $this->faker->name(),
-                'domain' => $this->faker->domainWord(),
+                'name' => $name,
+                'domain' => Str::lower(Str::replace(' ','-',  $name)),
                 'address' => $this->faker->address(),
                 'shop_id' => mt_rand(111111, 999999),
             ]);
@@ -47,7 +49,6 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user->id,
                 'merchant_id' => $this->faker->randomElement($merchant)
             ]);
-
 
         });
 
