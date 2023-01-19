@@ -116,7 +116,7 @@ class OrderController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function show($id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $merchant = User::query()->where('role', 'merchant')->find(auth()->user()->id);
         if (!$merchant) {
@@ -217,20 +217,17 @@ class OrderController extends Controller
         }
     }
 
-    public function order_invoice(Request $request)
+    public function order_invoice(Request $request): JsonResponse
     {
-
-        $orderID = $request->header('order_id');
-
-        $order = Order::with(['order_details', 'customer'])->where('id', $orderID)->where('shop-id', $request->header('shop-id'))->first();
+        $order = Order::with(['order_details', 'customer'])
+            ->where('id', $request->header('order_id'))
+            ->where('shop_id', $request->header('shop-id'))
+            ->first();
 
         if (!$order) {
             return $this->sendApiResponse('', 'Order Not found', 'NotFound');
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $order,
-        ], 200);
+        return $this->sendApiResponse($order);
     }
 }
