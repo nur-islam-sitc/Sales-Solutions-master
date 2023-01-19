@@ -220,7 +220,7 @@ class OrderController extends Controller
     public function order_invoice(Request $request): JsonResponse
     {
         $order = Order::with(['order_details', 'customer'])
-            ->where('id', $request->header('order_id'))
+            ->where('id', $request->header('order-id'))
             ->where('shop_id', $request->header('shop-id'))
             ->first();
 
