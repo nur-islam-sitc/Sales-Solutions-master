@@ -13,6 +13,12 @@ use Illuminate\Validation\ValidationException;
 
 class CourierController extends Controller
 {
+
+    public function index(Request $request)
+    {
+
+    }
+
     public function store(CourierProviderRequest $request): JsonResponse
     {
         $courier = MerchantCourier::query()
