@@ -17,33 +17,19 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $merchant = User::query()->where('role', 'merchant')->find(auth()->user()->id);
-        if (!$merchant) {
-            return $this->sendApiResponse('', 'Merchant not found');
-        }
+        $orders = Order::with('order_details', 'customer')
+            ->where('shop_id', $request->header('shop-id'))
+            ->get();
 
-        $allOrder = [];
-        $orders = Order::with('order_details')->where('shop_id', $merchant->shop->shop_id)->get();
         if (!$orders) {
-            return $this->sendApiResponse('', 'Orders not found');
+            return $this->sendApiResponse('', 'Orders not found', 'NotFound');
         }
-        foreach ($orders as $order) {
-            $customer = User::query()->where('id', $order->customer_id)->where('role', 'customer')->first();
-            if (!$customer) {
-                return $this->sendApiResponse('', 'Customer not found');
-            }
-
-            $allOrder[] = [
-                'order' => $order,
-                'customer' => $customer,
-            ];
-
-        }
-        return $this->sendApiResponse($allOrder);
+        return $this->sendApiResponse($orders);
 
     }
 
@@ -61,11 +47,11 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
         try {
-            
+
             DB::beginTransaction();
 
             $customerID = null;
-            $findCustomer = User::where('phone', $request->customer_phone)->where('role', 'customer')->first();
+            $findCustomer = User::query()->where('phone', $request->input('customer_phone'))->where('role', 'customer')->first();
 
             if ($findCustomer) {
                 $customerID = $findCustomer->id;
@@ -73,11 +59,11 @@ class OrderController extends Controller
 
             if (!$findCustomer) {
                 $customer = new User();
-                $customer->name = $request->customer_name;
+                $customer->name = $request->input('customer_name');
                 $customer->role = 'customer';
                 $customer->email = 'customer' . rand(1000, 9999) . '@gmail.com';
-                $customer->phone = $request->customer_phone;
-                $customer->address = $request->customer_address;
+                $customer->phone = $request->input('customer_phone');
+                $customer->address = $request->input('customer_address');
                 $customer->password = Hash::make(12345678);
                 $customer->save();
 
@@ -130,7 +116,7 @@ class OrderController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function show($id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $merchant = User::query()->where('role', 'merchant')->find(auth()->user()->id);
         if (!$merchant) {
@@ -231,33 +217,17 @@ class OrderController extends Controller
         }
     }
 
-    public function order_invoice(Request $request)
+    public function order_invoice(Request $request): JsonResponse
     {
+        $order = Order::with(['order_details', 'customer'])
+            ->where('id', $request->header('order-id'))
+            ->where('shop_id', $request->header('shop-id'))
+            ->first();
 
-
-        try {
-
-            $orderID = $request->header('order_id');
-            $shopID = $request->header('shop_id');
-
-            $order = Order::with(['order_details', 'customer'])->where('id', $orderID)->where('shop_id', $shopID)->first();
-            
-            if (!$order) {
-                return response()->json([
-                    'success' => false,
-                    'data' => "Order not found!",
-                ], 401);
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $order,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        if (!$order) {
+            return $this->sendApiResponse('', 'Order Not found', 'NotFound');
         }
+
+        return $this->sendApiResponse($order);
     }
 }

@@ -13,7 +13,7 @@ class Theme extends Model
 
     public function media(): BelongsTo
     {
-        return $this->belongsTo(Media::class,'id','parent_id');
+        return $this->belongsTo(Media::class,'id','parent_id')->where('type', 'template');
     }
 
 }

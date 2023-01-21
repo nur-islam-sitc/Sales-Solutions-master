@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
     <section id="ClientList" class="openTicket">
 
@@ -160,7 +161,7 @@
                                     <td>{{ index+1 }}</td>
                                     <td class="name">{{ ticket['merchant']['name'] }}</td>
                                     <td>#{{ ticket['ticket_id'] }}</td>
-                                    <td class="subject_for_ticket"><a href="support_ticket_details.html">{{ ticket.subject }}</a></td>
+                                    <td class="subject_for_ticket"><a :href="'/panel/support-ticket/'+`${ticket.uuid}`">{{ ticket.subject }}</a></td>
                                     <td>{{ ticket.created_at }}</td>
                                     <td>{{ ticket.staff_id }}</td>
                                     <td>

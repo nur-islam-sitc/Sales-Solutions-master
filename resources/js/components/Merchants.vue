@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
     <div class="row">
         <div class="col-lg-12">
@@ -171,6 +172,8 @@ export default {
     },
     methods: {
         capitalized(name) {
+
+            console.log(name[0])
             const capitalizedFirst = name[0].toUpperCase();
             const rest = name.slice(1);
 

@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
     <div>
         <section id="Total_order" class="openTicket">
@@ -39,22 +40,13 @@
                             <!-- last_part -->
                             <div class="last_part">
 
-                                <ul>
-                                    <li><p>Orders Update:</p></li>
-                                    <li><span>Increased by</span></li>
-                                    <li>
-                                <span class="percent">
-                                    <svg width="28" height="24" viewBox="0 0 28 24" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                              d="M2.77661 1.42993C2.77661 1.09602 2.64396 0.775776 2.40785 0.539661C2.17174 0.303546 1.8515 0.170898 1.51758 0.170898C1.18366 0.170898 0.863422 0.303546 0.627307 0.539661C0.391193 0.775776 0.258545 1.09602 0.258545 1.42993L0.258545 22.4138C0.258545 23.1088 0.822592 23.6729 1.51758 23.6729H25.8589C26.1928 23.6729 26.5131 23.5402 26.7492 23.3041C26.9853 23.068 27.1179 22.7477 27.1179 22.4138C27.1179 22.0799 26.9853 21.7597 26.7492 21.5236C26.5131 21.2874 26.1928 21.1548 25.8589 21.1548H2.77661V1.42993ZM26.7486 5.67707C26.971 5.4384 27.0921 5.12273 27.0863 4.79655C27.0806 4.47038 26.9484 4.15917 26.7178 3.92849C26.4871 3.69781 26.1759 3.56568 25.8497 3.55992C25.5235 3.55417 25.2078 3.67524 24.9692 3.89764L17.0457 11.8212L12.8992 7.67474C12.6632 7.43896 12.3432 7.30653 12.0095 7.30653C11.6759 7.30653 11.3559 7.43896 11.1198 7.67474L5.664 13.1306C5.4416 13.3692 5.32053 13.6849 5.32628 14.0111C5.33204 14.3372 5.46417 14.6485 5.69485 14.8791C5.92552 15.1098 6.23673 15.2419 6.56291 15.2477C6.88908 15.2535 7.20476 15.1324 7.44343 14.91L12.0095 10.3439L16.1559 14.4903C16.392 14.7261 16.712 14.8585 17.0457 14.8585C17.3793 14.8585 17.6993 14.7261 17.9354 14.4903L26.7486 5.67707Z"
-                                              fill="#5DCA08"/>
-                                    </svg>
+                                <div class="last_part">
 
-                                    30%
-                                </span>
-                                    </li>
-                                </ul>
+                                    <ul>
+                                        <li><p>Total Ticket Created</p></li>
+                                    </ul>
+
+                                </div>
 
                             </div>
 
@@ -213,21 +205,30 @@
                         <label for="merchants">Merchant *</label>
                         <select class="form-control" v-model="form.user_id" @change="validate('user_id')">
                             <option disabled value="">Please select one</option>
-                            <option :value="item.id" v-for="item in merchant_list" :key="item.id">{{ item.name }}</option>
+                            <option :value="item.id" v-for="item in merchant_list" :key="item.id">{{
+                                    item.name
+                                }}
+                            </option>
                         </select>
                         <span class="validation-error-message" v-if="!!errors.user_id">{{ errors.user_id }}</span>
 
                     </div>
 
                     <div class="form-group mb-2">
-                        <label for="subject" :class="['mb-0', !!errors.subject && 'validation-error-label']">Subject *</label>
-                        <input type="text" v-model="form.subject" name="subject" :class="[ 'form-control', !!errors.subject && 'validation-error' ]" @blur="validate('subject')" @keypress="validate('subject')"/>
+                        <label for="subject" :class="['mb-0', !!errors.subject && 'validation-error-label']">Subject
+                            *</label>
+                        <input type="text" v-model="form.subject" name="subject"
+                               :class="[ 'form-control', !!errors.subject && 'validation-error' ]"
+                               @blur="validate('subject')" @keypress="validate('subject')"/>
                         <span class="validation-error-message" v-if="!!errors.subject">{{ errors.subject }}</span>
                     </div>
 
                     <div class="form-group mb-2">
-                        <label for="description" :class="['mb-0', !!errors.content && 'validation-error-label']">Description *</label>
-                        <textarea type="text" v-model="form.content" :class="[ 'form-control', !!errors.content && 'validation-error' ]" rows="5" @blur="validate('content')" @keypress="validate('content')"></textarea>
+                        <label for="description" :class="['mb-0', !!errors.content && 'validation-error-label']">Description
+                            *</label>
+                        <textarea type="text" v-model="form.content"
+                                  :class="[ 'form-control', !!errors.content && 'validation-error' ]" rows="5"
+                                  @blur="validate('content')" @keypress="validate('content')"></textarea>
                         <span class="validation-error-message" v-if="!!errors.content">{{ errors.content }}</span>
                     </div>
 
@@ -252,8 +253,8 @@ import * as yup from 'yup';
 const ticketsSchema = yup.object().shape({
     subject: yup.string().required().min(8),
     content: yup.string().required().min(20),
-    attachment: yup.mixed().test("type", 'Supported file types Image and PDF only', function(value) {
-        if(value === 'undefined' || value !== null) {
+    attachment: yup.mixed().test("type", 'Supported file types Image and PDF only', function (value) {
+        if (value === 'undefined' || value !== null) {
             return value && (value.type === 'image/jpg' || value.type === 'image/jpeg' || value.type === 'image/png' || value.type === 'application/pdf');
         } else {
             return true;
@@ -301,12 +302,12 @@ export default {
                     this.errors[field] = "";
                 })
                 .catch(err => {
-                this.errors[field] = err.message;
-            })
+                    this.errors[field] = err.message;
+                })
         },
         handleSubmit() {
             ticketsSchema
-                .validate(this.form, { abortEarly: false })
+                .validate(this.form, {abortEarly: false})
                 .then(() => {
                     this.errors = {};
 
@@ -316,7 +317,7 @@ export default {
                     formData.append('content', this.form.content)
                     formData.append('attachment', this.form.attachment)
 
-                    axios.post('/panel/support-ticket/store', formData,{
+                    axios.post('/panel/support-ticket/store', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
@@ -344,10 +345,11 @@ export default {
         },
         fetchTickets() {
             axios.get('/panel/support-ticket/tickets').then(response => {
-                console.log(response.data)
-                this.tickets = response.data.tickets.data
-                this.total =response.data.tickets.total
-                this.open = response.data['counts']['active']
+                this.tickets = response.data.data.tickets.data
+                this.total = response.data.data.tickets.total
+                this.open = response.data.data['counts']['opened'] ? response.data.data['counts']['opened'] : 0
+                this.processing = response.data.data['counts']['processing'] ? response.data.data['counts']['processing'] : 0
+                this.solved = response.data.data['counts']['solved'] ? response.data.data['counts']['solved'] : 0
             })
         }
     },

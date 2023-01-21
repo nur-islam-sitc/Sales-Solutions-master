@@ -36,11 +36,12 @@ use Illuminate\Support\Facades\Route;
 
 //client api
 Route::prefix('v1/customer')->name('customer.')->group(function () {
+
     Route::get('categories', [CustomerCategory::class, 'index'])->name('categories.index');
     Route::get('categories/{category}', [CustomerCategory::class, 'show'])->name('categories.show');
+
     Route::get('products', [CustomerProduct::class, 'index'])->name('products.index');
     Route::get('products/{id}', [CustomerProduct::class, 'show'])->name('products.show');
-
     Route::post('products/search', [CustomerProduct::class, 'search'])->name('products.search');
 
     //Orders
@@ -48,7 +49,6 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
 
     //top-selling product
     Route::get('top-selling-product', [TopSellingProduct::class, 'customer_index']);
-
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
@@ -94,6 +94,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::get('sales-target', [SalesTargetController::class, 'sales_target'])->name('sales.target');
     Route::post('sales-target/update', [SalesTargetController::class, 'sales_target_update'])->name('sales.target.update');
     Route::post('orders/status/update', [ClientOrder::class, 'order_status_update'])->name('orders.status.update');
+    Route::get('/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');
 
     Route::resource('sliders', ClientSlider::class);
     Route::resource('pages', PageController::class);
@@ -130,6 +131,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
     Route::group(['prefix' => 'courier'], function () {
 
+        Route::get('/list', [CourierController::class, 'index']);
         Route::post('/provider', [CourierController::class, 'store']);
         Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
         Route::post('/track-order', [CourierController::class, 'trackOrder']);
@@ -143,7 +145,7 @@ Route::group(['prefix' => 'v1/shops'], function () {
 });
 
 
-Route::get('v1/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');
+
 
 
 

@@ -14,39 +14,24 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        try {
-
-            $allProduct = [];
-
-
-            $shopId = $request->header('shop_id');
-            $products = Product::with('main_image')->where('shop_id', $shopId)->get();
-            foreach ($products as $product) {
-                $other_images = Media::where('parent_id', $product->id)->where('type', 'product_other_image')->get();
-                $product['other_images'] = $other_images;
-                $allProduct[] = $product;
-            }
-
-            if (count($allProduct) < 1) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Product not found',
-                ], 400);
-            }
-            return response()->json([
-                'success' => true,
-                'data' => $allProduct,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        $products = Product::with('main_image')->where('shop_id', $request->header('shop-id'))->get();
+        foreach ($products as $product) {
+            $other_images = Media::query()->where('parent_id', $product->id)->where('type', 'product_other_image')->get();
+            $product['other_images'] = $other_images;
+            $allProduct[] = $product;
         }
+
+        if($products->isEmpty()) {
+            return  $this->sendApiResponse('', 'No Product Available', 'NotAvailable');
+        }
+
+        return  $this->sendApiResponse($products);
+
     }
 
 
