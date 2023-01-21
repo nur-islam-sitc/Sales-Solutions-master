@@ -7,12 +7,15 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Models\Media;
 use App\Models\User;
+use App\Traits\sendApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use File;
+use Illuminate\Support\Facades\File;
 
 class InventoryController extends Controller
 {
+    use sendApiResponse;
+
     public function index(Request $request)
     {
         $products   = Product::with('main_image', 'other_images')->where('shop_id',$request->header('shop-id'))->get();
