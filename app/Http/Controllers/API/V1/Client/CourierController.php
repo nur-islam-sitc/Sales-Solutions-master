@@ -7,16 +7,23 @@ use App\Http\Requests\CourierProviderRequest;
 use App\Models\MerchantCourier;
 use App\Models\Order;
 use App\Services\Courier;
+use App\Traits\sendApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class CourierController extends Controller
 {
+    use sendApiResponse;
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
+        $couriers = MerchantCourier::query()->where('shop_id', $request->header('shop-id'))->get();
 
+        if($couriers->isEmpty()) {
+            return $this->sendApiResponse('', 'No data available', 'NotAvailable');
+        }
+        return $this->sendApiResponse($couriers);
     }
 
     public function store(CourierProviderRequest $request): JsonResponse
@@ -28,7 +35,7 @@ class CourierController extends Controller
 
         if (!$courier) {
             $courier = MerchantCourier::query()->create([
-                'shop_id' => $request->input('shop-id'),
+                'shop_id' => $request->header('shop-id'),
                 'provider' => $request->input('provider'),
                 'status' => $request->input('status'),
                 'config' => $request->input('config'),
@@ -39,19 +46,18 @@ class CourierController extends Controller
                 'config' => $request->input('config'),
             ]);
         }
-        return response()->json($courier);
+        return $this->sendApiResponse($courier, 'Provider Updated Successfully');
 
     }
 
-    public function sendOrderToCourier(Request $request)
+    public function sendOrderToCourier(Request $request): JsonResponse
     {
         $request->validate([
-            'merchant_id' => 'required',
             'provider' => 'required',
             'order_id' => 'required',
         ]);
         $courier = MerchantCourier::query()
-            ->where('merchant_id', $request->input('merchant_id'))
+            ->where('shop_id', $request->header('shop-id'))
             ->where('provider', $request->input('provider'))
             ->where('status', 'active')
             ->first();
@@ -96,5 +102,6 @@ class CourierController extends Controller
         if ($request->filled('tracking_code')) {
             return $courier->trackOrder('/status_by_trackingcode/' . $request->input('tracking_code'));
         }
+
     }
 }

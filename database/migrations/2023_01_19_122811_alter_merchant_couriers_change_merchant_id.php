@@ -14,7 +14,11 @@ class AlterMerchantCouriersChangeMerchantId extends Migration
     public function up()
     {
         Schema::table('merchant_couriers', function (Blueprint $table) {
-            $table->foreignId('shop_id')->constrained('shops')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('shop_id')->after('id');
+        });
+
+        Schema::table('merchant_couriers', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('merchant_id');
         });
     }
 
@@ -25,8 +29,6 @@ class AlterMerchantCouriersChangeMerchantId extends Migration
      */
     public function down()
     {
-        Schema::table('merchant_couriers', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('merchant_id');
-        });
+
     }
 }

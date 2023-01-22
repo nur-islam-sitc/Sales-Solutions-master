@@ -24,7 +24,6 @@ class CourierProviderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'merchant_id' => 'required',
             'provider' => 'required'
         ];
     }
