@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -17,9 +18,9 @@ class Product extends Model
         return $this->belongsTo(Media::class,'id','parent_id')->where('type','product_main_image');
     }
 
-    public function other_images(): BelongsTo
+    public function other_images(): HasMany
     {
-        return $this->belongsTo(Media::class,'id','parent_id')->where('type','product_other_image');
+        return $this->hasMany(Media::class, 'parent_id')->where('type','product_other_image');
     }
 
 
