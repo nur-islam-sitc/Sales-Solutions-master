@@ -22,13 +22,13 @@ class CourierController extends Controller
     public function store(CourierProviderRequest $request): JsonResponse
     {
         $courier = MerchantCourier::query()
-            ->where('merchant_id', $request->input('merchant_id'))
+            ->where('shop_id', $request->header('shop-id'))
             ->where('provider', $request->input('provider'))
             ->first();
 
         if (!$courier) {
             $courier = MerchantCourier::query()->create([
-                'merchant_id' => $request->input('merchant_id'),
+                'shop_id' => $request->input('shop-id'),
                 'provider' => $request->input('provider'),
                 'status' => $request->input('status'),
                 'config' => $request->input('config'),

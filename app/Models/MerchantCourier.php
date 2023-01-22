@@ -18,9 +18,4 @@ class MerchantCourier extends Model
     const PAPERFLY = 'paperfly';
     const ECOURIER = 'ecourier';
 
-
-    public static function courierList()
-    {
-
-    }
 }
