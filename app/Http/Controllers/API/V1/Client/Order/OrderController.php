@@ -96,6 +96,30 @@ class OrderController extends Controller
             }
 
             DB::commit();
+
+	    $user = 'FunnelLine';
+            $password = 'upm664se';
+            $sender_id = 'FunnelLiner';
+            $msg = 'Dear '.$request->input('customer_name').' ,
+Your Order ID: '.$orderDetails->order_id.' is pending. 
+Thank you.
+
+'.auth()->user()->shop->name.'';
+            $url2 = "https://mshastra.com/sendurl.aspx";
+            $data2 = [
+                "user" => $user,
+                "pwd" => $password,
+                "type" => "text",
+                "CountryCode" => "+880",
+                "mobileno" => $request->input('customer_phone'),
+                "senderid" => $sender_id,
+                "msgtext" => $msg,
+            ];
+            $ch = curl_init($url2);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
+            $order = curl_exec($ch);
+
             return response()->json([
                 'success' => true,
                 'msg' => 'Order created Successfully',
@@ -204,6 +228,28 @@ class OrderController extends Controller
                 }
             }
             $order->save();
+            $user = 'FunnelLine';
+            $password = 'upm664se';
+            $sender_id = 'FunnelLiner';
+            $msg = 'Dear '.$order->customer_name.' ,
+Your Order ID: '.$request->order_id.' is '.$order->order_status.'. 
+Thank you.
+
+'.$merchant->shop->name.'';
+            $url2 = "https://mshastra.com/sendurl.aspx";
+            $data2 = [
+                "user" => $user,
+                "pwd" => $password,
+                "type" => "text",
+                "CountryCode" => "+880",
+                "mobileno" => $order->customer->phone,
+                "senderid" => $sender_id,
+                "msgtext" => $msg,
+            ];
+            $ch = curl_init($url2);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
+            $order = curl_exec($ch);
 
             return response()->json([
                 'success' => true,

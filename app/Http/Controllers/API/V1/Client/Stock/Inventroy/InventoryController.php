@@ -7,40 +7,23 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Models\Media;
 use App\Models\User;
+use App\Traits\sendApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use File;
+use Illuminate\Support\Facades\File;
 
 class InventoryController extends Controller
 {
-    public function index()
+    use sendApiResponse;
+
+    public function index(Request $request)
     {
-        try {
-
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Merchant not Found',
-                ], 404);
-            }
-
-            $allProduct = [];
-            $products   = Product::with('main_image')->where('shop_id',$merchant->shop->id)->get();
-            foreach($products as $product){
-                $other_images = Media::where('parent_id',$product->id)->where('type', 'product_other_image')->get();
-                $allProduct[] = $product;
-            }
-            return response()->json([
-                'success' => true,
-                'data' => $allProduct,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>  $e->getMessage(),
-            ], 400);
+        $products   = Product::with('main_image', 'other_images')->where('shop_id',$request->header('shop-id'))->get();
+        if($products->isEmpty()) {
+            return $this->sendApiResponse('', 'No products available', 'NotAvailable');
         }
+        return $this->sendApiResponse($products);
+
     }
 
     public function show($id)
@@ -56,7 +39,7 @@ class InventoryController extends Controller
             }
 
             $product  = Product::with('main_image')->where('id', $id)->where('shop_id',$merchant->shop->id)->first();
-            
+
             if (!$product) {
                 return response()->json([
                     'success' => false,
@@ -98,9 +81,9 @@ class InventoryController extends Controller
                 ], 404);
             }
 
-           
+
             $oldData = $product;
-        
+
 
             if ($request->product_name != null) {
                 $product->product_name = $request->product_name;
@@ -111,7 +94,7 @@ class InventoryController extends Controller
             if ($request->selling_price != null) {
                 $product->price = $request->selling_price;
             }
-            
+
             $product->save();
 
             if ($request->has('main_image')) {
@@ -125,7 +108,7 @@ class InventoryController extends Controller
                     'name' => '/images/' . $imageName
                 ]);
             }
-            
+
             $updatedProduct = Product::with(['main_image'])->where('id', $request->product_id)->first();
             DB::commit();
             return response()->json([
