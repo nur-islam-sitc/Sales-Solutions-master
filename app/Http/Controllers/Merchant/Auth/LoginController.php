@@ -80,9 +80,9 @@ class LoginController extends MerchantBaseController
                 'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
-            $this->create_subdomain($new_domain . '-dashboard', 'dashboard.funnelliner.com');
+            /*$this->create_subdomain($new_domain . '-dashboard', 'dashboard.funnelliner.com');
             $this->create_subdomain($new_domain . '-web', 'web.funnelliner.com');
-            $url = $domain . '-dashboard.funnelliner.com';
+            $url = $domain . '-dashboard.funnelliner.com';*/
 
             $shop = Shop::query()->where('name', $request->input('shop_name'))->first();
 
@@ -91,7 +91,7 @@ class LoginController extends MerchantBaseController
             $sender_id = 'FunnelLiner';
             $msg = 'Dear '.$data['name'].' ,
 Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For bKash Payment Reference ID will be '.$shop->shop_id.' .Please pay your registration fee & active this account.
-Your Payment Link: https://cutt.ly/payfunnelliner
+
 Thank you.
 
 Funnelliner.Com';
