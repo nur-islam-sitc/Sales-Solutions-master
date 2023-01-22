@@ -4,19 +4,16 @@ namespace App\Http\Controllers\API\V1\Client\Stock\StockIn;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
-use App\Models\Media;
 use App\Models\Product;
-use App\Models\User;
 use App\Traits\sendApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class StockInController extends Controller
 {
     use sendApiResponse;
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $products   = Product::with('main_image', 'other_images')->where('shop_id',$request->header('shop-id'))->get();
         if($products->isEmpty()) {
@@ -25,9 +22,8 @@ class StockInController extends Controller
         return $this->sendApiResponse($products);
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, $id): JsonResponse
     {
-
         $products   = Product::query()->with('main_image', 'other_images')
             ->where('shop_id',$request->header('shop-id'))
             ->where('id', $id)

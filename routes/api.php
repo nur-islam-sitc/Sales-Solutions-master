@@ -10,7 +10,7 @@ use App\Http\Controllers\API\V1\Client\SalesTarget\SalesTargetController;
 use App\Http\Controllers\API\V1\Client\Setting\SettingController as MerchantSetting;
 use App\Http\Controllers\API\V1\Client\Shop\ShopController;
 use App\Http\Controllers\API\V1\Client\Slider\SliderController as ClientSlider;
-use App\Http\Controllers\API\V1\Client\Stock\Inventroy\InventoryController;
+use App\Http\Controllers\API\V1\Client\Stock\Inventory\InventoryController;
 use App\Http\Controllers\API\V1\Client\Stock\ProductReturn\ProductReturnController;
 use App\Http\Controllers\API\V1\Client\Stock\StockIn\StockInController;
 use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
