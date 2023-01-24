@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('v1/page/{page}', [\App\Http\Controllers\API\V1\PageController::class, 'show']);
 
 //client api
 Route::prefix('v1/customer')->name('customer.')->group(function () {
