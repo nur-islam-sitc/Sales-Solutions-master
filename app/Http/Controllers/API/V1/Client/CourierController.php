@@ -68,12 +68,13 @@ class CourierController extends Controller
             ]);
         }
         $credentials = collect(json_decode($courier->config))->toArray();
-        $data = Order::query()->find($request->input('order_id'));
+
+        $data = Order::query()->with('customer')->find($request->input('order_id'));
         if ($data && $request->input('provider') == MerchantCourier::STEADFAST) {
             $provider = new Courier;
             $response = $provider->createOrder($credentials, $data)->json();
 
-            if($response->status === 200) {
+            if($response['status'] === 200) {
                 $data->consignment_id = $response->consignment->consignment_id;
                 $data->tracking_code = $response->consignment->tracking_code;
                 $data->courier_entry = true;
@@ -81,7 +82,7 @@ class CourierController extends Controller
 
                 return response()->json(['data' => $data, 'message' => 'Order has been send to'. MerchantCourier::STEADFAST]);
             } else {
-                return response()->json(['message' => $response->message]);
+                return response()->json(['message' => $response['errors']['invoice'][0]]);
             }
         }
 

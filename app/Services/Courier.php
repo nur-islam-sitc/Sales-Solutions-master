@@ -20,9 +20,9 @@ class Courier
     {
         return $this->request($credentials)->post('create_order', [
             'invoice' => $data['order_no'],
-            'recipient_name' => $data['customer_name'],
-            'recipient_phone' => $data['customer_phone'],
-            'recipient_address' => $data['customer_address'],
+            'recipient_name' => $data->customer['name'],
+            'recipient_phone' => $data->customer['phone'],
+            'recipient_address' => $data->customer['address'],
             'cod_amount' => $data['cod'],
             'note' => $data['note']
         ]);
