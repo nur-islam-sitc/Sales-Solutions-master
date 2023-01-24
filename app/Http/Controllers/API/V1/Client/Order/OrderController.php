@@ -101,7 +101,7 @@ class OrderController extends Controller
             $password = 'upm664se';
             $sender_id = 'FunnelLiner';
             $msg = 'Dear '.$request->input('customer_name').' ,
-Your Order ID. '.$order->order_no.' is pending. 
+Your Order No. '.$order->order_no.' is pending. 
 Thank you.
 
 '.auth()->user()->shop->name.'';
