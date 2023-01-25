@@ -134,7 +134,7 @@ Funnelliner.Com';
             ->where('role', User::MERCHANT)
             ->where('email', $request->input('email'))
             ->orWhere('phone', User::normalizePhone($request->input('email')))
-            ->orWhere('phone', $request->input('email'))
+            ->orWhere('phone', User::removeCode($request->input('email')))
             ->first();
 
         if($user && Hash::check($request->input('password'), $user->password)) {

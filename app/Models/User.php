@@ -81,6 +81,13 @@ class User extends Authenticatable
         return '+88'.$phone;
     }
 
+    public static function removeCode($phone): string
+    {
+        if(Str::startsWith($phone, "+88")) {
+            return Str::remove('+88', $phone);
+        }
+        return $phone;
+    }
 
 
     /**
