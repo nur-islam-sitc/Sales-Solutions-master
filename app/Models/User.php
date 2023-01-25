@@ -73,6 +73,15 @@ class User extends Authenticatable
 
     }
 
+    public static function normalizePhone($phone): string
+    {
+        if(Str::startsWith($phone, "+88")) {
+            return $phone;
+        }
+        return '+88'.$phone;
+    }
+
+
 
     /**
      * return password as a hash
@@ -112,6 +121,9 @@ class User extends Authenticatable
         return $this->hasOne(Shop::class);
     }
 
+    /**
+     * @return HasOne
+     */
     public function merchantinfo(): HasOne
     {
         return $this->hasOne(MerchantInfo::class);
@@ -122,7 +134,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    public function categories()
+    public function categories(): HasMany
     {
         return $this->hasMany(Category::class, 'category_user');
     }

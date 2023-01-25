@@ -24,6 +24,7 @@ class OrderController extends Controller
     {
         $orders = Order::with('order_details', 'customer')
             ->where('shop_id', $request->header('shop-id'))
+            ->orderByDesc('id')
             ->get();
 
         if (!$orders) {
@@ -101,7 +102,7 @@ class OrderController extends Controller
             $password = 'upm664se';
             $sender_id = 'FunnelLiner';
             $msg = 'Dear '.$request->input('customer_name').' ,
-Your Order No. '.$order->order_no.' is pending. 
+Your Order No. '.$order->order_no.' is pending.
 Thank you.
 
 '.auth()->user()->shop->name.'';
@@ -232,7 +233,7 @@ Thank you.
             $password = 'upm664se';
             $sender_id = 'FunnelLiner';
             $msg = 'Dear '.$order->customer_name.' ,
-Your Order No. '.$order->order_no.' is '.$order->order_status.'. 
+Your Order No. '.$order->order_no.' is '.$order->order_status.'.
 Thank you.
 
 '.$merchant->shop->name.'';

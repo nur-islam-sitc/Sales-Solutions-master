@@ -4,25 +4,29 @@ namespace App\Http\Controllers\Merchant\Auth;
 
 
 use App\Http\Controllers\MerchantBaseController;
+use App\Http\Resources\MerchantResource;
 use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
 use App\Models\Shop;
+use App\Traits\sendApiResponse;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class LoginController extends MerchantBaseController
 {
-
+    use sendApiResponse;
     /**
      * Show the merchant registration page
      *
@@ -126,29 +130,27 @@ Funnelliner.Com';
             return response()->json(['error' => $validator->errors()], 401);
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => User::MERCHANT])) {
-            $token = auth()->user()->createApiToken(); #Generate token
-            return response()->json(['status' => 'Authorised', 'token' => $token, 'merchant' => [
-                'id' => auth()->user()->id,
-                'name' => auth()->user()->name,
-                'domain' => auth()->user()->shop->domain,
-                'email' => auth()->user()->email,
-                'phone' => auth()->user()->phone,
-                'role' => auth()->user()->role,
-                'shop_id' => auth()->user()->shop->shop_id,
-                'avatar' => auth()->user()->avatar,
-            ]], 200);
+        $user = User::query()->with('shop')
+            ->where('role', User::MERCHANT)
+            ->where('email', $request->input('email'))
+            ->orWhere('phone', User::normalizePhone($request->input('email')))
+            ->orWhere('phone', $request->input('email'))
+            ->first();
+
+        if($user && Hash::check($request->input('password'), $user->password)) {
+            $token = $user->createApiToken();
+            return $this->sendApiResponse(new MerchantResource($user), 'Successfully logged in', '', ['token' => $token]);
         } else {
-            return response()->json(['status' => 'Unauthorised'], 401);
+            return $this->sendApiResponse('', 'Invalid Credentials', 'Unauthorized');
         }
+
     }
 
 
-    public function merchant_logout()
+    public function merchant_logout(): JsonResponse
     {
         $userRemoveToken = auth()->user()->removeApiToken();
         return response()->json(['msg' => $userRemoveToken], 200);
-
 
     }
 }

@@ -15,7 +15,10 @@ class StockInController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $products   = Product::with('main_image', 'other_images')->where('shop_id',$request->header('shop-id'))->get();
+        $products   = Product::query()->with('main_image', 'other_images')
+            ->where('shop_id',$request->header('shop-id'))
+            ->orderByDesc('id')
+            ->get();
         if($products->isEmpty()) {
             return $this->sendApiResponse('', 'No products available', 'NotAvailable');
         }

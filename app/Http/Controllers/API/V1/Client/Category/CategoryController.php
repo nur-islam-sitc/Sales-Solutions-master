@@ -26,6 +26,7 @@ class CategoryController extends Controller
         $categories = Category::query()->with('subcategory', 'category_image')
             ->where('parent_id', 0)
             ->where('shop_id', $request->header('shop_id'))
+            ->orderByDesc('id')
             ->get();
         if ($categories->isEmpty()) {
             return $this->sendApiResponse('', 'No data available', 'NotAvailable');

@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
+
+/** @noinspection PhpUndefinedFieldInspection */
 
 namespace App\Http\Controllers\API\V1\Theme;
 
@@ -23,7 +25,7 @@ class ThemeController extends Controller
             $query->where('type', $request->input('type'));
         }
 
-        $themes = $query->get();
+        $themes = $query->orderByDesc('id')->get();
         if ($themes->isEmpty()) {
             return $this->sendApiResponse([], 'No Data found');
         }
@@ -40,7 +42,7 @@ class ThemeController extends Controller
         }
 
         foreach ($query as $key => $q) {
-            $themes = Theme::where('name', $q->theme)->get();
+            $themes = Theme::query()->where('name', $q->theme)->get();
             $query[$key]['themes'] = $themes;
         }
 
@@ -85,7 +87,7 @@ class ThemeController extends Controller
         return $this->sendApiResponse($data, 'Data Updated Successfully');
     }
 
-    public function import(Request $request)
+    public function import(Request $request): JsonResponse
     {
         $request->validate([
             'type' => ['required'],
@@ -120,7 +122,7 @@ class ThemeController extends Controller
     }
 
 
-    public function getMerchantsTheme(Request $request)
+    public function getMerchantsTheme(Request $request): JsonResponse
     {
         $request->validate([
             'type' => ['required']

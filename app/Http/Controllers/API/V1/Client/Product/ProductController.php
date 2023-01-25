@@ -25,6 +25,7 @@ class ProductController extends Controller
     {
         $products = Product::query()->with('main_image', 'other_images')
             ->where('shop_id', $request->header('shop-id'))
+            ->orderByDesc('id')
             ->get();
 
         if ($products->isEmpty()) {
