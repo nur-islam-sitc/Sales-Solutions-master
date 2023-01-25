@@ -34,7 +34,7 @@ class ShopController extends MerchantBaseController
                 $shop['theme_id'] = $activeTheme->name;
             }
 
-            $shop->load('shop_logo', 'merchant');
+            $shop->load('shop_logo');
 
             return $this->sendApiResponse($shop);
         }
