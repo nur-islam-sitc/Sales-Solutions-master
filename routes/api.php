@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\V1\Client\Category\CategoryController as ClientCategory;
 use App\Http\Controllers\API\V1\Client\CourierController;
 use App\Http\Controllers\API\V1\Client\Customer\MerchantCustomerController;
+use App\Http\Controllers\API\V1\Client\ForgetPasswordController;
 use App\Http\Controllers\API\V1\Client\Order\OrderController as ClientOrder;
 use App\Http\Controllers\API\V1\Client\Page\PageController;
 use App\Http\Controllers\API\V1\Client\Product\ProductController as ClientProduct;
@@ -57,6 +58,12 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
 
 //merchant api
 Route::post('login', [LoginController::class, 'merchant_login'])->name('merchant.login');
+
+Route::group(['prefix' => 'v1/client'], function () {
+    Route::post('forget-password', [ForgetPasswordController::class, 'forgetPassword']);
+    Route::post('/otp-verify', [ForgetPasswordController::class, 'verifyOtp']);
+});
+
 Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(function () {
     Route::get('logout', [LoginController::class, 'merchant_logout'])->name('logout');
     Route::prefix('settings')->name('settings.')->group(function () {

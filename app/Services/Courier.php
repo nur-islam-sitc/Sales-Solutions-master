@@ -9,7 +9,6 @@ class Courier
 {
     public function request($credentials): \Illuminate\Http\Client\PendingRequest
     {
-
         return Http::baseUrl('https://portal.steadfast.com.bd/api/v1/')
             ->withHeaders($credentials)
             ->asJson();
