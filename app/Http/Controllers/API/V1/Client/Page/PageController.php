@@ -5,56 +5,37 @@ namespace App\Http\Controllers\API\V1\Client\Page;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PageRequest;
 use App\Models\Page;
+use App\Traits\sendApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    
-    public function index()
+    use sendApiResponse;
+
+    public function index(Request $request): JsonResponse
     {
-        try {
-            
-            $Page = Page::select('id','user_id','shop_id','title','slug','page_content','theme','status')->get();
-            
-            return response()->json([
-                'success' => true,
-                'data' => $Page,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>  $e->getMessage(),
-            ], 400);
+        $page = Page::query()->where('shop_id', $request->header('shop-id'))->get();
+        if ($page->isEmpty()) {
+            return $this->sendApiResponse('', 'No data available right now', 'NotAvailable');
         }
+        return $this->sendApiResponse($page);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(PageRequest $request)
     {
         //return $request->all();
         try {
-            
+
             DB::beginTransaction();
             $page = new Page();
             $page->user_id = auth()->user()->id;
@@ -82,71 +63,46 @@ class PageController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($slug)
+
+    public function show(Request $request, $slug): JsonResponse
     {
-        try {
-            $page = Page::where('slug', $slug)->first();
-            if (!$page) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Page not Found',
-                ], 404);
-            }
-            return response()->json([
-                'success' => true,
-                'data' =>   $page,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' =>   $e->getMessage(),
-            ], 400);
+
+        $page = Page::query()->where('slug', $slug)->where('shop-id', $request->header('shop-id'))->first();
+        if (!$page) {
+            return $this->sendApiResponse('', 'Page not Found', 'NotFound');
         }
+
+        return $this->sendApiResponse($page);
+
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(PageRequest $request, $id)
     {
         try {
 
             DB::beginTransaction();
-            $page  = Page::find($id);
+            $page = Page::find($id);
             if (!$page) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Page not Found',
+                    'msg' => 'Page not Found',
                 ], 404);
             }
 
-            $page->title  = $request->title;
+            $page->title = $request->title;
             $page->slug = Str::slug($request->title);
             $page->page_content = $request->page_content;
             $page->theme = $request->theme;
             $page->save();
-            
-            
+
+
             $updatedPage = Page::where('id', $id)->first();
             DB::commit();
             return response()->json([
@@ -158,29 +114,24 @@ class PageController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'msg' =>  $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         try {
-            $page  = Page::find($id);
+            $page = Page::find($id);
             if (!$page) {
                 return response()->json([
                     'success' => false,
-                    'msg' =>  'Page not Found',
+                    'msg' => 'Page not Found',
                 ], 404);
             }
-            
-            
+
+
             $page->delete();
             return response()->json([
                 'success' => true,
@@ -189,7 +140,7 @@ class PageController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'msg' =>  $e->getMessage(),
+                'msg' => $e->getMessage(),
             ], 400);
         }
     }
