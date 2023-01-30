@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Traits\HasPrimaryUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TicketComment extends Model
 {
@@ -13,19 +14,19 @@ class TicketComment extends Model
 
     protected $keyType = 'string';
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
-    public function support_ticket()
+    public function support_ticket(): BelongsTo
     {
         return $this->belongsTo(SupportTicket::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function attachment()
+    public function attachment(): BelongsTo
     {
         return $this->belongsTo(Attachment::class);
     }

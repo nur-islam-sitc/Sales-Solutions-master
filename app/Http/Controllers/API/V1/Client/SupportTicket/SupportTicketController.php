@@ -6,14 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use App\Models\SupportTicket;
 use App\Models\TicketComment;
+use App\Traits\sendApiResponse;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class SupportTicketController extends Controller
 {
+    use sendApiResponse;
     /**
      * @param Request $request
      * @return JsonResponse
@@ -26,7 +27,8 @@ class SupportTicketController extends Controller
         $tickets = SupportTicket::query()->with('attachment', 'comments', 'comments.user', 'comments.attachment')
             ->where('user_id', $request->input('merchant_id'))
             ->get();
-        return response()->json($tickets);
+
+        return $this->sendApiResponse($tickets);
     }
 
     /**
@@ -53,8 +55,7 @@ class SupportTicketController extends Controller
             $ticket->update(['attachment_id' => $attachment]);
             $ticket->load('attachment');
         }
-
-        return response()->json($ticket);
+        return $this->sendApiResponse($ticket, 'Successfully ticket created');
     }
 
     /**
@@ -68,7 +69,7 @@ class SupportTicketController extends Controller
             ->where('user_id', $merchant)
             ->where('id', $id)
             ->first();
-        return response()->json($ticket);
+        return $this->sendApiResponse($ticket);
     }
 
     /**
@@ -101,14 +102,14 @@ class SupportTicketController extends Controller
 
         $comment->load(['attachment', 'user']);
 
-        return response()->json($comment);
+        return $this->sendApiResponse($comment, 'Reply has been sent successfully');
     }
 
     /**
      * @param $request
      * @return HigherOrderBuilderProxy|mixed
      */
-    public function uploadAttachment($request)
+    public function uploadAttachment($request): HigherOrderBuilderProxy
     {
         $fileExt = $request->file('attachment')->getClientOriginalExtension();
         $size = $request->file('attachment')->getSize();
