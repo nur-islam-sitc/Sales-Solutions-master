@@ -141,7 +141,7 @@ Funnelliner.Com';
             $token = $user->createApiToken();
             return $this->sendApiResponse(new MerchantResource($user), 'Successfully logged in', '', ['token' => $token]);
         } else {
-            return $this->sendApiResponse('', 'Invalid Credentials', 'Unauthorized');
+            return $this->sendApiResponse('', 'Unable to sign in with given credentials', 'Unauthorized');
         }
 
     }
