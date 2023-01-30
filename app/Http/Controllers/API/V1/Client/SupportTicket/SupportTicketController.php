@@ -105,11 +105,7 @@ class SupportTicketController extends Controller
         return $this->sendApiResponse($comment, 'Reply has been sent successfully');
     }
 
-    /**
-     * @param $request
-     * @return HigherOrderBuilderProxy|mixed
-     */
-    public function uploadAttachment($request): HigherOrderBuilderProxy
+    public function uploadAttachment($request)
     {
         $fileExt = $request->file('attachment')->getClientOriginalExtension();
         $size = $request->file('attachment')->getSize();
