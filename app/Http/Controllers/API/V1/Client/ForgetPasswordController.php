@@ -20,7 +20,8 @@ class ForgetPasswordController extends MerchantBaseController
         $request->validate([
             'phone' => 'required'
         ]);
-        $user = User::query()->where('phone', User::normalizePhone($request->input('phone')))
+        $user = User::query()->where('role', User::MERCHANT)
+            ->where('phone', User::normalizePhone($request->input('phone')))
             ->orWhere('phone', User::removeCode($request->input('phone')))
             ->first();
 
@@ -38,13 +39,14 @@ class ForgetPasswordController extends MerchantBaseController
         }
     }
 
-    public function verifyOtp(Request $request)
+    public function verifyOtp(Request $request): JsonResponse
     {
         $request->validate([
             'phone' => 'required',
             'otp' => 'required'
         ]);
-        $user = User::query()->where('phone', User::normalizePhone($request->input('phone')))
+        $user = User::query()->where('role', User::MERCHANT)
+            ->where('phone', User::normalizePhone($request->input('phone')))
             ->orWhere('phone', User::removeCode($request->input('phone')))
             ->first();
 
