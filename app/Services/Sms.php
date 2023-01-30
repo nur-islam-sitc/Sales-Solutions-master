@@ -41,8 +41,8 @@ class Sms
 
     public function sendNewPass($user)
     {
-        $pass = mt_rand(11111111, 99999999);
-        $user->password = Hash::make($pass);
+        $pass = (string) mt_rand(11111111, 99999999);
+        $user->password = $pass;
         $user->save();
 
         $message = 'Your funnelliner Password is '.$pass. ' Please change it after login.';
