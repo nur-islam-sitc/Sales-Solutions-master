@@ -76,7 +76,7 @@
                                     <input type="file">
                                 </div>
 
-                                <a href="" class="Send">Save</a>
+                                <a @click.prevent="replyToTickets" class="Send">Save</a>
 
                             </div>
 
@@ -206,6 +206,7 @@ export default {
     },
     mounted() {
         this.fetchTicketDetails()
+
     },
     methods: {
         capitalized(name) {
@@ -216,10 +217,13 @@ export default {
         fetchTicketDetails() {
             axios.get(`/panel/support-ticket/details/${this.uuid}`).then(response => {
                 this.ticket = response.data.data
-                console.log(response.data.data)
             })
+        },
+        replyToTickets() {
+            console.log(this.ticket)
         }
-    }
+
+    },
 }
 </script>
 

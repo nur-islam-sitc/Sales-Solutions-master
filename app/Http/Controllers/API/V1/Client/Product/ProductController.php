@@ -152,7 +152,7 @@ class ProductController extends Controller
             $product->product_qty = $request->product_qty;
             $product->discount = $request->discount;
             $product->short_description = $request->short_description;
-            $product->status = $request->status ? $request->status : null;
+            $product->status = $request->status ? $request->status : $product->status;
             $product->save();
 
             if ($request->has('main_image')) {

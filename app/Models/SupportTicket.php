@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasUuid;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,22 @@ class SupportTicket extends Model
     const PROCESSING = 'processing';
     const SOLVED = 'solved';
     const CLOSED = 'closed';
+
+    public static function listStatus(): array
+    {
+        return [
+            self::OPENED => 'opened',
+            self::PROCESSING => 'processing',
+            self::SOLVED  => 'solved',
+            self::CLOSED => 'closed'
+        ];
+
+    }
+
+    public function getCreatedAtAttribute($value): string
+    {
+        return Carbon::parse($value)->toFormattedDateString();
+    }
 
     public function merchant(): BelongsTo
     {
@@ -36,6 +53,8 @@ class SupportTicket extends Model
 
     public function comments(): HasMany
     {
-        return $this->hasMany(TicketComment::class, 'ticket_id');
+        return $this->hasMany(TicketComment::class, 'ticket_id')->orderByDesc('created_at');
     }
+
+
 }

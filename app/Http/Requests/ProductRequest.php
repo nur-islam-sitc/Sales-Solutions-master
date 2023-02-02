@@ -26,7 +26,6 @@ class ProductRequest extends FormRequest
      */
     public function rules()
     {
-
         if(Request::route()->getName() === "client.products.store"){
             return [
                 'category_id' => 'required|integer',
