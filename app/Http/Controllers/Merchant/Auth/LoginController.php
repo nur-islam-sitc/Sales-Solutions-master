@@ -9,6 +9,7 @@ use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
 use App\Models\User;
 use App\Models\Shop;
+use App\Services\Sms;
 use App\Traits\sendApiResponse;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -90,30 +91,35 @@ class LoginController extends MerchantBaseController
 
             $shop = Shop::query()->where('name', $request->input('shop_name'))->first();
 
-            $user = 'FunnelLine';
-            $password = 'upm664se';
-            $sender_id = 'FunnelLiner';
-            $msg = 'Dear '.$data['name'].' ,
-Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For bKash Payment Reference ID will be '.$shop->shop_id.' .Please pay your registration fee & active this account.
+//            $user = 'FunnelLine';
+//            $password = 'upm664se';
+//            $sender_id = 'FunnelLiner';
+//            $msg = 'Dear '.$data['name'].' ,
+//Your registration successfully completed. Your Shop ID is '.$shop->shop_id.' .For bKash Payment Reference ID will be '.$shop->shop_id.' .Please pay your registration fee & active this account.
+//
+//Thank you.
+//
+//Funnelliner.Com';
+//            $url2 = "https://mshastra.com/sendurl.aspx";
+//            $data2 = [
+//                "user" => $user,
+//                "pwd" => $password,
+//                "type" => "text",
+//                "CountryCode" => "+880",
+//                "mobileno" => $data['phone'],
+//                "senderid" => $sender_id,
+//                "msgtext" => $msg,
+//            ];
+//            $ch = curl_init($url2);
+//            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//            curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
+//            $register = curl_exec($ch);
 
-Thank you.
+            $sms = new Sms();
+            $sms->sendOtp($merchant);
 
-Funnelliner.Com';
-            $url2 = "https://mshastra.com/sendurl.aspx";
-            $data2 = [
-                "user" => $user,
-                "pwd" => $password,
-                "type" => "text",
-                "CountryCode" => "+880",
-                "mobileno" => $data['phone'],
-                "senderid" => $sender_id,
-                "msgtext" => $msg,
-            ];
-            $ch = curl_init($url2);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
-            $register = curl_exec($ch);
-            return redirect()->away('https://dashboard.funnelliner.com');
+            return $this->sendApiResponse($merchant, 'Account Created Successfully verify the number for Successful Registration');
+//            return redirect()->away('https://dashboard.funnelliner.com');
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
