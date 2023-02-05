@@ -68,7 +68,7 @@ class CategoryController extends Controller
             $imageName = time() . '.' . $request->file('category_image')->getClientOriginalExtension();
             $request->file('category_image')->move(public_path('images/category'), $imageName);
             $media = new Media();
-            $media->name = '/images/category/' . $imageName;
+            $media->name = 'images/category/' . $imageName;
             $media->parent_id = $category->id;
             $media->type = 'category';
             $media->save();
@@ -81,14 +81,13 @@ class CategoryController extends Controller
      * Display the specified resource.
      *
      * @param Request $request
-     * @param $slug
+     * @param $id
      * @return JsonResponse
      */
-    public function show(Request $request, $slug): JsonResponse
+    public function show(Request $request, $id): JsonResponse
     {
-
         $category = Category::with('category_image', 'subcategory')
-            ->where('slug', $slug)
+            ->where('id', $id)
             ->where('shop_id', $request->header('shop_id'))
             ->first();
         if (!$category) {
@@ -134,7 +133,7 @@ class CategoryController extends Controller
             $imageName = time() . '.' . $request->file('category_image')->getClientOriginalExtension();
             $request->file('category_image')->move(public_path('images/category'), $imageName);
             $media = Media::query()->where('type', 'category')->where('parent_id', $category->id)->update([
-                'name' => '/images/category/' . $imageName,
+                'name' => 'images/category/' . $imageName,
             ]);
         }
         $category->load('category_image');
