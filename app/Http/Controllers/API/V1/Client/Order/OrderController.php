@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Client\Order;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
+use App\Services\Sms;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\User;
@@ -33,7 +34,18 @@ class OrderController extends Controller
         return $this->sendApiResponse($orders);
 
     }
+    public function order($id): JsonResponse
+    {
+        $orders = Order::with('order_details', 'customer')
+            ->where('id', $id)
+            ->firstOrFail();
 
+        if (!$orders) {
+            return $this->sendApiResponse('', 'Orders not found', 'NotFound');
+        }
+        return $this->sendApiResponse($orders);
+
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -98,9 +110,9 @@ class OrderController extends Controller
 
             DB::commit();
 
-	    $user = 'FunnelLine';
-            $password = 'upm664se';
-            $sender_id = 'FunnelLiner';
+	    $user = '20102107';
+            $password = 'SES@321';
+            $sender_id = 'INFOSMS';
             $msg = 'Dear '.$request->input('customer_name').' ,
 Your Order No. '.$order->order_no.' is pending.
 Thank you.
@@ -120,6 +132,7 @@ Thank you.
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
             $order = curl_exec($ch);
+
 
             return response()->json([
                 'success' => true,
@@ -229,9 +242,9 @@ Thank you.
                 }
             }
             $order->save();
-            $user = 'FunnelLine';
-            $password = 'upm664se';
-            $sender_id = 'FunnelLiner';
+            $user = '20102107';
+            $password = 'SES@321';
+            $sender_id = 'INFOSMS';
             $msg = 'Dear '.$order->customer_name.' ,
 Your Order No. '.$order->order_no.' is '.$order->order_status.'.
 Thank you.
