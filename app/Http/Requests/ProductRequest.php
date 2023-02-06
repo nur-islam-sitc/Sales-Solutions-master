@@ -28,7 +28,8 @@ class ProductRequest extends FormRequest
     {
         if(Request::route()->getName() === "client.products.store"){
             return [
-                'category_id' => 'required|integer',
+                'category_id' => 'required_without:category_name|integer',
+                'category_name' => 'required_without:category_id|string',
                 'product_name' => 'required|string',
                 'product_code' => 'required|string',
                 'price' => 'required|integer',

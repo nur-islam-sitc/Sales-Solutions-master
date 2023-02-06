@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Client\Product;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use App\Models\Category;
 use App\Models\Media;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
@@ -52,7 +53,22 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         $product = new Product();
-        $product->category_id = $request->category_id;
+        if(!$request->input('category_id')) {
+
+            $category = new Category;
+            $category->name = $request->input('category_name');
+            $category->slug = Str::slug($request->input('category_name'));
+            $category->user_id = auth()->user()->id;
+            $category->shop_id = $request->header('shop-id');
+            $category->status = 1;
+            $category->save();
+
+            $category_id = $category->id;
+
+        } else {
+            $category_id = $request->category_id;
+        }
+        $product->category_id = $category_id;
         $product->user_id = auth()->user()->id;
         $product->shop_id = auth()->user()->shop->shop_id;
         $product->product_name = $request->product_name;
