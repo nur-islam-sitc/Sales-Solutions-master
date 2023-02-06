@@ -48,6 +48,7 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
 
     //Orders
     Route::post('/order/store', [\App\Http\Controllers\API\V1\Customer\OrderController::class, 'store'])->name('order.store');
+    Route::get('/order/{id}/details', [\App\Http\Controllers\API\V1\Customer\OrderController::class, 'show'])->name('order.details');
 
     //top-selling product
     Route::get('top-selling-product', [TopSellingProduct::class, 'customer_index']);

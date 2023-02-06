@@ -89,4 +89,11 @@ class OrderController extends Controller
             ], 400);
         }
     }
+
+    public function show($id): JsonResponse
+    {
+        $order = Order::query()->with('order_details', 'customer')->find($id);
+
+        return $this->sendApiResponse($order);
+    }
 }
