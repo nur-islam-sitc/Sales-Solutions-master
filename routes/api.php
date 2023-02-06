@@ -56,7 +56,15 @@ Route::prefix('v1/customer')->name('customer.')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
+
 //merchant api
+
+Route::group(['prefix' => 'v1'], function () {
+    Route::post('signup', [LoginController::class, 'register']);
+    Route::post('auth/verify', [LoginController::class, 'verify']);
+});
+
+
 Route::post('login', [LoginController::class, 'merchant_login'])->name('merchant.login');
 
 Route::group(['prefix' => 'v1/client'], function () {
