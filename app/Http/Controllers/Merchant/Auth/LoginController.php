@@ -116,16 +116,17 @@ class LoginController extends MerchantBaseController
 //            $register = curl_exec($ch);
 
             $sms = new Sms();
-            $sms->sendOtp($merchant);
+            $sms->sendVerifyOtp($merchant);
 
-            return $this->sendApiResponse($merchant, 'Account Created Successfully verify the number for Successful Registration');
+            return $this->sendApiResponse($merchant, 'Account created Successfully, Verify phone to Use our service');
+
 //            return redirect()->away('https://dashboard.funnelliner.com');
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
     }
 
-    public function merchant_login(Request $request)
+    public function merchant_login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required',
@@ -158,5 +159,45 @@ class LoginController extends MerchantBaseController
         $userRemoveToken = auth()->user()->removeApiToken();
         return response()->json(['msg' => $userRemoveToken], 200);
 
+    }
+
+    public function verify(Request $request): JsonResponse
+    {
+        $request->validate([
+            'phone' => 'required',
+            'otp' => 'required'
+        ]);
+        $user = User::query()->with('shop')
+            ->where('role', User::MERCHANT)
+            ->where('phone', User::normalizePhone($request->input('phone')))
+            ->orWhere('phone', User::removeCode($request->input('phone')))
+            ->first();
+
+        if($user->otp === $request->input('otp')) {
+            $user->api_token = Str::random(64);
+            $user->phone_verified_at = now();
+            $user->save();
+            return $this->sendApiResponse(new MerchantResource($user), 'Account Verification Successful');
+
+        } else {
+            return $this->sendApiResponse('', 'Invalid OTP! Please insert valid OTP', 'Invalid');
+        }
+    }
+
+    public function resendOTP(Request $request): JsonResponse
+    {
+        $request->validate([
+            'phone' => 'required',
+        ]);
+
+        $user = User::query()->with('shop')
+            ->where('role', User::MERCHANT)
+            ->where('phone', User::normalizePhone($request->input('phone')))
+            ->orWhere('phone', User::removeCode($request->input('phone')))
+            ->first();
+
+        $sms = new Sms();
+        $sms->sendVerifyOtp($user);
+        return $this->sendApiResponse('', 'OTP has been send to given number');
     }
 }

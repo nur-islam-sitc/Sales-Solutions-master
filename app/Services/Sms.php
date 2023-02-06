@@ -49,4 +49,13 @@ class Sms
         $query = $this->config($pass, $user->phone, $message);
         return $this->request()->get('sendurl.aspx', $query);
     }
+
+    public function sendVerifyOtp($user)
+    {
+        $otp = mt_rand(111111, 999999);
+        $user->otp = $otp;
+        $user->save();
+        $query = $this->config($otp, $user->phone, null);
+        return $this->request()->get('sendurl.aspx', $query);
+    }
 }
