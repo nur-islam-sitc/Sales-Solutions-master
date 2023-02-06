@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\AdminBaseController;
+use App\Models\Shop;
 use App\Models\SupportTicket;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -75,5 +76,16 @@ class MerchantController extends AdminBaseController
         $statuses = User::listStatus();
 
         return response()->json($statuses);
+    }
+
+    public function destroy(User $merchant)
+    {
+        $shop = Shop::query()->where('user_id', $merchant->id)->first();
+        if($shop) {
+            $shop->delete();
+        }
+        $merchant->delete();
+
+        return response()->json('Merchant Deleted');
     }
 }

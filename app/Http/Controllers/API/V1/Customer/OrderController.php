@@ -52,6 +52,8 @@ class OrderController extends Controller
             $order->shop_id = $shop->shop_id;
             $order->user_id = $shop->user_id;
             $order->customer_id = $customerID;
+            $order->note = $request->input('note');
+            $order->address = $request->input('address');
             $order->save();
 
             //store order details

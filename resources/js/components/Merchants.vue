@@ -6,11 +6,12 @@
 
                 <div class="FilterBy_item d_flex">
                     <h3 style="width: 70%">Joining Date:</h3>
-                    <input type="date" class="form-control" ref="joining_date" name="joining_date" @change="filterByDate">
+                    <input type="date" class="form-control" ref="joining_date" name="joining_date"
+                           @change="filterByDate">
                 </div>
 
 
-                <div class="FilterBy_item d_flex" >
+                <div class="FilterBy_item d_flex">
                     <h3 style="width: 80%">Status:</h3>
                     <div class="dropdown_part form-control">
                             <span class="dropdown-toggle d_flex" id="dropdownMenuButton1" data-bs-toggle="dropdown"
@@ -27,7 +28,10 @@
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
-                            <li v-for="status in statusList" @click="filterMerchants(status)"><a class="dropdown-item" href="#">{{ capitalized(status) }}</a></li>
+                            <li v-for="status in statusList" @click="filterMerchants(status)"><a class="dropdown-item"
+                                                                                                 href="#">{{
+                                    status
+                                }}</a></li>
 
                             <!-- up arrow -->
                             <div class="up_arrow">
@@ -45,10 +49,11 @@
                 </div>
 
 
-                <div class="FilterBy_item" >
+                <div class="FilterBy_item">
                     <div class="custome_input">
 
-                        <input type="text" class="form-control form-control-lg" ref="search" @keyup.enter="searchMerchant" placeholder="Search here...">
+                        <input type="text" class="form-control form-control-lg" ref="search"
+                               @keyup.enter="searchMerchant" placeholder="Search here...">
 
                         <div class="search">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -86,12 +91,15 @@
                         <th>Next Due Date</th>
                         <th>Status</th>
                         <th>Login</th>
+                        <th>Action</th>
                     </tr>
 
                     <tr v-for="(merchant, key) in merchants.data" :key="merchant.id">
-                        <td>{{ key+1 }}</td>
-                        <td class="companyName">{{ merchant.shop.name }}</td>
-                        <td class="name"><a :href="'/panel/merchants/'+`${merchant.id}`">{{ merchant.name }}</a></td>
+                        <td>{{ key + 1 }}</td>
+                        <td class="companyName">{{ merchant?.shop?.name }}</td>
+                        <td class="name"><a :href="'/panel/merchants/'+`${merchant.id}`">{{
+                                capitalized(merchant.name)
+                            }}</a></td>
                         <td>{{ merchant.phone }}</td>
                         <td>{{ merchant.created_at }}</td>
                         <td></td>
@@ -111,7 +119,8 @@
 
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
-                                    <li v-for="status in statusList" @click="updateStatus(merchant.id, status)"><a class="dropdown-item" id="change-status">{{ capitalized(status)}}</a></li>
+                                    <li v-for="status in statusList" @click="updateStatus(merchant.id, status)"><a
+                                        class="dropdown-item" id="change-status">{{ capitalized(status) }}</a></li>
 
                                     <!-- up arrow -->
                                     <div class="up_arrow">
@@ -130,18 +139,28 @@
                         <td>
                             <a href="">Login</a>
                         </td>
+                        <td>
+                            <a @click="deleteMerchant(merchant.id)" href="javascript:;"><i class="fa fa-trash-alt"></i></a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
 
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-end">
-                        <li class="page-item" :class="{disabled: currentPage === 1}" @click="prevPage(merchants.prev_page_url)">
+                        <li class="page-item" :class="{disabled: currentPage === 1}"
+                            @click="prevPage(merchants.prev_page_url)">
                             <a class="page-link" tabindex="-1">Previous</a>
                         </li>
-                        <li v-for="pageNumber in totalPage" v-if="Math.abs((pageNumber - currentPage)) > 6 || pageNumber === totalPage - 1 || pageNumber === 0" class="page-item" :class="{active: currentPage === pageNumber }">
-                            <a class="page-link" @click="setCurrentPage(pageNumber)" :class="{disabled: currentPage === pageNumber , last: (pageNumber === totalPage - 1 && Math.abs(pageNumber - currentPage) > 3), first:(pageNumber === 0 && Math.abs(pageNumber - currentPage) > 3)}">{{ pageNumber }}</a></li>
-                        <li class="page-item" :class="{disabled: currentPage === totalPage}" @click="nextPage(merchants['next_page_url'])">
+                        <li v-for="pageNumber in totalPage"
+                            v-if="Math.abs((pageNumber - currentPage)) > 6 || pageNumber === totalPage - 1 || pageNumber === 0"
+                            class="page-item" :class="{active: currentPage === pageNumber }">
+                            <a class="page-link" @click="setCurrentPage(pageNumber)"
+                               :class="{disabled: currentPage === pageNumber , last: (pageNumber === totalPage - 1 && Math.abs(pageNumber - currentPage) > 3), first:(pageNumber === 0 && Math.abs(pageNumber - currentPage) > 3)}">{{
+                                    pageNumber
+                                }}</a></li>
+                        <li class="page-item" :class="{disabled: currentPage === totalPage}"
+                            @click="nextPage(merchants['next_page_url'])">
                             <a class="page-link">Next</a>
                         </li>
                     </ul>
@@ -166,14 +185,12 @@ export default {
         }
     },
     mounted() {
-        console.log(Math.abs(0 - 1) < 6 )
         this.fetchMerchants();
         this.fetchStatues();
     },
     methods: {
         capitalized(name) {
 
-            console.log(name[0])
             const capitalizedFirst = name[0].toUpperCase();
             const rest = name.slice(1);
 
@@ -187,8 +204,8 @@ export default {
             const joining_date = e.target.value
             this.fetchMerchants(0, '', '', joining_date)
         },
-        fetchMerchants(page = 0, status = '',  search = '', joining_date = '') {
-            axios.get('/panel/merchants/merchants', {params: {page, status, search, joining_date }}).then(response => {
+        fetchMerchants(page = 0, status = '', search = '', joining_date = '') {
+            axios.get('/panel/merchants/merchants', {params: {page, status, search, joining_date}}).then(response => {
                 this.merchants = response.data
                 this.currentPage = response.data["current_page"]
                 this.totalPage = response.data["last_page"]
@@ -200,11 +217,17 @@ export default {
             })
         },
         filterMerchants(status) {
-            this.statusText = this.capitalized(status)
-            this.fetchMerchants(this.currentPage,  status)
+            this.statusText = status
+            this.fetchMerchants(this.currentPage, status)
         },
         updateStatus(merchant, status) {
-            axios.post('/panel/merchants/'+merchant+'/update-status', {status}).then(response => {
+            axios.post('/panel/merchants/' + merchant + '/update-status', {status}).then(response => {
+                this.fetchMerchants();
+            })
+        },
+
+        deleteMerchant(merchant) {
+            axios.post('/panel/merchants/' + merchant + '/delete').then(response => {
                 this.fetchMerchants();
             })
         },
@@ -219,7 +242,7 @@ export default {
             this.fetchMerchants(page)
         },
         nextPage(url) {
-            if(this.currentPage < this.totalPage) {
+            if (this.currentPage < this.totalPage) {
                 axios.get(url).then(response => {
                     this.merchants = response.data
                     this.currentPage = response.data["current_page"]
@@ -239,18 +262,20 @@ export default {
 </script>
 
 <style>
- .page-item {
-     cursor: pointer;
- }
- .page-link, .page-link:hover {
-     color: #a071f1;
- }
- .page-item.active .page-link {
-     background-color: #a071f1 !important;
-     border-color: hsl(262deg 82% 69%) !important;
- }
+.page-item {
+    cursor: pointer;
+}
 
- .dropdown-menu li:hover {
-     cursor: pointer;
- }
+.page-link, .page-link:hover {
+    color: #a071f1;
+}
+
+.page-item.active .page-link {
+    background-color: #a071f1 !important;
+    border-color: hsl(262deg 82% 69%) !important;
+}
+
+.dropdown-menu li:hover {
+    cursor: pointer;
+}
 </style>

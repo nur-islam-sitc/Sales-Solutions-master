@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'panel'], function () {
         Route::get('/statuses', [MerchantController::class, 'statuses']);
         Route::get('/{merchant}', [MerchantController::class, 'show'])->name('admin.merchant.details');
         Route::post('/{merchant}/update-status', [MerchantController::class, 'changeStatus'])->name('admin.merchant.change_status');
+        Route::post('/{merchant}/delete', [MerchantController::class, 'destroy'])->name('admin.merchant.delete');
     });
 
 
