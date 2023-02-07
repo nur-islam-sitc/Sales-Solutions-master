@@ -68,15 +68,20 @@ class SettingController extends MerchantBaseController
             $shop->shop_id = $request->shop_id;
             $shop->shop_meta_title = $request->shop_meta_title;
             $shop->shop_meta_description = $request->shop_meta_description;
-	    $shop->fb_pixel = $request->fb_pixel;
-	    $shop->c_api = $request->c_api;
+	        $shop->fb_pixel = $request->fb_pixel;
+	        $shop->c_api = $request->c_api;
             $shop->test_event = $request->test_event;
             $shop->domain_verify = $request->domain_verify;
             $shop->c_status = $request->c_status;
             $shop->save();
 
             //store shop logo
+            if($request->shop_logo == null){
+            }else{
+                
             $mainImageName = time() . '_shop_logo.' . $request->shop_logo->extension();
+            
+            
             $request->shop_logo->move(public_path('images'), $mainImageName);
             $media = new Media();
             $media->name = '/images/' . $mainImageName;
@@ -85,6 +90,7 @@ class SettingController extends MerchantBaseController
             $media->save();
 
             $shop['logo'] = $media->name;
+             }
 
             DB::commit();
             return response()->json([
