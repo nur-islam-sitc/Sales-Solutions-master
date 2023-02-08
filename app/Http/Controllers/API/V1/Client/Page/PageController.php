@@ -49,7 +49,7 @@ class PageController extends Controller
         $page->slug = Str::slug($request->input('title'));
         $page->page_content = $request->input('page_content');
         $page->theme = $request->input('theme');
-        $page->status = $request->input('status');
+        $page->status = $request->input('status') ?: 1;
         $page->product_id = $request->input('product_id');
         $page->save();
 
