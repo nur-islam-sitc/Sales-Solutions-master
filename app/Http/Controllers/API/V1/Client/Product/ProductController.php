@@ -78,6 +78,15 @@ class ProductController extends Controller
         $product->product_qty = $request->product_qty;
         $product->discount = $request->discount;
         $product->short_description = $request->short_description;
+        $product->delivery_charge = $request->input('delivery_charge');
+
+        if($request->input('delivery_charge') === 'paid') {
+            $product->inside_dhaka = $request->input('inside_dhaka');
+            $product->outside_dhaka = $request->input('outside_dhaka');
+        } else {
+            $product->inside_dhaka = 0;
+            $product->outside_dhaka = 0;
+        }
         $product->save();
 
         //store product main image
@@ -169,6 +178,17 @@ class ProductController extends Controller
             $product->discount = $request->discount;
             $product->short_description = $request->short_description;
             $product->status = $request->status ? $request->status : $product->status;
+
+            $product->delivery_charge = $request->input('delivery_charge');
+
+            if($request->input('delivery_charge') === 'paid') {
+                $product->inside_dhaka = $request->input('inside_dhaka');
+                $product->outside_dhaka = $request->input('outside_dhaka');
+            } else {
+                $product->inside_dhaka = 0;
+                $product->outside_dhaka = 0;
+            }
+
             $product->save();
 
             if ($request->has('main_image')) {

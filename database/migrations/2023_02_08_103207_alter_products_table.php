@@ -13,8 +13,10 @@ class AlterProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table){
-            $table->enum('delivery_charge', ['free', 'paid']);
+        Schema::table('products', function (Blueprint $table){
+            $table->enum('delivery_charge', ['free', 'paid'])->default('free');
+            $table->integer('inside_dhaka')->default(0);
+            $table->integer('outside_dhaka')->default(0);
         });
     }
 
@@ -25,8 +27,10 @@ class AlterProductsTable extends Migration
      */
     public function down()
     {
-        Schema::create('products', function (Blueprint $table){
-            $table->dropColumn('delivery_charge', ['free', 'paid']);
+        Schema::table('products', function (Blueprint $table){
+            $table->dropColumn('delivery_charge');
+            $table->dropColumn('inside_dhaka');
+            $table->dropColumn('outside_dhaka');
         });
     }
 }
