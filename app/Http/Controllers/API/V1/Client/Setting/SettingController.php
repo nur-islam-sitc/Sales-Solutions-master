@@ -68,11 +68,6 @@ class SettingController extends MerchantBaseController
             $shop->shop_id = $request->shop_id;
             $shop->shop_meta_title = $request->shop_meta_title;
             $shop->shop_meta_description = $request->shop_meta_description;
-	        $shop->fb_pixel = $request->fb_pixel;
-	        $shop->c_api = $request->c_api;
-            $shop->test_event = $request->test_event;
-            $shop->domain_verify = $request->domain_verify;
-            $shop->c_status = $request->c_status;
             $shop->save();
 
             //store shop logo
@@ -374,7 +369,75 @@ class SettingController extends MerchantBaseController
             ], 400);
         }
     }
+    public function pixel_update(MerchantSettingRequest $request)
+    {
 
+        try {
+            DB::beginTransaction();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
+            $shop = Shop::where('user_id', $merchant->id)->first();
+            $shop->name = $request->shop_name;
+            $shop->shop_id = $request->shop_id;
+	        $shop->fb_pixel = $request->fb_pixel;
+	        $shop->c_api = $request->c_api;
+            $shop->test_event = $request->test_event;
+            $shop->c_status = $request->c_status;
+            $shop->save();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'msg' => 'FB Pixel setting update successfully',
+                'data' =>    $shop,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
+    }
+    public function domain_verify(MerchantSettingRequest $request)
+    {
+
+        try {
+            DB::beginTransaction();
+            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
+            if (!$merchant) {
+                return response()->json([
+                    'success' => false,
+                    'msg' =>  'Merchant not Found',
+                ], 404);
+            }
+
+            $shop = Shop::where('user_id', $merchant->id)->first();
+            $shop->name = $request->shop_name;
+            $shop->shop_id = $request->shop_id;
+            $shop->domain_verify = $request->domain_verify;
+            $shop->save();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'msg' => 'Domain verify meta update successfully',
+                'data' =>    $shop,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'msg' =>   $e->getMessage(),
+            ], 400);
+        }
+    }
     public function website()
     {
         try {
