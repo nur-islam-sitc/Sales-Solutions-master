@@ -133,7 +133,7 @@
                                         <img :src="theme?.media?.name" alt="">
                                     </div>
                                     <div class="template-info">
-                                        <button class="">Preview</button>
+                                        <a class="" :href="theme?.url" target="_blank">Preview</a>
                                     </div>
                                 </div>
                             </div>
@@ -188,6 +188,18 @@
                     </div>
 
                     <div class="form-group mb-2">
+                        <label for="subject" :class="['mb-0', !!errors.url && 'validation-error-label']">Preview Url
+                            *</label>
+
+                        <input type="text" v-model="form.url" name="subject"
+                               :class="[ 'form-control', !!errors.url && 'validation-error' ]"
+                               @blur="validate('url')"
+                               @keypress="validate('url')"/>
+
+                        <span class="validation-error-message" v-if="!!errors.url">{{ errors.url }}</span>
+                    </div>
+
+                    <div class="form-group mb-2">
                         <label for="" :class="['mb-0', !!errors.image && 'validation-error-label']">Preview Image
                             *</label>
                         <input type="file" name="attachment"
@@ -207,7 +219,7 @@ import Modal from "./Modal.vue";
 import * as yup from 'yup';
 
 const themeSchema = yup.object().shape({
-    name: yup.string().required(),
+    name: yup.string().required('title is a required field'),
     image: yup.mixed().test("type", 'Supported file types Image only', function (value) {
         if (value !== null) {
             return value && (value.type === 'image/jpg' || value.type === 'image/jpeg' || value.type === 'image/png');
@@ -216,7 +228,8 @@ const themeSchema = yup.object().shape({
         }
 
     }),
-    type: yup.string().required('Please Select Template Type')
+    type: yup.string().required('Please Select Template Type'),
+    url: yup.string().required()
 });
 
 export default {
@@ -229,11 +242,13 @@ export default {
                 type: "",
                 name: "",
                 image: null,
+                url: "",
             },
             errors: {
                 type: "",
                 name: "",
                 image: "",
+                url: ""
             },
             types: [
                 {name: 'Landing', value: 'landing'},
@@ -262,6 +277,7 @@ export default {
                     const formData = new FormData();
                     formData.append('type', this.form.type)
                     formData.append('name', this.form.name)
+                    formData.append('url', this.form.url)
                     formData.append('image', this.form.image)
 
                     axios.post('/panel/themes/store', formData, {
@@ -272,6 +288,7 @@ export default {
                         this.showModal = false
                         this.form.type = ""
                         this.form.name = ""
+                        this.form.url = ""
                         this.form.image = null
                         this.fetchThemes()
 
@@ -292,7 +309,6 @@ export default {
         fetchThemes() {
             axios.get('/panel/themes/list').then((res) => {
                 this.themes = res.data.data
-
             })
         }
     },
