@@ -14,7 +14,7 @@ class PageRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,7 +24,7 @@ class PageRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         if(Request::route()->getName() === "client.page.store"){
             return [
@@ -44,7 +44,7 @@ class PageRequest extends FormRequest
             ];
         }
 
-        
+
         return [];
     }
 

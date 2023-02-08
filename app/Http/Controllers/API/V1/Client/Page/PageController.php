@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Client\Page;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PageRequest;
+use App\Models\ActiveTheme;
 use App\Models\Page;
 use App\Traits\sendApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -15,9 +16,13 @@ class PageController extends Controller
 {
     use sendApiResponse;
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function index(Request $request): JsonResponse
     {
-        $page = Page::query()->where('shop_id', $request->header('shop-id'))->get();
+        $page = Page::query()->with('product')->where('shop_id', $request->header('shop-id'))->get();
         if ($page->isEmpty()) {
             return $this->sendApiResponse('', 'No data available right now', 'NotAvailable');
         }
@@ -31,50 +36,43 @@ class PageController extends Controller
     }
 
 
-    public function store(PageRequest $request)
+    /**
+     * @param PageRequest $request
+     * @return JsonResponse
+     */
+    public function store(PageRequest $request): JsonResponse
     {
-        //return $request->all();
-        try {
+        $page = new Page();
+        $page->user_id = auth()->user()->id;
+        $page->shop_id = $request->header('shop-id');
+        $page->title = $request->input('title');
+        $page->slug = Str::slug($request->input('title'));
+        $page->page_content = $request->input('page_content');
+        $page->theme = $request->input('theme');
+        $page->status = $request->input('status');
+        $page->product_id = $request->input('product_id');
+        $page->save();
 
-            DB::beginTransaction();
-            $page = new Page();
-            $page->user_id = auth()->user()->id;
-            $page->shop_id = auth()->user()->shop->shop_id;
-            $page->title = $request->title;
-            $page->slug = Str::slug($request->title);
-            $page->page_content = $request->page_content;
-            $page->theme = $request->theme;
-            $page->status = $request->status;
-            $page->save();
-
-
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'msg' => 'Page created successfully',
-                'data' => $page,
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        if (!$page) {
+            return $this->sendApiResponse('', 'Something went wrong', 'UnknownError');
         }
+        return $this->sendApiResponse($page, 'Page created successfully');
+
     }
 
 
+    /**
+     * @param Request $request
+     * @param $slug
+     * @return JsonResponse
+     */
     public function show(Request $request, $slug): JsonResponse
     {
-
-        $page = Page::query()->where('slug', $slug)->where('shop-id', $request->header('shop-id'))->first();
+        $page = Page::query()->with('product')->where('slug', $slug)->where('shop-id', $request->header('shop-id'))->first();
         if (!$page) {
             return $this->sendApiResponse('', 'Page not Found', 'NotFound');
         }
-
         return $this->sendApiResponse($page);
-
-
     }
 
 
@@ -83,65 +81,38 @@ class PageController extends Controller
 
     }
 
-    public function update(PageRequest $request, $id)
+    /**
+     * @param PageRequest $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function update(PageRequest $request, $id): JsonResponse
     {
-        try {
-
-            DB::beginTransaction();
-            $page = Page::find($id);
-            if (!$page) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Page not Found',
-                ], 404);
-            }
-
-            $page->title = $request->title;
-            $page->slug = Str::slug($request->title);
-            $page->page_content = $request->page_content;
-            $page->theme = $request->theme;
-            $page->save();
-
-
-            $updatedPage = Page::where('id', $id)->first();
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'msg' => 'Page updated successfully',
-                'data' => $updatedPage,
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        $page = Page::query()->find($id);
+        if (!$page) {
+            return $this->sendApiResponse('', 'Page Not found', 'NotFound');
         }
+        $page->title = $request->input('title');
+        $page->slug = Str::slug($request->input('title'));
+        $page->page_content = $request->input('page_content');
+        $page->theme = $request->input('theme');
+        $page->product_id = $request->input('product_id') ?: $page->product_id;
+        $page->save();
+
+        return $this->sendApiResponse($page, 'Page updated successfully');
     }
 
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        try {
-            $page = Page::find($id);
-            if (!$page) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Page not Found',
-                ], 404);
-            }
-
-
-            $page->delete();
-            return response()->json([
-                'success' => true,
-                'msg' => 'Page remove successfully',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
+        $page = Page::query()->find($id);
+        if (!$page) {
+            return $this->sendApiResponse('', 'Page not found', 'NotFound');
         }
+        $theme = ActiveTheme::query()->where('theme_id', $page->theme)->first();
+        $theme->delete();
+        $page->delete();
+        return $this->sendApiResponse('', 'Page deleted successfully');
+
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\AdminBaseController;
+use App\Http\Requests\ThemeRequest;
 use App\Models\Media;
 use App\Models\Theme;
 use App\Traits\sendApiResponse;
@@ -17,21 +18,16 @@ class ThemeController extends AdminBaseController
         return view('panel.themes.index');
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(ThemeRequest $request): JsonResponse
     {
-        $request->validate([
-            'type' => ['required'],
-            'name' => ['required'],
-            'image' => ['required'],
-        ]);
-
-        $file = $request->file('image')->getClientOriginalName();
+        $file = time().'-'.$request->file('image')->getClientOriginalName();
         $path = '/upload/themes';
         $image = $request->file('image')->storeAs($path, $file, 'local');
 
         $theme = Theme::query()->create([
             'type' => $request->input('type'),
             'name' => $request->input('name'),
+            'url' => $request->input('url'),
         ]);
 
         $preview_image = Media::query()->create([
@@ -45,7 +41,7 @@ class ThemeController extends AdminBaseController
 
     public function getThemes(): JsonResponse
     {
-        $themes = Theme::all();
+        $themes = Theme::query()->orderByDesc('id')->get();
         $themes->load('media');
         return $this->sendApiResponse($themes);
     }
