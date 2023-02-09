@@ -156,8 +156,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::get('/list', [CourierController::class, 'index']);
         Route::post('/provider', [CourierController::class, 'store']);
         Route::post('/send-order', [CourierController::class, 'sendOrderToCourier']);
-        Route::post('/track-order', [CourierController::class, 'trackOrder']);
-
+        Route::post('/track-order/{id}', [CourierController::class, 'trackOrder']);
     });
 
 

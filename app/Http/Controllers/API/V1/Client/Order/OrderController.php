@@ -287,8 +287,8 @@ Thank you.
         $order = Order::query()->find($id);
 
         $order->update([
-            'follow_up_date' => $request->input('follow_up_date'),
-            'follow_up_note' => $request->input('follow_up_note'),
+            'follow_up_date' => $request->input('follow_up_date') ?: $order->follow_up_date,
+            'follow_up_note' => $request->input('follow_up_note') ?: $order->follow_up_note,
         ]);
 
         return $this->sendApiResponse($order, 'Follow up date updated successfully');

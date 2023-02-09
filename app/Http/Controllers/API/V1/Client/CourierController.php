@@ -78,9 +78,9 @@ class CourierController extends Controller
                 $data->consignment_id = $response['consignment']['consignment_id'];
                 $data->tracking_code = $response['consignment']['tracking_code'];
                 $data->courier_entry = true;
-                $data->order_status = $response['consignment']['status'];
+                $data->courier_status = $response['consignment']['status'];
                 $data->save();
-                return $this->sendApiResponse($data, 'Order has been send to'. MerchantCourier::STEADFAST);
+                return $this->sendApiResponse($data, 'Order has been send to '. MerchantCourier::STEADFAST);
             } else {
                 return $this->sendApiResponse('', $response['errors']['invoice'][0], 'AlreadyTaken');
             }
@@ -90,19 +90,37 @@ class CourierController extends Controller
 
     }
 
-    public function trackOrder(Request $request)
+    public function trackOrder(Request $request, $id)
     {
+        $order = Order::query()->find($id);
         $courier = new Courier;
+        $merchant_courier = MerchantCourier::query()
+            ->where('shop_id', $request->header('shop-id'))
+            ->where('provider', $request->input('provider'))
+            ->where('status', 'active')
+            ->first();
 
-        if ($request->filled('consignment_id')) {
-            return $courier->trackOrder('/status_by_cid/' . $request->input('consignment_id'));
+        if($merchant_courier->provider === MerchantCourier::STEADFAST) {
+
+            $credentials = collect(json_decode($merchant_courier->config))->toArray();
+
+            if ($request->filled('consignment_id')) {
+                $response = $courier->trackOrder($credentials, '/status_by_cid/' . $request->input('consignment_id'));
+            }
+            if ($request->filled('invoice')) {
+                $response = $courier->trackOrder($credentials, '/status_by_invoice/' . $request->input('invoice'));
+            }
+            if ($request->filled('tracking_code')) {
+                $response = $courier->trackOrder($credentials, '/status_by_trackingcode/' . $request->input('tracking_code'));
+            }
+
+            $status = $response->body();
+
+
         }
-        if ($request->filled('invoice')) {
-            return $courier->trackOrder('/status_by_invoice/' . $request->input('invoice'));
-        }
-        if ($request->filled('tracking_code')) {
-            return $courier->trackOrder('/status_by_trackingcode/' . $request->input('tracking_code'));
-        }
+
+
+        return $this->sendApiResponse('', 'Courier data not found', 'NotFound');
 
     }
 }
