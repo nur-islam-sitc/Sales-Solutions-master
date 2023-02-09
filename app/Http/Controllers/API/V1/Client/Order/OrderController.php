@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Client\Order;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
+use App\Models\Product;
 use App\Services\Sms;
 use App\Models\Order;
 use App\Models\OrderDetails;
@@ -34,6 +35,7 @@ class OrderController extends Controller
         return $this->sendApiResponse($orders);
 
     }
+
     public function order($id): JsonResponse
     {
         $orders = Order::with('order_details', 'customer')
@@ -46,6 +48,7 @@ class OrderController extends Controller
         return $this->sendApiResponse($orders);
 
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -59,93 +62,73 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
-        try {
+        $customer = User::query()->firstOrCreate([
+            'phone' => $request->input('customer_phone'),
+            'role' => User::CUSTOMER
+        ],[
+            'name' => $request->input('customer_name'),
+            'email' => 'customer' . rand(1000, 9999) . '@gmail.com',
+            'address' => $request->input('customer_address'),
+            'password' => Hash::make(12345678),
+        ]);
 
-            DB::beginTransaction();
+        $order = Order::query()->create([
+            'order_no' => rand(100, 9999),
+            'shop_id' => $request->header('shop-id'),
+            'user_id' => auth()->user()->id,
+            'customer_id' => $customer->id,
+            'address' => $request->input('customer_address')
+        ]);
 
-            $customerID = null;
-            $findCustomer = User::query()->where('phone', $request->input('customer_phone'))->where('role', 'customer')->first();
+        $grand_total = 0;
+        //store order details
+        foreach ($request->input('product_id') as $key => $item) {
 
-            if ($findCustomer) {
-                $customerID = $findCustomer->id;
-            }
+            $product = Product::query()->find($item);
 
-            if (!$findCustomer) {
-                $customer = new User();
-                $customer->name = $request->input('customer_name');
-                $customer->role = 'customer';
-                $customer->email = 'customer' . rand(1000, 9999) . '@gmail.com';
-                $customer->phone = $request->input('customer_phone');
-                $customer->address = $request->input('customer_address');
-                $customer->password = Hash::make(12345678);
-                $customer->save();
+            $order->order_details()->create([
+                'product_id' => $item,
+                'product_qty' => $request->input('product_qty')[$key],
+            ]);
 
-                $customerID = $customer->id;
-            }
+            $grand_total += $product->price * $request->input('product_qty')[$key];
 
+        }
+        $order->grand_total = $grand_total;
+        $order->save();
 
-            $order = new Order();
-            $order->order_no = rand(100, 9999);
-            $order->shop_id = auth()->user()->shop->shop_id;
-            $order->user_id = auth()->user()->id;
-            $order->customer_id = $customerID;
-            $order->save();
+        $order->load('customer', 'order_details');
+        foreach ($order->order_details as $details) {
+            $details->product->update([
+                'product_qty' => $details->product->product_qty - $details->product_qty
+            ]);
+        }
 
-            //store order details
-            foreach ($request->product_id as $key => $val) {
-
-                $orderDetails = new OrderDetails();
-                $orderDetails->order_id = $order->id;
-                $orderDetails->product_id = $val;
-                $orderDetails->product_qty = $request->product_qty[$key];
-                $orderDetails->save();
-            }
-            $createdOrder = Order::with('order_details')->where('id', $order->id)->first();
-
-            foreach ($createdOrder->order_details as $details) {
-                $details->product->update([
-                    'product_qty' => $details->product->product_qty - $details->product_qty
-                ]);
-            }
-
-            DB::commit();
-
-	    $user = '20102107';
-            $password = 'SES@321';
-            $sender_id = 'INFOSMS';
-            $msg = 'Dear '.$request->input('customer_name').' ,
-Your Order No. '.$order->order_no.' is pending.
+        $user = '20102107';
+        $password = 'SES@321';
+        $sender_id = 'INFOSMS';
+        $msg = 'Dear ' . $request->input('customer_name') . ' ,
+Your Order No. ' . $order->order_no . ' is pending.
 Thank you.
 
-'.auth()->user()->shop->name.'';
-            $url2 = "https://mshastra.com/sendurl.aspx";
-            $data2 = [
-                "user" => $user,
-                "pwd" => $password,
-                "type" => "text",
-                "CountryCode" => "+880",
-                "mobileno" => $request->input('customer_phone'),
-                "senderid" => $sender_id,
-                "msgtext" => $msg,
-            ];
-            $ch = curl_init($url2);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
-            $order = curl_exec($ch);
+' . auth()->user()->shop->name . '';
+        $url2 = "https://mshastra.com/sendurl.aspx";
+        $data2 = [
+            "user" => $user,
+            "pwd" => $password,
+            "type" => "text",
+            "CountryCode" => "+880",
+            "mobileno" => $request->input('customer_phone'),
+            "senderid" => $sender_id,
+            "msgtext" => $msg,
+        ];
+        $ch = curl_init($url2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
+        $order_sms = curl_exec($ch);
 
+        return $this->sendApiResponse($order, 'Order Created Successfully');
 
-            return response()->json([
-                'success' => true,
-                'msg' => 'Order created Successfully',
-                'data' => $createdOrder,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
-        }
     }
 
     /**
@@ -245,11 +228,11 @@ Thank you.
             $user = '20102107';
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
-            $msg = 'Dear '.$order->customer_name.' ,
-Your Order No. '.$order->order_no.' is '.$order->order_status.'.
+            $msg = 'Dear ' . $order->customer_name . ' ,
+Your Order No. ' . $order->order_no . ' is ' . $order->order_status . '.
 Thank you.
 
-'.$merchant->shop->name.'';
+' . $merchant->shop->name . '';
             $url2 = "https://mshastra.com/sendurl.aspx";
             $data2 = [
                 "user" => $user,
