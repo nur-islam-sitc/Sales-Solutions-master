@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\Product;
 use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -16,78 +17,50 @@ class OrderController extends Controller
 {
     public function store(OrderRequest $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
+        $customer = User::query()->firstOrCreate([
+            'phone' => $request->input('customer_phone'),
+            'role' => User::CUSTOMER
+        ], [
+            'name' => $request->input('customer_name'),
+            'email' => 'customer' . rand(1000, 9999) . '@gmail.com',
+            'address' => $request->input('customer_address'),
+            'password' => Hash::make(12345678),
+        ]);
 
-            $customerID = null;
-            $findCustomer = User::where('phone', $request->customer_phone)->where('role', 'customer')->first();
+        $order = Order::query()->create([
+            'order_no' => rand(100, 9999),
+            'shop_id' => $request->header('shop-id'),
+            'user_id' => auth()->user()->id,
+            'customer_id' => $customer->id,
+            'address' => $request->input('customer_address')
+        ]);
 
-            if($findCustomer){
-                $customerID = $findCustomer->id;
-            }
+        $grand_total = 0;
+        //store order details
+        foreach ($request->input('product_id') as $key => $item) {
 
-            if (!$findCustomer) {
-                $customer = new User();
-                $customer->name = $request->customer_name;
-                $customer->role = 'customer';
-                $customer->email = 'customer' . rand(1000, 9999) . '@gmail.com';
-                $customer->phone  = $request->customer_phone;
-                $customer->address  = $request->customer_address;
-                $customer->password = Hash::make(12345678);
-                $customer->save();
+            $product = Product::query()->find($item);
 
-                $customerID = $customer->id;
-            }
+            $order->order_details()->create([
+                'product_id' => $item,
+                'product_qty' => $request->input('product_qty')[$key],
+            ]);
 
-            $shop = Shop::where('shop_id', $request->header('shop_id'))->first();
-            if (!$shop) {
-                return response()->json([
-                    'success' => false,
-                    'msg' => 'Shop Not Found',
-                ], 404);
-            }
+            $grand_total += $product->price * $request->input('product_qty')[$key];
 
-            $order = new Order();
-            $order->order_no = rand(100, 9999);
-            $order->shop_id = $shop->shop_id;
-            $order->user_id = $shop->user_id;
-            $order->customer_id = $customerID;
-            $order->note = $request->input('note');
-            $order->address = $request->input('address');
-            $order->save();
-
-            //store order details
-            foreach ($request->input('product_id') as $key => $val) {
-
-                $orderDetails = new OrderDetails();
-                $orderDetails->order_id = $order->id;
-                $orderDetails->product_id = $val;
-                $orderDetails->product_qty = $request->product_qty[$key];
-                $orderDetails->save();
-            }
-
-            $createdOrder = Order::with('order_details')->where('id', $order->id)->first();
-
-
-            foreach ($createdOrder->order_details as $details) {
-                $details->product->update([
-                    'product_qty' => $details->product->product_qty - $details->product_qty
-                ]);
-            }
-
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'msg' => 'Order created Successfully',
-                'data' => $createdOrder,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' => $e->getMessage(),
-            ], 400);
         }
+        $order->grand_total = $grand_total;
+        $order->save();
+
+        $order->load('customer', 'order_details');
+        foreach ($order->order_details as $details) {
+            $details->product->update([
+                'product_qty' => $details->product->product_qty - $details->product_qty
+            ]);
+        }
+
+        return $this->sendApiResponse($order, 'Order Created Successfully');
+
     }
 
     public function show($id): JsonResponse
