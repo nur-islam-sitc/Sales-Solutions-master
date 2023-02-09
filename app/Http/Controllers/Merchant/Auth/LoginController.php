@@ -82,6 +82,7 @@ class LoginController extends MerchantBaseController
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
                 'domain' => $new_domain,
+		        'sms_balance' => "50",
                 'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();

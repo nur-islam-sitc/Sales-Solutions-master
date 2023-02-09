@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Shop;
 
 class OrderController extends Controller
 {
@@ -65,7 +66,7 @@ class OrderController extends Controller
         $customer = User::query()->firstOrCreate([
             'phone' => $request->input('customer_phone'),
             'role' => User::CUSTOMER
-        ],[
+        ], [
             'name' => $request->input('customer_name'),
             'email' => 'customer' . rand(1000, 9999) . '@gmail.com',
             'address' => $request->input('customer_address'),
@@ -104,28 +105,35 @@ class OrderController extends Controller
             ]);
         }
 
-        $user = '20102107';
-        $password = 'SES@321';
-        $sender_id = 'INFOSMS';
-        $msg = 'Dear ' . $request->input('customer_name') . ' ,
-Your Order No. ' . $order->order_no . ' is pending.
-Thank you.
+        $shop = Shop::where('shop_id', auth()->user()->shop->shop_id)->first();
 
-' . auth()->user()->shop->name . '';
-        $url2 = "https://mshastra.com/sendurl.aspx";
-        $data2 = [
-            "user" => $user,
-            "pwd" => $password,
-            "type" => "text",
-            "CountryCode" => "+880",
-            "mobileno" => $request->input('customer_phone'),
-            "senderid" => $sender_id,
-            "msgtext" => $msg,
-        ];
-        $ch = curl_init($url2);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
-        $order_sms = curl_exec($ch);
+        if ($shop->sms_balance < 1) {
+
+        } else {
+            $shop->sms_balance = $shop->sms_balance - 1;
+            $shop->sms_sent = $shop->sms_sent + 1;
+            $shop->save();
+
+
+            $user = '20102107';
+            $password = 'SES@321';
+            $sender_id = 'INFOSMS';
+            $msg = 'Dear ' . $request->input('customer_name') . ' , Your Order No. ' . $order->order_no . ' is pending.Thank you.' . auth()->user()->shop->name . '';
+            $url2 = "https://mshastra.com/sendurl.aspx";
+            $data2 = [
+                "user" => $user,
+                "pwd" => $password,
+                "type" => "text",
+                "CountryCode" => "+880",
+                "mobileno" => $request->input('customer_phone'),
+                "senderid" => $sender_id,
+                "msgtext" => $msg,
+            ];
+            $ch = curl_init($url2);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
+            $order = curl_exec($ch);
+        }
 
         return $this->sendApiResponse($order, 'Order Created Successfully');
 
