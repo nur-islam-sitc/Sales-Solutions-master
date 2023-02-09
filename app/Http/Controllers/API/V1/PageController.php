@@ -15,7 +15,7 @@ class PageController extends MerchantBaseController
 
     public function show($page): JsonResponse
     {
-        $page = Page::query()->with('theme', 'product')->where('slug', $page)->first();
+        $page = Page::query()->with('theme', 'product', 'product.main_image', 'product.other_images')->where('slug', $page)->first();
         if(!$page) {
             return $this->sendApiResponse('', 'No page found', 'NotFound');
         }

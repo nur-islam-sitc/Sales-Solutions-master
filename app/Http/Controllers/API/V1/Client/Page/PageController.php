@@ -22,7 +22,7 @@ class PageController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $page = Page::query()->with('product')->where('shop_id', $request->header('shop-id'))->get();
+        $page = Page::query()->with('product', 'product.main_image', 'product.other_images')->where('shop_id', $request->header('shop-id'))->get();
         if ($page->isEmpty()) {
             return $this->sendApiResponse('', 'No data available right now', 'NotAvailable');
         }
@@ -52,6 +52,7 @@ class PageController extends Controller
         $page->status = $request->input('status') ?: 1;
         $page->product_id = $request->input('product_id');
         $page->save();
+        $page->load('product');
 
         if (!$page) {
             return $this->sendApiResponse('', 'Something went wrong', 'UnknownError');
@@ -68,7 +69,10 @@ class PageController extends Controller
      */
     public function show(Request $request, $slug): JsonResponse
     {
-        $page = Page::query()->with('product')->where('slug', $slug)->where('shop-id', $request->header('shop-id'))->first();
+        $page = Page::query()->with('product', 'product.main_image', 'product.other_images')
+            ->where('slug', $slug)
+            ->where('shop-id', $request->header('shop-id'))
+            ->first();
         if (!$page) {
             return $this->sendApiResponse('', 'Page not Found', 'NotFound');
         }
@@ -98,6 +102,7 @@ class PageController extends Controller
         $page->theme = $request->input('theme');
         $page->product_id = $request->input('product_id') ?: $page->product_id;
         $page->save();
+        $page->load('product');
 
         return $this->sendApiResponse($page, 'Page updated successfully');
     }

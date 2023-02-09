@@ -115,6 +115,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
     Route::post('sales-target/update', [SalesTargetController::class, 'sales_target_update'])->name('sales.target.update');
     Route::post('orders/status/update', [ClientOrder::class, 'order_status_update'])->name('orders.status.update');
     Route::get('/order-invoice', [ClientOrder::class, 'order_invoice'])->name('order.invoice');
+    Route::post('/order/follow-up/{id}/update', [ClientOrder::class, 'updateFollowup'])->name('order.follow_up');
 
     Route::resource('sliders', ClientSlider::class);
     Route::resource('pages', PageController::class);
