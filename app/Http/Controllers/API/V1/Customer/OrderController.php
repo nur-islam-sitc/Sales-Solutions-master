@@ -29,7 +29,6 @@ class OrderController extends Controller
         $order = Order::query()->create([
             'order_no' => rand(100, 9999),
             'shop_id' => $request->header('shop-id'),
-            'user_id' => auth()->user()->id,
             'customer_id' => $customer->id,
             'address' => $request->input('customer_address')
         ]);
