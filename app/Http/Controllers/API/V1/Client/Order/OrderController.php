@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Shop;
 
 class OrderController extends Controller
 {
@@ -110,6 +111,16 @@ class OrderController extends Controller
 
             DB::commit();
 
+	    $shop = Shop::where('shop_id', auth()->user()->shop->shop_id)->first();
+            
+
+            if($shop->sms_balance < 1){
+
+            }else{
+            $shop->sms_balance = $shop->sms_balance -1;
+            $shop->sms_sent = $shop->sms_sent +1;
+            $shop->save();
+
 	    $user = '20102107';
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
@@ -132,6 +143,7 @@ Thank you.
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
             $order = curl_exec($ch);
+	    }
 
 
             return response()->json([
@@ -242,12 +254,22 @@ Thank you.
                 }
             }
             $order->save();
+            $shop = Shop::where('shop_id', $merchant->shop->shop_id)->first();
+            
+
+            if($shop->sms_balance < 1){
+
+            }else{
+	    $shop->sms_balance = $shop->sms_balance -1;
+            $shop->sms_sent = $shop->sms_sent +1;
+            $shop->save();
+
             $user = '20102107';
             $password = 'SES@321';
             $sender_id = 'INFOSMS';
             $msg = 'Dear '.$order->customer_name.' ,
 Your Order No. '.$order->order_no.' is '.$order->order_status.'.
-Thank you.
+Thank you. 
 
 '.$merchant->shop->name.'';
             $url2 = "https://mshastra.com/sendurl.aspx";
@@ -264,6 +286,7 @@ Thank you.
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data2);
             $order = curl_exec($ch);
+		}
 
             return response()->json([
                 'success' => true,
