@@ -1,16 +1,15 @@
-<?php
+<?php /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+
+/** @noinspection PhpUndefinedFieldInspection */
 
 namespace App\Http\Controllers\API\V1\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
-use App\Models\OrderDetails;
 use App\Models\Product;
-use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class OrderController extends Controller

@@ -6,90 +6,39 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SalesTargetRequest;
 use App\Models\SalesTarget;
 use App\Models\User;
-use DB;
+use App\Traits\sendApiResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 
 
 class SalesTargetController extends Controller
 {
-    public function sales_target()
+    use sendApiResponse;
+
+    public function sales_target(): JsonResponse
     {
-        try {
-            DB::beginTransaction();
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Merchant not Found',
-                ], 404);
-            }
-            $salesTarget  = SalesTarget::where('user_id', $merchant->id)->first();
-            if (!$salesTarget) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Sales Target not Found!',
-                ], 404);
-            }
-
-
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'data' =>   $salesTarget,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' =>   $e->getMessage(),
-            ], 400);
+        $salesTarget = SalesTarget::query()->where('user_id', auth()->user()->id)->first();
+        if (!$salesTarget) {
+            return $this->sendApiResponse('', 'Sales target not available right now', 'NotAvailable');
         }
+
+        return $this->sendApiResponse($salesTarget);
+
     }
 
-
-    public function sales_target_update(SalesTargetRequest $request)
+    public function sales_target_update(SalesTargetRequest $request): JsonResponse
     {
-        try {
-            
-            $merchant = User::where('role', 'merchant')->find(auth()->user()->id);
-            if (!$merchant) {
-                return response()->json([
-                    'success' => false,
-                    'msg' =>  'Merchant not Found',
-                ], 404);
-            }
-            $salesTarget = SalesTarget::where('user_id', $merchant->id)->first();
-            if (!$salesTarget) {
-                $target = new SalesTarget();
-                $target->shop_id = auth()->user()->shop->id;
-                $target->user_id = auth()->user()->id;
-                $target->daily = $request->daily;
-                $target->weekly = $request->weekly;
-                $target->monthly = $request->monthly;
-                $target->save();
-              
-                return response()->json([
-                    'success' => true,
-                    'msg' => 'Sales target updated successfully',
-                    'data' =>  $target,
-                ], 200);
-            }
+        $salesTarget = SalesTarget::query()->updateOrCreate([
+            'user_id' => auth()->id(),
+            'shop_id' => $request->header('shop-id')
+        ], [
+            'daily' => $request->input('daily'),
+            'monthly' => $request->input('monthly'),
+            'custom' => $request->input('custom'),
+            'from_date' => $request->input('from_date'),
+            'to_date' => $request->input('to_date'),
+        ]);
+        return $this->sendApiResponse($salesTarget, 'Sales target updated successfully');
 
-            $salesTarget->daily = $request->daily;
-            $salesTarget->weekly = $request->weekly;
-            $salesTarget->monthly = $request->monthly;
-            $salesTarget->save();
-
-            return response()->json([
-                'success' => true,
-                'msg' => 'Sales target updated successfully',
-                'data' =>   $salesTarget,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'msg' =>   $e->getMessage(),
-            ], 400);
-        }
     }
 }

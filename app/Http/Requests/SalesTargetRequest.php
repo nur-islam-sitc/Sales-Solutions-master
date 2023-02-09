@@ -14,7 +14,7 @@ class SalesTargetRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,13 +24,15 @@ class SalesTargetRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         if(Request::route()->getName() === "client.sales.target.update"){
             return [
                 'daily' => 'required|integer',
-                'weekly' => 'required|integer',
                 'monthly' => 'required|integer',
+                'custom' => 'required|integer',
+                'from_date' => 'required',
+                'to_date' => 'required'
             ];
         }
 
