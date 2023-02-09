@@ -17,6 +17,8 @@ class CreateMerchantTokensTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('token');
+            $table->string('ip');
+            $table->string('browser');
             $table->timestamps();
         });
     }
