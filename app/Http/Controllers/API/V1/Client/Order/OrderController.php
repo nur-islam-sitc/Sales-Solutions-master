@@ -293,4 +293,13 @@ Thank you.
 
         return $this->sendApiResponse($order, 'Follow up date updated successfully');
     }
+
+    public function advancePayment(Request $request, $id): JsonResponse
+    {
+        $order = Order::query()->find($id);
+        $order->update([
+            'advance' => $request->input('advance')
+        ]);
+        return $this->sendApiResponse($order, 'Advance payment updated');
+    }
 }
