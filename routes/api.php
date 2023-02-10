@@ -66,7 +66,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('auth/verify', [LoginController::class, 'verify']);
     Route::post('resend/otp', [LoginController::class, 'resendOTP']);
     
-    Route::get('ip/check', [LoginController::class, 'checkIp']);
+    Route::get('device/{ip}/check/{browser}', [LoginController::class, 'checkIp']);
 });
 
 
