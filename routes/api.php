@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('v1/page/{page}', [\App\Http\Controllers\API\V1\PageController::class, 'show']);
 
+
 //client api
 Route::prefix('v1/customer')->name('customer.')->group(function () {
 
@@ -64,6 +65,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('signup', [LoginController::class, 'register']);
     Route::post('auth/verify', [LoginController::class, 'verify']);
     Route::post('resend/otp', [LoginController::class, 'resendOTP']);
+    
+    Route::get('ip/check, [LoginController::class, 'checkIp']);
 });
 
 
