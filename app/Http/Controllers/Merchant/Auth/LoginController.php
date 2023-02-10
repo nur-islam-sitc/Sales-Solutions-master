@@ -201,4 +201,15 @@ class LoginController extends MerchantBaseController
         $sms->sendVerifyOtp($user);
         return $this->sendApiResponse('', 'OTP has been send to given number');
     }
+    
+    public function checkIp($ip, $browser)
+    {
+        $user = MerchantToken::query()->where('ip', $ip)->where('browser', $browser)->first();
+        
+        if(!$user) {
+            return $this->sendApiResponse('', 'No user token found with this ip');
+        }
+        
+        return $this->sendApiResponse($user);
+    }
 }
