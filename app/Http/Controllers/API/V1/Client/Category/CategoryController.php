@@ -127,8 +127,12 @@ class CategoryController extends Controller
         $category->update($data);
 
         if ($request->has('category_image')) {
-            $image_path = $category->category_image->name;
-            File::delete(public_path($image_path));
+
+            if($category->category_image !== null) {
+                $image_path = $category->category_image->name;
+                File::delete(public_path($image_path));
+            }
+
 
             $imageName = time() . '.' . $request->file('category_image')->getClientOriginalExtension();
             $request->file('category_image')->move(public_path('images/category'), $imageName);

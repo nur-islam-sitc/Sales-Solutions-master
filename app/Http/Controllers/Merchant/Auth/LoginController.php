@@ -7,6 +7,7 @@ use App\Http\Controllers\MerchantBaseController;
 use App\Http\Resources\MerchantResource;
 use App\Libraries\cPanel;
 use App\Http\Requests\Merchant\MerchantRegister;
+use App\Models\MerchantToken;
 use App\Models\User;
 use App\Models\Shop;
 use App\Services\Sms;
@@ -201,15 +202,15 @@ class LoginController extends MerchantBaseController
         $sms->sendVerifyOtp($user);
         return $this->sendApiResponse('', 'OTP has been send to given number');
     }
-    
-    public function checkIp($ip, $browser)
+
+    public function checkIp($ip, $browser): JsonResponse
     {
         $user = MerchantToken::query()->where('ip', $ip)->where('browser', $browser)->first();
-        
+
         if(!$user) {
             return $this->sendApiResponse('', 'No user token found with this ip');
         }
-        
+
         return $this->sendApiResponse($user);
     }
 }
