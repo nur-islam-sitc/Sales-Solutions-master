@@ -18,6 +18,7 @@ use App\Http\Controllers\API\V1\Client\SupportTicket\SupportTicketController;
 use App\Http\Controllers\API\V1\Client\TopSellingProduct\TopSellingProduct;
 use App\Http\Controllers\API\V1\Theme\ThemeController;
 use App\Http\Controllers\Merchant\Auth\LoginController;
+use App\Http\Controllers\API\V1\Client\SmsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -99,6 +100,10 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('website/update', [MerchantSetting::class, 'website_update'])->name('website.update');
     });
 
+    // SMS Send
+        Route::post('/single-sms-send', [SmsController::class, 'single_sms_send']);
+        Route::post('/multiple-sms-send', [SmsController::class, 'multiple_sms_send']);
+    
     // Support ticket
     Route::group(['prefix' => 'support-ticket'], function () {
         Route::post('/list', [SupportTicketController::class, 'index']);
