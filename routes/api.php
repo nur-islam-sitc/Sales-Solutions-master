@@ -85,6 +85,7 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
         Route::post('business-info/update', [MerchantSetting::class, 'business_info_update'])->name('business.info.update');
         Route::post('pixel/update', [MerchantSetting::class, 'pixel_update'])->name('pixel.update');
         Route::post('domain-meta/update', [MerchantSetting::class, 'domain_verify'])->name('domain.meta.update');
+        Route::post('domain/update', [MerchantSetting::class, 'domain_request'])->name('domain.request.update');
 
         //owner info
         Route::get('owner-info', [MerchantSetting::class, 'owner_info'])->name('owner.info');
@@ -163,17 +164,3 @@ Route::prefix('v1/client')->middleware('auth:api')->name('client.')->group(funct
 
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-

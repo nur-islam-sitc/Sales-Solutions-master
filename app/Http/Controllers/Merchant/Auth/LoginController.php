@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+use App\Models\MerchantToken;
 class LoginController extends MerchantBaseController
 {
     use sendApiResponse;
@@ -83,7 +83,7 @@ class LoginController extends MerchantBaseController
             $merchant->shop()->create([
                 'name' => $request->input('shop_name'),
                 'domain' => $new_domain,
-		        'sms_balance' => "50",
+		'sms_balance' => "50",
                 'shop_id' => mt_rand(111111, 999999),
             ]);
             $merchant->merchantinfo()->create();
@@ -202,15 +202,14 @@ class LoginController extends MerchantBaseController
         $sms->sendVerifyOtp($user);
         return $this->sendApiResponse('', 'OTP has been send to given number');
     }
-
+    
     public function checkIp($ip, $browser): JsonResponse
     {
-        $user = MerchantToken::query()->where('ip', $ip)->where('browser', $browser)->first();
-
+        $user = MerchantToken::query()->where('ip', $ip)->where('browser', $browser)->first(); 
         if(!$user) {
             return $this->sendApiResponse('', 'No user token found with this ip');
         }
-
+        
         return $this->sendApiResponse($user);
     }
 }
