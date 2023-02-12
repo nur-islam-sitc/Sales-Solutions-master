@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Merchant\Auth;
 
-
 use App\Http\Controllers\MerchantBaseController;
 use App\Http\Resources\MerchantResource;
 use App\Libraries\cPanel;
@@ -25,7 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Models\MerchantToken;
+
 class LoginController extends MerchantBaseController
 {
     use sendApiResponse;
