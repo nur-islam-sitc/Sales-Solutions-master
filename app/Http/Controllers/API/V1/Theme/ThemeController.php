@@ -9,6 +9,7 @@ use App\Models\ActiveTheme;
 use App\Models\Shop;
 use App\Models\Theme;
 use App\Models\ThemeEdit;
+use App\Models\ThemeImage;
 use App\Traits\sendApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -54,7 +55,8 @@ class ThemeController extends Controller
         $data = $request->validate([
             'type' => 'required',
             'page' => 'required',
-            'theme' => 'nullable'
+            'theme' => 'nullable',
+            'menu' => 'nullable',
         ]);
         $data['shop_id'] = $request->header('shop_id');
         if ($request->hasFile('logo')) {
@@ -67,6 +69,20 @@ class ThemeController extends Controller
         $data['content'] = $request->input('content');
 
         $theme = ThemeEdit::query()->create($data);
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $item) {
+                $file = time().'-'.$item->getClientOriginalName();
+                $path = '/themes/images/gallery';
+                $image = $item->storeAs($path, $file, 'local');
+                $gallery = ThemeImage::query()->create([
+                    'theme_edit_id' => $theme->id,
+                    'type' => 'gallery',
+                    'file_name' => $image
+                ]);
+            }
+        }
+        $theme->load('gallery');
+
 
         return $this->sendApiResponse($theme, 'Data Created Successfully');
     }
@@ -80,6 +96,19 @@ class ThemeController extends Controller
             $image = $request->file('logo')->storeAs($path, $file, 'local');
             $data->logo = $image;
             $data->save();
+        }
+
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $item) {
+                $file = time().'-'.$item->getClientOriginalName();
+                $path = '/themes/images/gallery';
+                $image = $item->storeAs($path, $file, 'local');
+                $gallery = ThemeImage::query()->create([
+                    'theme_edit_id' => $id,
+                    'type' => 'gallery',
+                    'file_name' => $image
+                ]);
+            }
         }
 
         $data->update($request->except('logo'));
