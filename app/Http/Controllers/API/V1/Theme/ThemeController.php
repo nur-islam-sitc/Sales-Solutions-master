@@ -36,7 +36,7 @@ class ThemeController extends Controller
 
     public function getListByPage(Request $request, $page): JsonResponse
     {
-        $query = ThemeEdit::query()->where('shop_id', $request->header('shop_id'))->where('page', $page)->get();
+        $query = ThemeEdit::query()->with('gallery')->where('shop_id', $request->header('shop_id'))->where('page', $page)->get();
 
         if ($query->isEmpty()) {
             return $this->sendApiResponse('', 'No data available');
@@ -112,6 +112,7 @@ class ThemeController extends Controller
         }
 
         $data->update($request->except('logo'));
+        $data->load('gallery');
 
         return $this->sendApiResponse($data, 'Data Updated Successfully');
     }
